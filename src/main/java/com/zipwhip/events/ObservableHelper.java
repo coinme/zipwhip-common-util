@@ -2,12 +2,10 @@ package com.zipwhip.events;
 
 import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.DestroyableBase;
-import com.zipwhip.util.CollectionUtil;
 
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 
 /**
  * Created by IntelliJ IDEA.

@@ -3,17 +3,14 @@ package com.zipwhip.util;
 import java.util.*;
 
 /**
- * Created by IntelliJ IDEA.
- * User: Ali
- * Date: Mar 22, 2010
- * Time: 2:04:58 PM
- *
+ * Created by IntelliJ IDEA. User: Ali Date: Mar 22, 2010 Time: 2:04:58 PM
+ * 
  * A collection of useful utilities for working with strings.
  */
 public class StringUtil {
 
-
     public static final String EMPTY_STRING = "";
+
     private static final List<String> VALID_NUMBERS = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
     private static final String PLUS_MOBIFONE = "+84";
     private static final String PLUS = "+";
@@ -30,6 +27,7 @@ public class StringUtil {
     }
 
     public static boolean equalsIgnoreCase(String string1, String... strings) {
+
         if (CollectionUtil.isNullOrEmpty(strings)) {
             if (StringUtil.isNullOrEmpty(string1)) {
                 return true;
@@ -69,10 +67,10 @@ public class StringUtil {
     }
 
     /**
-     * Strips all characters that are not numbers (0 - 9) and returns a new string.
-     * Returns and empty string if the mobile number is null or empty.
-     *
-     * @param mobileNumber        - mobile number string to parse
+     * Strips all characters that are not numbers (0 - 9) and returns a new
+     * string. Returns and empty string if the mobile number is null or empty.
+     * 
+     * @param mobileNumber - mobile number string to parse
      * @param appendInternational appends (1) at the beginning of mobile number (international format)
      * @return String - parsed mobile number
      */
@@ -95,13 +93,13 @@ public class StringUtil {
     }
 
     private static boolean equals(char string1, String string2) {
-        return equals(new String(new char[]{string1}), string2);
+        return equals(new String(new char[] { string1 }), string2);
     }
 
     /**
-     * Strips all characters that are not numbers (0 - 9) and returns a new string.
-     * Returns an empty string if the mobile number is null or empty.
-     *
+     * Strips all characters that are not numbers (0 - 9) and returns a new
+     * string. Returns an empty string if the mobile number is null or empty.
+     * 
      * @param mobileNumber - mobile number string to parse
      * @return String - parsed mobile number
      */
@@ -132,11 +130,15 @@ public class StringUtil {
             return false;
         }
 
-        String string = new String(new char[]{toFind});
+        String string = new String(new char[] { toFind });
 
         return validNumbers.contains(string);
     }
 
+    public static boolean exists(String string) {
+        return !isNullOrEmpty(string);
+    }
+    
     public static boolean isNullOrEmpty(String string) {
         return (string == null) || string.isEmpty() || StringUtil.equalsIgnoreCase(string, "null");
     }
@@ -161,7 +163,7 @@ public class StringUtil {
 
     /**
      * Case insensitive.
-     *
+     * 
      * @param source
      * @param toFind
      * @return
@@ -207,7 +209,8 @@ public class StringUtil {
         }
     }
 
-    //adding this method because the default Boolean.ParseBoolean(string s) method sucks and will interpret anything other than true as false
+    // adding this method because the default Boolean.ParseBoolean(string s)
+    // method sucks and will interpret anything other than true as false
     public static Boolean parseBoolean(String s) {
         if (equals(s, "true")) {
             return true;
@@ -325,13 +328,9 @@ public class StringUtil {
             return ""; // vacancy test.
         }
         for (int i = 0; i < in.length(); i++) {
-            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught here; it should not happen.
-            if ((current == 0x9) ||
-                    (current == 0xA) ||
-                    (current == 0xD) ||
-                    ((current >= 0x20) && (current <= 0xD7FF)) ||
-                    ((current >= 0xE000) && (current <= 0xFFFD)) ||
-                    ((current >= 0x10000) && (current <= 0x10FFFF))) {
+            current = in.charAt(i); // NOTE: No IndexOutOfBoundsException caught
+                                    // here; it should not happen.
+            if ((current == 0x9) || (current == 0xA) || (current == 0xD) || ((current >= 0x20) && (current <= 0xD7FF)) || ((current >= 0xE000) && (current <= 0xFFFD)) || ((current >= 0x10000) && (current <= 0x10FFFF))) {
                 out.append(current);
             }
         }
@@ -351,11 +350,7 @@ public class StringUtil {
         return contents;
     }
 
-    public static String convertPatterns(
-            final String contents,
-            final String hostnamePattern,
-            final String string
-    ) {
+    public static String convertPatterns(final String contents, final String hostnamePattern, final String string) {
 
         final Map<String, String> keyVals = new HashMap<String, String>();
         keyVals.put(hostnamePattern, string);
@@ -383,4 +378,5 @@ public class StringUtil {
         }
         return body;
     }
+
 }
