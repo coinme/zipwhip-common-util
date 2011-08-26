@@ -14,7 +14,7 @@ public interface Observer<T> {
      * A generic signal notification.
      *
      * @param sender The sender might not be the same object every time, so we'll let it just be object, rather than generics.
-     * @param item   - Rich object representing the notification.
+     * @param item Rich object representing the notification.
      */
     void notify(Object sender, T item);
 

@@ -51,20 +51,19 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
      * @param item   the item that the observers will hear about.
      */
     public synchronized void notifyObservers(final Object sender, final T item) {
+
         if (observers == null || observers.isEmpty()) {
             return;
         }
 
-        final Object[] asdf = observers.toArray();
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                for (Object observer : asdf) {
-                    ((Observer<T>)observer).notify(sender, item);
+                for (Observer<T> observer : observers) {
+                    observer.notify(sender, item);
                 }
             }
         });
-
     }
 
     @Override
@@ -73,4 +72,5 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
             observers.clear();
         }
     }
+
 }
