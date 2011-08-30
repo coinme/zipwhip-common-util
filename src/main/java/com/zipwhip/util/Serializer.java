@@ -3,15 +3,16 @@ package com.zipwhip.util;
 /**
  * Created by IntelliJ IDEA. User: Michael Date: 8/19/11 Time: 4:22 PM
  * 
- * Serialize the implementing object to a string
+ * Represents a parser that can parse from 1 type to another
  */
-public interface Serializer {
+public interface Serializer<TSource, TDestination> {
 
     /**
      * Serialize this object to this output
-     * 
-     * @return the serialized string representation of this
+     *
+     * @param source this
+     * @return the serialized representation of this
      */
-    String serialize();
+    TDestination serialize(TSource source);
 
 }
