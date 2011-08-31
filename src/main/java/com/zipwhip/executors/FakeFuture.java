@@ -22,6 +22,7 @@ public class FakeFuture<T> extends FutureTask<T> implements Future<T> {
 
     public FakeFuture(T result) {
         super(NULL_RUNNABLE, result);
+        run();
     }
 
 }
