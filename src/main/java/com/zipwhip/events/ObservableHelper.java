@@ -2,7 +2,9 @@ package com.zipwhip.events;
 
 import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.DestroyableBase;
+import com.zipwhip.util.CollectionUtil;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -31,7 +33,7 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
     @Override
     public synchronized void addObserver(Observer<T> observer) {
         if (observers == null) {
-            observers = new LinkedList<Observer<T>>();
+            observers = Collections.synchronizedList(new LinkedList<Observer<T>>());
         }
         observers.add(observer);
     }
@@ -52,7 +54,7 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
      */
     public synchronized void notifyObservers(final Object sender, final T item) {
 
-        if (observers == null || observers.isEmpty()) {
+        if (CollectionUtil.isNullOrEmpty(observers)) {
             return;
         }
 
