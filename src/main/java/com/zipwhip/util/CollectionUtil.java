@@ -1,5 +1,6 @@
 package com.zipwhip.util;
 
+import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.*;
@@ -625,6 +626,67 @@ public class CollectionUtil {
             return null;
         }
         return arguments.subList(index, max);
+    }
+
+    public static Set<String> getSet(Map params, String key) {
+        Object param = getParam(params, key);
+
+        if (param == null) {
+            return null;
+        }
+
+        if (param instanceof Collection) {
+            Collection collection = (Collection) param;
+            Set<String> result = new HashSet<String>();
+            for (Object part : collection) {
+                result.add(String.valueOf(part));
+            }
+            return result;
+        }
+
+        Set<String> result = new HashSet<String>();
+        if (param.getClass().isArray()) {
+            List items = Arrays.asList(toObjectArray(param));
+            for (Object item : items) {
+                result.add(String.valueOf(item));
+            }
+        } else {
+            result.add(String.valueOf(param));
+        }
+
+        return result;
+    }
+
+    /**
+     * Convert the given array (which may be a primitive array) to an
+     * object array (if necessary of primitive wrapper objects).
+     * <p>A <code>null</code> source value will be converted to an
+     * empty Object array.
+     *
+     * @param source the (potentially primitive) array
+     * @return the corresponding object array (never <code>null</code>)
+     * @throws IllegalArgumentException if the parameter is not an array
+     */
+    public static Object[] toObjectArray(Object source) {
+        if (source instanceof Object[]) {
+            return (Object[]) source;
+        }
+        if (source == null) {
+            return new Object[0];
+        }
+        if (!source.getClass().isArray()) {
+            throw new IllegalArgumentException("Source is not an array: " + source);
+        }
+        int length = Array.getLength(source);
+        if (length == 0) {
+            return new Object[0];
+        }
+        Class wrapperType = Array.get(source, 0).getClass();
+        Object[] newArray = (Object[]) Array.newInstance(wrapperType, length);
+        for (int i = 0; i < length; i++) {
+            newArray[i] = Array.get(source, i);
+        }
+        return newArray;
     }
 
 }
