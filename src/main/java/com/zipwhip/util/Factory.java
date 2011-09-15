@@ -14,8 +14,7 @@ public interface Factory<T> {
      * Create an item via our factory strategy.
      *
      * @return the new item that u just created
-     * @throws Exception if there was a problem creating/validating the item
      */
-    T create() throws Exception;
+    T create();
 
 }
