@@ -14,6 +14,8 @@ import java.util.*;
  */
 public class CollectionUtil {
 
+    public static final String[] EMPTY_STRING_ARRAY = new String[1];
+
     public static void deepJoinArrays(Map<String, Object> result, Map<String, Object> addition) {
 
         for (String key : addition.keySet()) {
@@ -625,6 +627,22 @@ public class CollectionUtil {
             return null;
         }
         return arguments.subList(index, max);
+    }
+
+    public static String[] toStringArray(List<String> list) {
+        return list.toArray(EMPTY_STRING_ARRAY);
+    }
+
+    public static <T> T getFirst(List<T> list) {
+        if (isNullOrEmpty(list)) {
+            return null;
+        }
+
+        if (list.size() > 0) {
+            return list.get(0);
+        }
+
+        return null;
     }
 
 }
