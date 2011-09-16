@@ -1,6 +1,11 @@
 package com.zipwhip.util;
 
+import junit.framework.Assert;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,8 +51,14 @@ public class CollectionUtilTest {
     }
 
     @Test
-    public void testGetList() throws Exception {
-
+    public void testGetListFromStringArray() throws Exception {
+        Map<String, String[]> m = new HashMap<String, String[]>();
+        m.put("key", new String[]{"asdf", "fdsa"});
+        List<String> lst = CollectionUtil.getList(m, "key");
+        Assert.assertNotNull(lst);
+        Assert.assertTrue(lst.size() == 2);
+        Assert.assertEquals(lst.get(0), "asdf");
+        Assert.assertEquals(lst.get(1), "fdsa");
     }
 
     @Test

@@ -251,7 +251,9 @@ public class CollectionUtil {
 
         List<String> result = new ArrayList<String>();
         if (param.getClass().isArray()) {
-            List items = Arrays.asList(param); //org.springframework.util.CollectionUtils.arrayToList(param);
+
+            List items = Arrays.asList(toObjectArray(param));
+
             for (Object item : items) {
                 result.add(String.valueOf(item));
             }
