@@ -69,13 +69,25 @@ public class StringUtil {
     /**
      * Strips all characters that are not numbers (0 - 9) and returns a new
      * string. Returns and empty string if the mobile number is null or empty.
+     * Assumes US format cleaning "1" from the beginning if it exists.
+     *
+     * @param mobileNumber - mobile number string to parse
+     * @return String - parsed mobile number
+     */
+    public static String safeCleanMobileNumber(String mobileNumber) {
+        return safeCleanMobileNumber(mobileNumber, false);
+    }
+
+    /**
+     * Strips all characters that are not numbers (0 - 9) and returns a new
+     * string. Returns and empty string if the mobile number is null or empty.
      * 
      * @param mobileNumber - mobile number string to parse
      * @param appendInternational appends (1) at the beginning of mobile number (international format)
      * @return String - parsed mobile number
      */
     public static String safeCleanMobileNumber(String mobileNumber, boolean appendInternational) {
-        String cleanMobileNumber = safeCleanMobileNumber(mobileNumber);
+        String cleanMobileNumber = cleanMobileNumber(mobileNumber);
 
         if (isNullOrEmpty(cleanMobileNumber)) {
             return EMPTY_STRING;
@@ -83,7 +95,7 @@ public class StringUtil {
 
         if (appendInternational && (cleanMobileNumber.length() == 10)) {
             return "1" + cleanMobileNumber;
-        } else if (!appendInternational && (cleanMobileNumber.length() == 11) && equals(cleanMobileNumber.charAt(0), "1")) {
+        } else if ((cleanMobileNumber.length() == 11) && equals(cleanMobileNumber.charAt(0), "1")) {
             return cleanMobileNumber.substring(1);
         } else if (!appendInternational && (cleanMobileNumber.length() == 13) && cleanMobileNumber.startsWith("001")) {
             return cleanMobileNumber.substring(3);
@@ -103,7 +115,7 @@ public class StringUtil {
      * @param mobileNumber - mobile number string to parse
      * @return String - parsed mobile number
      */
-    public static String safeCleanMobileNumber(String mobileNumber) {
+    private static String cleanMobileNumber(String mobileNumber) {
         if (isNullOrEmpty(mobileNumber)) {
             return EMPTY_STRING;
         }
