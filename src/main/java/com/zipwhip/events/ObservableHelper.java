@@ -20,7 +20,7 @@ import java.util.concurrent.Executor;
 public class ObservableHelper<T> extends DestroyableBase implements Observable<T> {
 
     private Executor executor;
-    private List<Observer<T>> observers;
+    private final List<Observer<T>> observers = Collections.synchronizedList(new LinkedList<Observer<T>>());
 
     public ObservableHelper() {
         this(new SimpleExecutor());
@@ -32,9 +32,6 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
 
     @Override
     public synchronized void addObserver(Observer<T> observer) {
-        if (observers == null) {
-            observers = Collections.synchronizedList(new LinkedList<Observer<T>>());
-        }
         observers.add(observer);
     }
 
@@ -61,8 +58,10 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                for (Observer<T> observer : observers) {
-                    observer.notify(sender, item);
+                synchronized (observers) {
+                    for (Observer<T> observer : observers) {
+                        observer.notify(sender, item);
+                    }
                 }
             }
         });
