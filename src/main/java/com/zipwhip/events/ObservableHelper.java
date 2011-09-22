@@ -4,7 +4,6 @@ import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.DestroyableBase;
 import com.zipwhip.util.CollectionUtil;
 
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Executor;
@@ -20,7 +19,7 @@ import java.util.concurrent.Executor;
 public class ObservableHelper<T> extends DestroyableBase implements Observable<T> {
 
     private Executor executor;
-    private final List<Observer<T>> observers = Collections.synchronizedList(new LinkedList<Observer<T>>());
+    private final List<Observer<T>> observers = new LinkedList<Observer<T>>();
 
     public ObservableHelper() {
         this(new SimpleExecutor());
@@ -31,16 +30,20 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
     }
 
     @Override
-    public synchronized void addObserver(Observer<T> observer) {
-        observers.add(observer);
+    public void addObserver(Observer<T> observer) {
+        synchronized (observers) {
+            observers.add(observer);
+        }
     }
 
     @Override
-    public synchronized void removeObserver(Observer<T> observer) {
-        if (observers == null) {
-            return;
+    public void removeObserver(Observer<T> observer) {
+        synchronized (observers) {
+            if (observers == null) {
+                return;
+            }
+            observers.remove(observer);
         }
-        observers.remove(observer);
     }
 
     /**
@@ -49,7 +52,7 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
      * @param sender who is notifying of the event!
      * @param item   the item that the observers will hear about.
      */
-    public synchronized void notifyObservers(final Object sender, final T item) {
+    public void notifyObservers(final Object sender, final T item) {
 
         if (CollectionUtil.isNullOrEmpty(observers)) {
             return;
@@ -68,9 +71,11 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
     }
 
     @Override
-    protected synchronized void onDestroy() {
-        if (observers != null){
-            observers.clear();
+    protected void onDestroy() {
+        synchronized (observers) {
+            if (observers != null){
+                observers.clear();
+            }
         }
     }
 
