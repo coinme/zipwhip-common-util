@@ -152,7 +152,8 @@ public class StringUtil {
     }
     
     public static boolean isNullOrEmpty(String string) {
-        return (string == null) || string.isEmpty() || StringUtil.equalsIgnoreCase(string, "null");
+        //used string.length() == 0 because not everyone has Java 1.6
+        return (string == null) || string.length()==0 || StringUtil.equalsIgnoreCase(string, "null");
     }
 
     public static String defaultValue(String value, String defaultValue) {
