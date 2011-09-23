@@ -22,8 +22,7 @@ public class ParallelBulkExecutor extends DestroyableBase implements BulkExecuto
     private ExecutorService executor;
 
     public ParallelBulkExecutor(String name) {
-        // todo: figure out a way for this pool
-        executor = Executors.newCachedThreadPool(new DefaultThreadFactory(name));
+        executor = ThreadPoolManager.getInstance().getFixedThreadPool();
     }
 
     public ParallelBulkExecutor(Class<?> clazz) {
