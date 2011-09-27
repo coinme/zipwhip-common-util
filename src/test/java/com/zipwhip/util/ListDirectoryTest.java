@@ -14,13 +14,13 @@ import java.util.Set;
  * Date: 9/26/11
  * Time: 10:58 AM
  */
-public class MemoryDirectoryTest {
+public class ListDirectoryTest {
 
     Directory<String, String> directory;
 
     @Before
     public void setUp() throws Exception {
-        directory = new MemoryDirectory<String, String>();
+        directory = new ListDirectory<String, String>();
     }
 
     @Test

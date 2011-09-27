@@ -6,24 +6,21 @@ import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: Michael
- * Date: Dec 3, 2010
- * Time: 4:00:29 AM
- * <p/>
- * Just a simple memory implementation backed by a {@code List} implementation.
+ * User: jed
+ * Date: 9/27/11
+ * Time: 10:59 AM
  *
- * THIS CLASS IS DEPRECATED, USE {@link ListDirectory}
+ * An in memory implementation backed by a {@code List} implementation.
  */
-@Deprecated
-public class MemoryDirectory<TKey, TValue> extends DestroyableBase implements Directory<TKey, TValue> {
+public class ListDirectory <TKey, TValue> extends DestroyableBase implements Directory<TKey, TValue> {
 
     final Map<TKey, List<TValue>> listeners = new HashMap<TKey, List<TValue>>();
 
-    public MemoryDirectory() {
+    public ListDirectory() {
 
     }
 
-    public MemoryDirectory(List<TValue> values, InputCallable<TKey,TValue> sorter) {
+    public ListDirectory(List<TValue> values, InputCallable<TKey,TValue> sorter) {
         if (CollectionUtil.isNullOrEmpty(values)){
             return;
         }
