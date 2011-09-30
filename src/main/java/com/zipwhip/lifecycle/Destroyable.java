@@ -13,14 +13,14 @@ public interface Destroyable {
     /**
      * When you destroy this object, cascade the destruction it to the "destroyable" passed in.
      *
-     * @param destroyable
+     * @param destroyable The {@code Destroyable} to be linked.
      */
     void link(Destroyable destroyable);
 
     /**
      * Prevent the cascading destruction.
      *
-     * @param destroyable
+     * @param destroyable The {@code Destroyable} to be linked.
      */
     void unlink(Destroyable destroyable);
 
@@ -32,7 +32,7 @@ public interface Destroyable {
     /**
      * See if it's already been destroyed (since we can't control garbage collection).
      *
-     * @return
+     * @return true if this has been destroyed, otherwise false.
      */
     boolean isDestroyed();
 
