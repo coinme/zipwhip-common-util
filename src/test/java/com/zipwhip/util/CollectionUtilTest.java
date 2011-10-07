@@ -3,9 +3,7 @@ package com.zipwhip.util;
 import junit.framework.Assert;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -112,8 +110,62 @@ public class CollectionUtilTest {
     }
 
     @Test
+    public void testSet() throws Exception {
+
+        Set<String> set;
+
+        set = CollectionUtil.asSet();
+        Assert.assertNotNull(set);
+        Assert.assertTrue(set.isEmpty());
+
+        set = CollectionUtil.asSet("1", "2", "3", "3");
+        Assert.assertNotNull(set);
+        Assert.assertFalse(set.isEmpty());
+        Assert.assertTrue(set.size() == 3);
+    }
+
+    @Test
     public void testIsNullOrEmpty() throws Exception {
 
+        List<Object> list = new ArrayList<Object>();
+        Map<Object, Object> map = new HashMap<Object, Object>();
+
+        Assert.assertTrue(CollectionUtil.isNullOrEmpty(list));
+        Assert.assertTrue(CollectionUtil.isNullOrEmpty(map));
+
+        list.add("");
+        map.put("" ,"");
+
+        Assert.assertFalse(CollectionUtil.isNullOrEmpty(list));
+        Assert.assertFalse(CollectionUtil.isNullOrEmpty(map));
+
+        list = null;
+        map = null;
+
+        Assert.assertTrue(CollectionUtil.isNullOrEmpty(list));
+        Assert.assertTrue(CollectionUtil.isNullOrEmpty(map));
+    }
+
+    @Test
+    public void testExists() throws Exception {
+
+        List<Object> list = new ArrayList<Object>();
+        Map<Object, Object> map = new HashMap<Object, Object>();
+
+        Assert.assertFalse(CollectionUtil.exists(list));
+        Assert.assertFalse(CollectionUtil.exists(map));
+
+        list.add("");
+        map.put("" ,"");
+
+        Assert.assertTrue(CollectionUtil.exists(list));
+        Assert.assertTrue(CollectionUtil.exists(map));
+
+        list = null;
+        map = null;
+
+        Assert.assertFalse(CollectionUtil.exists(list));
+        Assert.assertFalse(CollectionUtil.exists(map));
     }
 
     @Test

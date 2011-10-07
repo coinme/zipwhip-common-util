@@ -485,6 +485,14 @@ public class CollectionUtil {
         return ((map == null) || map.isEmpty());
     }
 
+    public static <T> boolean exists(Collection<T> collection) {
+        return !isNullOrEmpty(collection);
+    }
+
+    public static boolean exists(Map map) {
+        return !isNullOrEmpty(map);
+    }
+
     public static <T> T first(List<T> collection) {
         return get(collection, 0);
     }
@@ -558,16 +566,6 @@ public class CollectionUtil {
         return false;
     }
 
-    //    public static <T> List<T> add(List<T> result, T item){
-    //        if (result == null){
-    //            result = new Vector<T>();
-    //        }
-    //
-    //        result.add(item);
-    //
-    //        return result;
-    //    }
-
     public static <K, V> Map<K, V> add(Map<K, V> result, K key, V value) {
         if (result == null) {
             result = new HashMap<K, V>();
@@ -614,6 +612,22 @@ public class CollectionUtil {
         result.put(key, value);
 
         return result;
+    }
+
+    /**
+     * Create a Set from a lst of items of the same type, T.
+     * The implementation is {@code HashSet} so iterating will become slow as you add to it.
+     *
+     * @param items Zero or more items of type T from which to create the Set
+     * @param <T> The type of Set to produce.
+     * @return A Set of type T containing the arguments.
+     */
+    public static <T> Set<T> asSet(T... items) {
+
+        Set<T> set = new HashSet<T>();
+        set.addAll(Arrays.asList(items));
+
+        return set;
     }
 
     public static List<String> subList(List<String> arguments, int index) {

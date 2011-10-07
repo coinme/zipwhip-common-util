@@ -25,7 +25,7 @@ public interface Directory<TKey, TValue> extends Destroyable {
     Collection<TValue> get(TKey key);
 
     /**
-     * This method is deprecated. Use {@code instead} instead.
+     * This method is deprecated. Use {@code get} instead.
      *
      * @param key The key.
      * @return A list based on the key.
