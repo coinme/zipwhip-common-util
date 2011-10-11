@@ -4,8 +4,8 @@ import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.DestroyableBase;
 import com.zipwhip.util.CollectionUtil;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
 /**
@@ -19,14 +19,18 @@ import java.util.concurrent.Executor;
 public class ObservableHelper<T> extends DestroyableBase implements Observable<T> {
 
     private Executor executor;
-    private final List<Observer<T>> observers = new LinkedList<Observer<T>>();
+    private final List<Observer<T>> observers = new CopyOnWriteArrayList<Observer<T>>();
 
     public ObservableHelper() {
-        this(new SimpleExecutor());
+        this(null);
     }
 
     public ObservableHelper(Executor executor) {
-        this.executor = executor;
+        if (executor == null){
+            this.executor = new SimpleExecutor();
+        } else {
+            this.executor = executor;
+        }
     }
 
     @Override
@@ -42,6 +46,7 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
             if (observers == null) {
                 return;
             }
+
             observers.remove(observer);
         }
     }
@@ -50,22 +55,31 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
      * Notify all the observers that their thing occurred.
      *
      * @param sender who is notifying of the event!
-     * @param item   the item that the observers will hear about.
+     * @param result the result that the observers will hear about.
      */
-    public void notifyObservers(final Object sender, final T item) {
+    public void notifyObservers(final Object sender, final T result) {
 
         if (CollectionUtil.isNullOrEmpty(observers)) {
             return;
         }
 
+        for (Observer<T> observer : observers) {
+            notifyObserver(observer, sender, result);
+        }
+    }
+
+    /**
+     * Notify all the observer that its thing occurred.
+     *
+     * @param observer the observer to notify.
+     * @param sender who is notifying of the event.
+     * @param result the result that the observers will hear about.
+     */
+    public void notifyObserver(final Observer<T> observer, final Object sender, final T result) {
         executor.execute(new Runnable() {
             @Override
             public void run() {
-                synchronized (observers) {
-                    for (Observer<T> observer : observers) {
-                        observer.notify(sender, item);
-                    }
-                }
+                observer.notify(sender, result);
             }
         });
     }
