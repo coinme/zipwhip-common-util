@@ -20,13 +20,13 @@ public class DefaultNetworkFuture<V> implements NetworkFuture<V> {
     private V result;
     private Object sender;
 
-    public DefaultNetworkFuture(Executor executor, Object sender) {
-        this.sender = sender;
-        observableHelper = new ObservableHelper<NetworkFuture<V>>(executor);
+    public DefaultNetworkFuture(Object sender) {
+        this(sender, null);
     }
 
-    public DefaultNetworkFuture(Object sender) {
-        this(null, sender);
+    public DefaultNetworkFuture(Object sender, Executor executor) {
+        this.sender = sender;
+        observableHelper = new ObservableHelper<NetworkFuture<V>>(executor);
     }
 
     @Override
@@ -123,9 +123,7 @@ public class DefaultNetworkFuture<V> implements NetworkFuture<V> {
 
     @Override
     public void await() throws InterruptedException {
-
         doneCountDownLatch.await();
-
     }
 
     @Override
@@ -136,7 +134,6 @@ public class DefaultNetworkFuture<V> implements NetworkFuture<V> {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     @Override
