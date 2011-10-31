@@ -23,7 +23,6 @@
     <distributionManagement>
         <repository>
             <id>snapshots</id>
-            <!--<url>https://artifactory.zipwhip.com/libs-snapshot-local</url>-->
             <url>https://artifactory.zipwhip.com/libs-snapshot-local</url>
         </repository>
     </distributionManagement>
