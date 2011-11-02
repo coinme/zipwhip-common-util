@@ -64,7 +64,7 @@ public class SetDirectoryTest {
         directory.remove("one", "a");
         results = directory.get("one");
 
-        Assert.assertNull(results);
+        Assert.assertTrue(CollectionUtil.isNullOrEmpty(results));
     }
 
     @Test
@@ -109,8 +109,8 @@ public class SetDirectoryTest {
         Assert.assertNotNull(keys);
 
         Assert.assertTrue(keys.contains("one"));
-        Assert.assertFalse(keys.contains("two"));
-        Assert.assertTrue(keys.size() == 1);
+        Assert.assertTrue(keys.contains("two"));
+        Assert.assertTrue(keys.size() == 2);
     }
 
 }

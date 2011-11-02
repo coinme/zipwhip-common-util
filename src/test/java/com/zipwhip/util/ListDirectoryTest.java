@@ -83,7 +83,7 @@ public class ListDirectoryTest {
         directory.remove("one", "a");
 
         results = directory.get("one");
-        Assert.assertNull(results);
+        Assert.assertTrue(CollectionUtil.isNullOrEmpty(results));
     }
 
     @Test
