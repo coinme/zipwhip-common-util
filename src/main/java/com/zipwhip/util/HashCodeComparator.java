@@ -1,5 +1,6 @@
 package com.zipwhip.util;
 
+import java.io.Serializable;
 import java.util.Comparator;
 
 /**
@@ -10,7 +11,7 @@ import java.util.Comparator;
  * <p/>
  * So you can put objects into a TreeSet
  */
-public class HashCodeComparator<T> implements Comparator<T> {
+public class HashCodeComparator<T> implements Comparator<T>, Serializable {
 
     @Override
     public int compare(T o1, T o2) {
