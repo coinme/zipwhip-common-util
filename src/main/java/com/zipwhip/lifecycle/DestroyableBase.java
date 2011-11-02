@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.TreeSet;
 
-import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.HashCodeComparator;
 
 /**
@@ -18,30 +17,10 @@ import com.zipwhip.util.HashCodeComparator;
  */
 public abstract class DestroyableBase implements Destroyable {
 
-	boolean destroyed;
+	private boolean destroyed;
 
 	private static final Comparator<Destroyable> COMPARATOR = new HashCodeComparator<Destroyable>();
 	protected Collection<Destroyable> destroyables = null;
-
-	@Override
-	public void link(Destroyable destroyable) {
-		if (destroyable == null) {
-			return;
-		}
-		createDestroyableList();
-		destroyables.add(destroyable);
-	}
-
-	@Override
-	public void unlink(Destroyable destroyable) {
-		if (destroyable == null) {
-			return;
-		}
-		if (CollectionUtil.isNullOrEmpty(destroyables)) {
-			return;
-		}
-		destroyables.remove(destroyable);
-	}
 
 	@Override
 	public void destroy() {
