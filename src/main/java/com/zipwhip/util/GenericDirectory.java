@@ -29,7 +29,14 @@ public abstract class GenericDirectory<TKey, TValue> extends DestroyableBase imp
         }
 
         collection.remove(value);
+
+        if (collection.isEmpty()){
+            removeFromStore(key);
+        }
+
     }
+
+    protected abstract void removeFromStore(TKey key);
 
     protected abstract Collection<TValue> getOrCreateCollection(TKey key);
 

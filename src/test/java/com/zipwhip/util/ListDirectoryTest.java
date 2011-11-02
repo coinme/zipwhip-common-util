@@ -91,6 +91,8 @@ public class ListDirectoryTest {
         Assert.assertTrue(directory.isEmpty());
         directory.add("key", "value");
         Assert.assertFalse(directory.isEmpty());
+        directory.remove("key", "value");
+        Assert.assertTrue(directory.isEmpty());
     }
 
     @Test

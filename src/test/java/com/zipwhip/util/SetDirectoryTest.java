@@ -109,8 +109,8 @@ public class SetDirectoryTest {
         Assert.assertNotNull(keys);
 
         Assert.assertTrue(keys.contains("one"));
-        Assert.assertTrue(keys.contains("two"));
-        Assert.assertTrue(keys.size() == 2);
+        Assert.assertFalse(keys.contains("two"));
+        Assert.assertTrue(keys.size() == 1);
     }
 
 }

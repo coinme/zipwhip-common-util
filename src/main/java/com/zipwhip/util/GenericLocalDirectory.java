@@ -58,6 +58,15 @@ public class GenericLocalDirectory<TKey, TValue> extends GenericDirectory<TKey, 
     }
 
     @Override
+    protected void removeFromStore(TKey key) {
+        if (data == null){
+            return;
+        }
+
+        data.remove(key);
+    }
+
+    @Override
     protected Collection<TValue> getOrCreateCollection(TKey key) {
         if (data == null) {
             synchronized (this) {
