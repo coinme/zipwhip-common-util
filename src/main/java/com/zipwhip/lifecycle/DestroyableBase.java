@@ -1,8 +1,12 @@
 package com.zipwhip.lifecycle;
 
-import com.zipwhip.util.CollectionUtil;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.TreeSet;
 
-import java.util.List;
+import com.zipwhip.util.CollectionUtil;
+import com.zipwhip.util.HashCodeComparator;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,21 +18,64 @@ import java.util.List;
  */
 public abstract class DestroyableBase implements Destroyable {
 
-    private boolean destroyed;
+	boolean destroyed;
 
-    public void destroy() {
-        if (this.destroyed) {
-            return;
-        }
-        this.destroyed = true;
+	private static final Comparator<Destroyable> COMPARATOR = new HashCodeComparator<Destroyable>();
+	protected Collection<Destroyable> destroyables = null;
 
-        this.onDestroy();
-    }
+	@Override
+	public void link(Destroyable destroyable) {
+		if (destroyable == null) {
+			return;
+		}
+		createDestroyableList();
+		destroyables.add(destroyable);
+	}
 
-    public boolean isDestroyed() {
-        return this.destroyed;
-    }
+	@Override
+	public void unlink(Destroyable destroyable) {
+		if (destroyable == null) {
+			return;
+		}
+		if (CollectionUtil.isNullOrEmpty(destroyables)) {
+			return;
+		}
+		destroyables.remove(destroyable);
+	}
 
-    protected abstract void onDestroy();
+	@Override
+	public void destroy() {
+		if (this.destroyed) {
+			return;
+		}
+		this.destroyed = true;
 
+		if (destroyables != null) {
+			synchronized (destroyables) {
+
+				for (Destroyable destroyable : destroyables) {
+					destroyable.destroy();
+				}
+
+				destroyables.clear();
+			}
+			destroyables = null;
+		}
+
+		this.onDestroy();
+	}
+
+	protected abstract void onDestroy();
+
+	@Override
+	public boolean isDestroyed() {
+		return this.destroyed;
+	}
+
+	protected synchronized void createDestroyableList()
+	{
+		if (destroyables == null) {
+			destroyables = Collections.synchronizedCollection(new TreeSet<Destroyable>(COMPARATOR));
+		}
+	}
 }
