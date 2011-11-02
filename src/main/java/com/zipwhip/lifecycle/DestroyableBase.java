@@ -14,27 +14,7 @@ import java.util.List;
  */
 public abstract class DestroyableBase implements Destroyable {
 
-    boolean destroyed;
-
-    protected List<Destroyable> destroyables = null;
-
-    public void link(Destroyable destroyable) {
-        if (destroyable == null) {
-            return;
-        }
-
-        destroyables = (List<Destroyable>) CollectionUtil.add(destroyables, destroyable);
-    }
-
-    public void unlink(Destroyable destroyable) {
-        if (destroyable == null) {
-            return;
-        }
-        if (CollectionUtil.isNullOrEmpty(destroyables)) {
-            return;
-        }
-        destroyables.remove(destroyable);
-    }
+    private boolean destroyed;
 
     public void destroy() {
         if (this.destroyed) {
@@ -42,21 +22,13 @@ public abstract class DestroyableBase implements Destroyable {
         }
         this.destroyed = true;
 
-        if (destroyables != null) {
-            for (Destroyable destroyable : destroyables) {
-                destroyable.destroy();
-            }
-            destroyables.clear();
-            destroyables = null;
-        }
-
         this.onDestroy();
     }
-
-    protected abstract void onDestroy();
 
     public boolean isDestroyed() {
         return this.destroyed;
     }
+
+    protected abstract void onDestroy();
 
 }

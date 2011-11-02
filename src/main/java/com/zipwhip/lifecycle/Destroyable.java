@@ -11,20 +11,6 @@ package com.zipwhip.lifecycle;
 public interface Destroyable {
 
     /**
-     * When you destroy this object, cascade the destruction it to the "destroyable" passed in.
-     *
-     * @param destroyable The {@code Destroyable} to be linked.
-     */
-    void link(Destroyable destroyable);
-
-    /**
-     * Prevent the cascading destruction.
-     *
-     * @param destroyable The {@code Destroyable} to be linked.
-     */
-    void unlink(Destroyable destroyable);
-
-    /**
      * Destroy this item (and anything that it is linked to).
      */
     void destroy();

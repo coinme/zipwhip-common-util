@@ -16,7 +16,7 @@ import java.util.Set;
  */
 public class ListDirectoryTest {
 
-    Directory<String, String> directory;
+    LocalDirectory<String, String> directory;
 
     @Before
     public void setUp() throws Exception {

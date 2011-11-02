@@ -1,5 +1,7 @@
 package com.zipwhip.util;
 
+import org.apache.commons.collections.list.TreeList;
+
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -331,7 +333,7 @@ public class CollectionUtil {
 
     public static <T> Collection<T> add(Collection<T> list, T item) {
         if (list == null) {
-            list = new Vector<T>();
+            list = new TreeList();
         }
 
         list.add(item);

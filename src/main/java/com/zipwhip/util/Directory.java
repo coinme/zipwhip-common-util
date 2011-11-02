@@ -20,20 +20,6 @@ public interface Directory<TKey, TValue> extends Destroyable {
 
     void remove(TKey key, TValue value);
 
-    Set<TKey> keySet();
-
     Collection<TValue> get(TKey key);
 
-    /**
-     * This method is deprecated. Use {@code get} instead.
-     *
-     * @param key The key.
-     * @return A list based on the key.
-     */
-    @Deprecated
-    List<TValue> list(TKey key);
-
-    boolean isEmpty();
-
-    void clear();
 }
