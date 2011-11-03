@@ -108,7 +108,9 @@ public class GenericLocalDirectory<TKey, TValue> extends GenericDirectory<TKey, 
 
 	@Override
 	protected void onDestroy() {
-		data.clear();
+        if(data != null) {
+		    data.clear();
+        }
 	}
 
 }
