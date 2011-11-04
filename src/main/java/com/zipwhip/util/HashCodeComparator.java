@@ -13,19 +13,21 @@ import java.util.Comparator;
  */
 public class HashCodeComparator<T> implements Comparator<T>, Serializable {
 
-    @Override
-    public int compare(T o1, T o2) {
-        int left = o1.hashCode();
-        int right = o2.hashCode();
+	private static final long serialVersionUID = 1L;
 
-        if (left < right) {
-            return -1;
-        } else if (left > right) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
+	@Override
+	public int compare(T o1, T o2) {
+		int left = o1.hashCode();
+		int right = o2.hashCode();
+
+		if (left < right) {
+			return -1;
+		} else if (left > right) {
+			return 1;
+		} else {
+			return 0;
+		}
+	}
 
 
 }

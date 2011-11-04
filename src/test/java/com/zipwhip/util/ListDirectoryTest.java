@@ -1,12 +1,18 @@
 package com.zipwhip.util;
 
-import junit.framework.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import junit.framework.Assert;
+
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,111 +22,131 @@ import java.util.Set;
  */
 public class ListDirectoryTest {
 
-    LocalDirectory<String, String> directory;
+	LocalDirectory<String, String> directory;
 
-    @Before
-    public void setUp() throws Exception {
-        directory = new ListDirectory<String, String>();
-    }
+	@Before
+	public void setUp() throws Exception {
+		directory = new ListDirectory<String, String>();
+	}
 
-    @Test
-    public void testAddGet() throws Exception {
+	/**
+	 * This object must be serializable as it's injected into memcache at times
+	 * 
+	 * @throws IOException
+	 */
+	@Test
+	public void testSerializable() throws IOException
+	{
 
-        Collection<String> results = directory.get("nothing");
-        Assert.assertNull(results);
+		directory.add("KEY", "VALUE");
 
-        directory.add("one", "a");
-        directory.add("one", "b");
-        directory.add("one", "c");
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		ObjectOutputStream oos = new ObjectOutputStream(out);
+		oos.writeObject(directory);
+		oos.close();
 
-        directory.add("two", "1");
-        directory.add("two", "2");
-        directory.add("two", "3");
+		assertTrue(out.toByteArray().length > 0);
 
-        results = directory.get("one");
-        Assert.assertNotNull(results);
+	}
 
-        List<String> resultList = (List<String>) results;
+	@Test
+	public void testAddGet() throws Exception {
 
-        Assert.assertTrue(resultList.get(0).equals("a"));
-        Assert.assertTrue(resultList.get(1).equals("b"));
-        Assert.assertTrue(resultList.get(2).equals("c"));
-        Assert.assertTrue(resultList.size() == 3);
+		Collection<String> results = directory.get("nothing");
+		Assert.assertNull(results);
 
-        results = directory.get("two");
-        Assert.assertNotNull(results);
+		directory.add("one", "a");
+		directory.add("one", "b");
+		directory.add("one", "c");
 
-        resultList = (List<String>) results;
+		directory.add("two", "1");
+		directory.add("two", "2");
+		directory.add("two", "3");
 
-        Assert.assertTrue(resultList.get(0).equals("1"));
-        Assert.assertTrue(resultList.get(1).equals("2"));
-        Assert.assertTrue(resultList.get(2).equals("3"));
-        Assert.assertTrue(resultList.size() == 3);
-    }
+		results = directory.get("one");
+		Assert.assertNotNull(results);
 
-    @Test
-    public void testRemove() throws Exception {
+		List<String> resultList = (List<String>) results;
 
-        directory.add("one", "a");
-        directory.add("one", "b");
+		Assert.assertTrue(resultList.get(0).equals("a"));
+		Assert.assertTrue(resultList.get(1).equals("b"));
+		Assert.assertTrue(resultList.get(2).equals("c"));
+		Assert.assertTrue(resultList.size() == 3);
 
-        Collection<String> results = directory.get("one");
-        Assert.assertNotNull(results);
+		results = directory.get("two");
+		Assert.assertNotNull(results);
 
-        List<String> resultList = (List<String>) results;
+		resultList = (List<String>) results;
 
-        Assert.assertTrue(resultList.get(0).equals("a"));
-        Assert.assertTrue(resultList.get(1).equals("b"));
+		Assert.assertTrue(resultList.get(0).equals("1"));
+		Assert.assertTrue(resultList.get(1).equals("2"));
+		Assert.assertTrue(resultList.get(2).equals("3"));
+		Assert.assertTrue(resultList.size() == 3);
+	}
 
-        directory.remove("one", "b");
+	@Test
+	public void testRemove() throws Exception {
 
-        results = directory.get("one");
-        Assert.assertNotNull(results);
+		directory.add("one", "a");
+		directory.add("one", "b");
 
-        resultList = (List<String>) results;
+		Collection<String> results = directory.get("one");
+		Assert.assertNotNull(results);
 
-        Assert.assertTrue(resultList.get(0).equals("a"));
-        directory.remove("one", "a");
+		List<String> resultList = (List<String>) results;
 
-        results = directory.get("one");
-        Assert.assertTrue(CollectionUtil.isNullOrEmpty(results));
-    }
+		Assert.assertTrue(resultList.get(0).equals("a"));
+		Assert.assertTrue(resultList.get(1).equals("b"));
 
-    @Test
-    public void testIsEmpty() throws Exception {
-        Assert.assertTrue(directory.isEmpty());
-        directory.add("key", "value");
-        Assert.assertFalse(directory.isEmpty());
-        directory.remove("key", "value");
-        Assert.assertTrue(directory.isEmpty());
-    }
+		directory.remove("one", "b");
 
-    @Test
-    public void testClear() throws Exception {
-        Assert.assertTrue(directory.isEmpty());
-        directory.add("key", "value");
-        Assert.assertFalse(directory.isEmpty());
-        directory.clear();
-        Assert.assertTrue(directory.isEmpty());
-    }
+		results = directory.get("one");
+		Assert.assertNotNull(results);
 
-    @Test
-    public void testKeySet() throws Exception {
+		resultList = (List<String>) results;
 
-        directory.add("one", "a");
-        directory.add("one", "b");
-        directory.add("one", "c");
+		Assert.assertTrue(resultList.get(0).equals("a"));
+		directory.remove("one", "a");
 
-        directory.add("two", "1");
-        directory.add("two", "2");
-        directory.add("two", "3");
+		results = directory.get("one");
+		Assert.assertTrue(CollectionUtil.isNullOrEmpty(results));
+	}
 
-        Set<String> keys = directory.keySet();
-        Assert.assertNotNull(keys);
+	@Test
+	public void testIsEmpty() throws Exception {
+		Assert.assertTrue(directory.isEmpty());
+		directory.add("key", "value");
+		Assert.assertFalse(directory.isEmpty());
+		directory.remove("key", "value");
+		Assert.assertTrue(directory.isEmpty());
+	}
+
+	@Test
+	public void testClear() throws Exception {
+		Assert.assertTrue(directory.isEmpty());
+		directory.add("key", "value");
+		Assert.assertFalse(directory.isEmpty());
+		directory.clear();
+		Assert.assertTrue(directory.isEmpty());
+	}
+
+	@Test
+	public void testKeySet() throws Exception {
+
+		directory.add("one", "a");
+		directory.add("one", "b");
+		directory.add("one", "c");
+
+		directory.add("two", "1");
+		directory.add("two", "2");
+		directory.add("two", "3");
+
+		Set<String> keys = directory.keySet();
+		Assert.assertNotNull(keys);
 
 
-        Assert.assertTrue(keys.contains("one"));
-        Assert.assertTrue(keys.contains("two"));
-    }
+		Assert.assertTrue(keys.contains("one"));
+		Assert.assertTrue(keys.contains("two"));
+	}
 
 }
