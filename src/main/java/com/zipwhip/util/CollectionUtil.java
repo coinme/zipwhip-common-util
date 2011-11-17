@@ -331,6 +331,8 @@ public class CollectionUtil {
         return list;
     }
 
+    // Don't use this. It was a bad design decision to hide the data data structure.
+    @Deprecated
     public static <T> Collection<T> add(Collection<T> list, T item) {
         if (list == null) {
             list = new TreeList();
