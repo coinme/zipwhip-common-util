@@ -709,4 +709,18 @@ public class CollectionUtil {
         return newArray;
     }
 
+    /**
+     * Returns the size of the of a Collection  or or -1 if c is null.
+     *
+     * For example:
+     *
+     * {@code If (CollectionUtil.size(c) <= 0)...}
+     *
+     * @param c The collection to test the size of.
+     * @return The size of c or or -1 if c is null
+     */
+    public static int size(Collection c) {
+        return c == null ? -1 : c.size();
+    }
+
 }
