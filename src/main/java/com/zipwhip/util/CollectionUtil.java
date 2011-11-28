@@ -1,7 +1,5 @@
 package com.zipwhip.util;
 
-import org.apache.commons.collections.list.TreeList;
-
 import java.lang.reflect.Array;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -331,11 +329,9 @@ public class CollectionUtil {
         return list;
     }
 
-    // Don't use this. It was a bad design decision to hide the data data structure.
-    @Deprecated
     public static <T> Collection<T> add(Collection<T> list, T item) {
         if (list == null) {
-            list = new TreeList();
+            list = new ArrayList<T>();
         }
 
         list.add(item);
