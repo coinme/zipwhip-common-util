@@ -13,6 +13,15 @@ import java.util.Comparator;
  */
 public class HashCodeComparator<T> implements Comparator<T>, Serializable {
 
+    private static HashCodeComparator instance;
+
+    public static HashCodeComparator getInstance() {
+        if (instance == null) {
+            instance = new HashCodeComparator();
+        }
+        return instance;
+    }
+
 	private static final long serialVersionUID = 1L;
 
 	@Override
