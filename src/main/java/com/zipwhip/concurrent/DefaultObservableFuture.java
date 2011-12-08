@@ -10,23 +10,23 @@ import java.util.concurrent.TimeUnit;
 /**
  *
  */
-public class DefaultNetworkFuture<V> implements NetworkFuture<V> {
+public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     private boolean cancelled;
     private boolean success;
     private Throwable cause;
-    private ObservableHelper<NetworkFuture<V>> observableHelper;
+    private ObservableHelper<ObservableFuture<V>> observableHelper;
     private CountDownLatch doneCountDownLatch = new CountDownLatch(1);
     private V result;
     private Object sender;
 
-    public DefaultNetworkFuture(Object sender) {
+    public DefaultObservableFuture(Object sender) {
         this(sender, null);
     }
 
-    public DefaultNetworkFuture(Object sender, Executor executor) {
+    public DefaultObservableFuture(Object sender, Executor executor) {
         this.sender = sender;
-        observableHelper = new ObservableHelper<NetworkFuture<V>>(executor);
+        observableHelper = new ObservableHelper<ObservableFuture<V>>(executor);
     }
 
     @Override
@@ -102,7 +102,7 @@ public class DefaultNetworkFuture<V> implements NetworkFuture<V> {
     }
 
     @Override
-    public void addObserver(Observer<NetworkFuture<V>> observer) {
+    public void addObserver(Observer<ObservableFuture<V>> observer) {
         if (isDone()){
             notifyObserver(observer);
             return;
@@ -112,7 +112,7 @@ public class DefaultNetworkFuture<V> implements NetworkFuture<V> {
     }
 
     @Override
-    public void removeObserver(Observer<NetworkFuture<V>> observer) {
+    public void removeObserver(Observer<ObservableFuture<V>> observer) {
         if (isDone()){
             notifyObserver(observer);
             return;
@@ -156,7 +156,7 @@ public class DefaultNetworkFuture<V> implements NetworkFuture<V> {
         return this.isDone();
     }
 
-    private void notifyObserver(Observer<NetworkFuture<V>> observer) {
+    private void notifyObserver(Observer<ObservableFuture<V>> observer) {
         observableHelper.notifyObserver(observer, this.sender, this);
     }
 

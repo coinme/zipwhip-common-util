@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * An interface that represents a unit of work that will
  */
-public interface NetworkFuture<V> {
+public interface ObservableFuture<V> {
 
     /**
      * @return {@code true} if and only if this future is
@@ -78,7 +78,7 @@ public interface NetworkFuture<V> {
      *
      * @param observer The observer to add.
      */
-    void addObserver(Observer<NetworkFuture<V>> observer);
+    void addObserver(Observer<ObservableFuture<V>> observer);
 
     /**
      * Removes the specified listener from this future.
@@ -89,7 +89,7 @@ public interface NetworkFuture<V> {
      *
      * @param observer The observer to remove.
      */
-    void removeObserver(Observer<NetworkFuture<V>> observer);
+    void removeObserver(Observer<ObservableFuture<V>> observer);
 
     /**
      * Waits for this future to be completed.

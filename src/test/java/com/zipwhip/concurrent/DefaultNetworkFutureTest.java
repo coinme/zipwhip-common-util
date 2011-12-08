@@ -15,11 +15,11 @@ import static org.junit.Assert.*;
  */
 public class DefaultNetworkFutureTest {
 
-    MockObserver<NetworkFuture<Object>> observer = new MockObserver<NetworkFuture<Object>>();
+    MockObserver<ObservableFuture<Object>> observer = new MockObserver<ObservableFuture<Object>>();
 
     @Test
     public void testSuccess() throws Exception {
-        NetworkFuture<Object> future = new DefaultNetworkFuture<Object>(this);
+        ObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
 
         assertVirgin(future);
 
@@ -39,7 +39,7 @@ public class DefaultNetworkFutureTest {
 
     @Test
     public void testCancel() throws Exception {
-        NetworkFuture<Object> future = new DefaultNetworkFuture<Object>(this);
+        ObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
 
         assertVirgin(future);
 
@@ -56,7 +56,7 @@ public class DefaultNetworkFutureTest {
 
     @Test
     public void testThrowable() throws Exception {
-        NetworkFuture<Object> future = new DefaultNetworkFuture<Object>(this);
+        ObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
 
         assertVirgin(future);
 
@@ -75,15 +75,15 @@ public class DefaultNetworkFutureTest {
 
     }
 
-    private void assertHitCount(MockObserver<NetworkFuture<Object>> observer, int i) {
+    private void assertHitCount(MockObserver<ObservableFuture<Object>> observer, int i) {
         assertTrue(observer.getHitCount() == i);
     }
 
-    private void assertNotVirgin(NetworkFuture<?> future) {
+    private void assertNotVirgin(ObservableFuture<?> future) {
         assertTrue(future.isDone());
     }
 
-    private void assertVirgin(NetworkFuture<?> future) {
+    private void assertVirgin(ObservableFuture<?> future) {
         assertFalse("future is not done", future.isDone());
         assertFalse("future is not cancelled", future.isCancelled());
         assertFalse("future is not success", future.isSuccess());
