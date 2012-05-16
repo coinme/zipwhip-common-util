@@ -10,8 +10,6 @@ package com.zipwhip.binding;
  */
 public class NullFilter<T> implements Filter<T> {
 
-    private static Filter<Record> instance;
-
     private boolean value;
 
     public NullFilter() {
@@ -20,19 +18,6 @@ public class NullFilter<T> implements Filter<T> {
 
     public NullFilter(boolean value) {
         this.value = value;
-    }
-
-    /**
-     * Defaults to false value.
-     *
-     * @return
-     */
-    public static Filter<Record> getInstance() {
-        if (instance == null){
-            instance = new NullFilter<Record>(false);
-        }
-
-        return instance;
     }
 
     public boolean call(T item) throws Exception {

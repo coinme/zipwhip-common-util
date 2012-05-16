@@ -13,43 +13,43 @@ import java.util.EventObject;
  *
  * A store contains records. It also loads them and manages them.
  */
-public interface Store extends Filterable<Record> {
+public interface Store<T extends Record> extends Filterable<T> {
 
     /**
      * Remove the record from the store.
-     * @param id
+     * @param id The id of the record to remove.
      */
     void remove(Long id);
 
     /**
      * Add a record to the store.
      *
-     * @param record
+     * @param record The record to be added.
      */
-    void add(Record record);
+    void add(T record);
 
     /**
      * Get a record by its recordId.
      *
-     * @param id
-     * @return
+     * @param id The id of the record to query.
+     * @return The record corresponding to the id, or null if the record does not exist.
      */
-    Record get(Long id);
+    T get(Long id);
 
     /**
      * How many records do you have?
      *
-     * @return
+     * @return The number of records in the store.
      */
     int size();
 
     /**
      * Give the record at the given index
      *
-     * @param index
-     * @return
+     * @param index The index of the record to query.
+     * @return The record corresponding to the index, or null if the index does not exist.
      */
-    Record getAt(int index);
+    T getAt(int index);
 
     /**
      * For a given record, where is it?
@@ -69,11 +69,11 @@ public interface Store extends Filterable<Record> {
 
     // events
 
-    Observable<OrderedDataEventObject<Record>> onChange();
+    Observable<OrderedDataEventObject<T>> onChange();
 
-    Observable<OrderedDataEventObject<Record>> onAdd();
+    Observable<OrderedDataEventObject<T>> onAdd();
 
-    Observable<OrderedDataEventObject<Record>> onRemove();
+    Observable<OrderedDataEventObject<T>> onRemove();
 
     Observable<EventObject> onLoad();
 

@@ -24,10 +24,10 @@ import static org.junit.Assert.assertTrue;
  */
 public class StoreTest {
 
-    private DataBindingMockObserver<OrderedDataEventObject<Record>> observer = new DataBindingMockObserver<OrderedDataEventObject<Record>>();
+    private DataBindingMockObserver<OrderedDataEventObject<SimpleRecord>> observer = new DataBindingMockObserver<OrderedDataEventObject<SimpleRecord>>();
     private DataBindingMockObserver<EventObject> simpleObserver = new DataBindingMockObserver<EventObject>();
 
-    private DefaultStore store = new DefaultStore();
+    private DefaultStore<SimpleRecord, Object> store = new DefaultStore<SimpleRecord, Object>();
     private SimpleRecord record = RecordTest.createRecord();
 
     @Before
@@ -176,8 +176,8 @@ public class StoreTest {
         assertIndex(rec, 1);
 
         // sort by ID (reversing their indexOf's)
-        store.sort(new Comparator<Record>() {
-            public int compare(Record record1, Record record2) {
+        store.sort(new Comparator<SimpleRecord>() {
+            public int compare(SimpleRecord record1, SimpleRecord record2) {
                 return record1.getRecordId().compareTo(record2.getRecordId());
             }
         });
@@ -206,7 +206,7 @@ public class StoreTest {
         assertFalse(simpleObserver.hit());
 
         // now lets filter some out
-        store.setFilter(NullFilter.getInstance());
+        store.setFilter(new NullFilter<SimpleRecord>());
 
         // ensure that the full store got wiped
         assertTrue(store.size() == 0);
@@ -263,7 +263,7 @@ public class StoreTest {
 
     }
 
-    public static void assertObserverHitAndReset(DataBindingMockObserver<OrderedDataEventObject<Record>> observer, Store store, SimpleRecord record) {
+    public static void assertObserverHitAndReset(DataBindingMockObserver<OrderedDataEventObject<SimpleRecord>> observer, Store store, SimpleRecord record) {
         // make sure the observer is hit
         assertTrue(observer.hit(1));
         assertSame(observer.getEventObject().getData(), record);

@@ -24,38 +24,50 @@ import java.util.Set;
  * This store is something GUI renderers/builders can use. They bind to the store, and it can be updated when
  * the store reports changes.
  */
-public class DefaultStore<T> implements Store {
+public class DefaultStore<R extends Record, D> implements Store<R> {
 
     private static final Generator<Long> ID_GENERATOR = new AutoNumberGenerator();
 
     /**
      * A record has been saved/committed.
      */
-    protected ObservableHelper<OrderedDataEventObject<Record>> onChange = new ObservableHelper<OrderedDataEventObject<Record>>();
+    protected ObservableHelper<OrderedDataEventObject<R>> onChange = new ObservableHelper<OrderedDataEventObject<R>>();
+
     /**
      * A record has been added.
      */
-    protected ObservableHelper<OrderedDataEventObject<Record>> onAdd = new ObservableHelper<OrderedDataEventObject<Record>>();
+    protected ObservableHelper<OrderedDataEventObject<R>> onAdd = new ObservableHelper<OrderedDataEventObject<R>>();
+
     /**
      * A record has been removed.
      */
-    protected ObservableHelper<OrderedDataEventObject<Record>> onRemove = new ObservableHelper<OrderedDataEventObject<Record>>();
+    protected ObservableHelper<OrderedDataEventObject<R>> onRemove = new ObservableHelper<OrderedDataEventObject<R>>();
 
+    /**
+     * The complete data set has been loaded or reloaded.
+     */
     protected ObservableHelper<EventObject> onLoad = new ObservableHelper<EventObject>();
 
-    protected MixedCollection<Long, Record> data = new MixedCollection<Long, Record>();
+    /**
+     * The backing data keyed by ID.
+     */
+    protected MixedCollection<Long, R> data = new MixedCollection<Long, R>();
 
     // cached for efficiency
     private EventObject eventObject;
 
-    private DataProxy<T> proxy;
-    private DataReader<T> reader;
+    private DataProxy<D> proxy;
+    private DataReader<D> reader;
+
+    // for async hits to load() data
+    private ObservableFuture<Void> lastLoadingFuture;
+    private ObservableFuture<D> lastProxyLoadingFuture;
 
     // this will listen for dataSource updates
-    private Observer<ObservableFuture<T>> onLoadCompleteCallback = new Observer<ObservableFuture<T>>() {
+    private Observer<ObservableFuture<D>> onLoadCompleteCallback = new Observer<ObservableFuture<D>>() {
 
         @Override
-        public void notify(Object dataEventObjectObservable, ObservableFuture<T> future) {
+        public void notify(Object dataEventObjectObservable, ObservableFuture<D> future) {
 
             // make sure we use this one
             if (future != lastProxyLoadingFuture){
@@ -68,13 +80,8 @@ public class DefaultStore<T> implements Store {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
     };
-
-    // for async hits to load() data
-    private ObservableFuture<Void> lastLoadingFuture;
-    private ObservableFuture<T> lastProxyLoadingFuture;
 
     public DefaultStore() {
 
@@ -86,7 +93,7 @@ public class DefaultStore<T> implements Store {
      * @param reader the thing that creates records from raw data
      * @param proxy  the thing that finds raw data somewhere
      */
-    public void setDataSource(DataReader<T> reader, DataProxy<T> proxy) {
+    public void setDataSource(DataReader<D> reader, DataProxy<D> proxy) {
         this.reader = reader;
         this.proxy = proxy;
     }
@@ -132,7 +139,7 @@ public class DefaultStore<T> implements Store {
      * @throws Exception
      * @return if it was done or not
      */
-    private synchronized boolean handleImmediatelyDone(ObservableFuture<T> internal, ObservableFuture<Void> external) throws Exception {
+    private synchronized boolean handleImmediatelyDone(ObservableFuture<D> internal, ObservableFuture<Void> external) throws Exception {
         // if it's already done, we need to do some work.
         if (internal.isDone()) {
             if (internal.isSuccess()){
@@ -166,16 +173,19 @@ public class DefaultStore<T> implements Store {
             // one of our records changed!
             // the Observable here is the record.
             if (onChange != null) {
-                Record record = e.getData();
+                @SuppressWarnings(value="unchecked") // Guaranteed type safe as R is defined as <R extends Record> and e is a Record which is an interface
+                R record = (R) e.getData();
+
                 // we need to find the index for this.
                 int index = data.indexOfValue(record);
+
                 // rethrow but with an index.
-                onChange.notifyObservers(this, getEventObject(e.getData(), index));
+                onChange.notifyObservers(this, getEventObject(record, index));
             }
         }
     };
 
-    private void remove(Record record) {
+    private void remove(R record) {
         if (record == null) {
             return;
         }
@@ -187,12 +197,14 @@ public class DefaultStore<T> implements Store {
 
         // need to know where it is so we can update the GUI efficiently
         int index = indexOf(id);
+
         // kill from our data backing.
         // NOTE: this MUST pierce the veil of filtering
         data.remove(id);
+
         // stop listening for changes.
         record.onChange().removeObserver(this.onValueChanged);
-        // throw
+
         if (this.onRemove != null) {
             this.onRemove.notifyObservers(this, getEventObject(record, index));
         }
@@ -200,21 +212,20 @@ public class DefaultStore<T> implements Store {
     }
 
     public synchronized void remove(Long id) {
-        Record record = get(id);
-
+        R record = get(id);
         remove(record);
     }
 
-    public synchronized void add(Record record) {
+    public synchronized void add(R record) {
 
         int index = silentAdd(record);
 
         if (this.onAdd != null) {
-            this.onAdd.notifyObservers(this, new OrderedDataEventObject<Record>(this, record, index));
+            this.onAdd.notifyObservers(this, new OrderedDataEventObject<R>(this, record, index));
         }
     }
 
-    private int silentAdd(Record record) {
+    private int silentAdd(R record) {
         if (record == null) {
             throw new NullPointerException("Record is null passed into add() to store");
         }
@@ -230,7 +241,7 @@ public class DefaultStore<T> implements Store {
             }
         }
 
-        Record existing = data.get(id);
+        R existing = data.get(id);
         if (existing != null) {
             throw new RuntimeException("The store already contains this");
         }
@@ -245,7 +256,7 @@ public class DefaultStore<T> implements Store {
         return index;
     }
 
-    public Record get(Long id) {
+    public R get(Long id) {
         return data.get(id);
     }
 
@@ -253,9 +264,9 @@ public class DefaultStore<T> implements Store {
         return data.size();
     }
 
-    public Observable<OrderedDataEventObject<Record>> onChange() {
+    public Observable<OrderedDataEventObject<R>> onChange() {
         if (this.onChange == null) {
-            this.onChange = new ObservableHelper<OrderedDataEventObject<Record>>();
+            this.onChange = new ObservableHelper<OrderedDataEventObject<R>>();
         }
 
         return this.onChange;
@@ -265,15 +276,15 @@ public class DefaultStore<T> implements Store {
         return onLoad;
     }
 
-    public Observable<OrderedDataEventObject<Record>> onAdd() {
+    public Observable<OrderedDataEventObject<R>> onAdd() {
         return this.onAdd;
     }
 
-    public Observable<OrderedDataEventObject<Record>> onRemove() {
+    public Observable<OrderedDataEventObject<R>> onRemove() {
         return this.onRemove;
     }
 
-    public Record getAt(int index) {
+    public R getAt(int index) {
         return data.getAt(index);
     }
 
@@ -285,11 +296,11 @@ public class DefaultStore<T> implements Store {
         return data.containsKey(recordId);
     }
 
-    public void sort(final Comparator<Record> comparator) {
+    public void sort(final Comparator<R> comparator) {
         // the 2 different data structures require different API's
         // let's wrap another comparator around to adapt between them.
-        data.sort(new Comparator<KeyValuePair<Long, Record>>() {
-            public int compare(KeyValuePair<Long, Record> o1, KeyValuePair<Long, Record> o2) {
+        data.sort(new Comparator<KeyValuePair<Long, R>>() {
+            public int compare(KeyValuePair<Long, R> o1, KeyValuePair<Long, R> o2) {
                 return comparator.compare(o1.getValue(), o2.getValue());
             }
         });
@@ -299,12 +310,12 @@ public class DefaultStore<T> implements Store {
         }
     }
 
-    public void setFilter(final Filter<Record> filter) {
+    public void setFilter(final Filter<R> filter) {
         // do the filter (NOTE: we ignore events from the MixedCollection)
         // so we have to throw our own event manually
-        data.setFilter(new Filter<KeyValuePair<Long, Record>>() {
+        data.setFilter(new Filter<KeyValuePair<Long, R>>() {
 
-            public boolean call(KeyValuePair<Long, Record> item) throws Exception {
+            public boolean call(KeyValuePair<Long, R> item) throws Exception {
                 return filter.call(item.getValue());
             }
         });
@@ -323,17 +334,18 @@ public class DefaultStore<T> implements Store {
         data.clearFilter();
     }
 
-    private OrderedDataEventObject<Record> getEventObject(Record record, int index) {
-        return new OrderedDataEventObject<Record>(this, record, index);
+    private OrderedDataEventObject<R> getEventObject(R record, int index) {
+        return new OrderedDataEventObject<R>(this, record, index);
     }
 
-    private OrderedDataEventObject<Record> getEventObject(Record record) {
-        return new OrderedDataEventObject<Record>(this, record, indexOf(record.getRecordId()));
+    private OrderedDataEventObject<R> getEventObject(R record) {
+        return new OrderedDataEventObject<R>(this, record, indexOf(record.getRecordId()));
     }
 
-    private void parseAndLoad(T data) throws Exception {
-        // parse it into records
-        Set<Record> records = reader.read(data);
+    private void parseAndLoad(D data) throws Exception {
+
+        @SuppressWarnings(value="unchecked") // Guaranteed type safe as R is defined as <R extends Record>
+        Set<R> records = (Set<R>) reader.read(data); // parse it into records
 
         synchronized (this) {
             // clear the data first.
@@ -341,7 +353,7 @@ public class DefaultStore<T> implements Store {
             // repopulate.
             // also, dont let anyone else do any adds during this time
             synchronized (records) {
-                for (Record record : records) {
+                for (R record : records) {
                     silentAdd(record);
                 }
             }

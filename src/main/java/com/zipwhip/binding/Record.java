@@ -16,7 +16,7 @@ public interface Record extends Modifiable {
     /**
      * Every record must have an ID. It can be null if it has no ID yet.
      *
-     * @return
+     * @return The ID of this record on null if it has not been set.
      */
     Long getRecordId();
 
@@ -33,7 +33,7 @@ public interface Record extends Modifiable {
      * When you commit (or when you change a value when AutoCommit is true) it throws the
      * "change" event.
      *
-     * @return
+     * @return Observable that is called onChange.
      */
     Observable<DataEventObject<Record>> onChange();
 
