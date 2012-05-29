@@ -211,11 +211,13 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
 
     }
 
+    @Override
     public synchronized void remove(Long id) {
         R record = get(id);
         remove(record);
     }
 
+    @Override
     public synchronized void add(R record) {
 
         int index = silentAdd(record);
@@ -256,14 +258,17 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
         return index;
     }
 
+    @Override
     public R get(Long id) {
         return data.get(id);
     }
 
+    @Override
     public int size() {
         return data.size();
     }
 
+    @Override
     public Observable<OrderedDataEventObject<R>> onChange() {
         if (this.onChange == null) {
             this.onChange = new ObservableHelper<OrderedDataEventObject<R>>();
@@ -272,26 +277,32 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
         return this.onChange;
     }
 
+    @Override
     public Observable<EventObject> onLoad() {
         return onLoad;
     }
 
+    @Override
     public Observable<OrderedDataEventObject<R>> onAdd() {
         return this.onAdd;
     }
 
+    @Override
     public Observable<OrderedDataEventObject<R>> onRemove() {
         return this.onRemove;
     }
 
+    @Override
     public R getAt(int index) {
         return data.getAt(index);
     }
 
+    @Override
     public int indexOf(Long id) {
         return data.indexOfKey(id);
     }
 
+    @Override
     public boolean contains(Long recordId) {
         return data.containsKey(recordId);
     }
@@ -310,6 +321,7 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
         }
     }
 
+    @Override
     public void setFilter(final Filter<R> filter) {
         // do the filter (NOTE: we ignore events from the MixedCollection)
         // so we have to throw our own event manually
@@ -326,12 +338,20 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
         }
     }
 
+    @Override
     public boolean isFiltered() {
         return data.isFiltered();
     }
 
+    @Override
     public void clearFilter() {
+
         data.clearFilter();
+
+        // announce that a full redraw is necessary
+        if (onLoad != null) {
+            onLoad.notifyObservers(this, new EventObject(this));
+        }
     }
 
     private OrderedDataEventObject<R> getEventObject(R record, int index) {
