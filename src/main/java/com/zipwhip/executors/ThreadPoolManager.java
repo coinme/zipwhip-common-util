@@ -14,8 +14,9 @@ public class ThreadPoolManager {
 
     private static final ThreadPoolManager instance = new ThreadPoolManager();
 
-    private ScheduledExecutorService scheduledThreadPool = Executors.newScheduledThreadPool(MAX_SCHEDULED_POOL_SIZE);
-    private ExecutorService fixedThreadPool = Executors.newFixedThreadPool(MAX_POOL_SIZE);
+    private ScheduledExecutorService scheduledThreadPool;
+    private ExecutorService fixedThreadPool;
+    private ExecutorService singleThreadPool;
 
     private ThreadPoolManager() {
     }
@@ -30,6 +31,11 @@ public class ThreadPoolManager {
      * @return ScheduledExecutorService to schedule future tasks.
      */
     public synchronized final ScheduledExecutorService getScheduledThreadPool() {
+
+        if (scheduledThreadPool == null) {
+            scheduledThreadPool = Executors.newScheduledThreadPool(MAX_SCHEDULED_POOL_SIZE);
+        }
+
         if (scheduledThreadPool.isShutdown()) {
             scheduledThreadPool = Executors.newScheduledThreadPool(MAX_SCHEDULED_POOL_SIZE);
         }
@@ -41,7 +47,29 @@ public class ThreadPoolManager {
      *
      * @return ExecutorService to execute tasks.
      */
+    public synchronized final ExecutorService getSingleThreadPool() {
+
+        if (singleThreadPool == null) {
+            singleThreadPool = Executors.newSingleThreadExecutor();
+        }
+
+        if (singleThreadPool.isShutdown()) {
+            singleThreadPool = Executors.newSingleThreadExecutor();
+        }
+        return singleThreadPool;
+    }
+
+    /**
+     * Warning: Use of the shutdown method may cause other threads to receive rejections
+     *
+     * @return ExecutorService to execute tasks.
+     */
     public synchronized final ExecutorService getFixedThreadPool() {
+
+        if (fixedThreadPool == null) {
+            fixedThreadPool = Executors.newFixedThreadPool(MAX_POOL_SIZE);
+        }
+
         if (fixedThreadPool.isShutdown()) {
             fixedThreadPool = Executors.newFixedThreadPool(MAX_POOL_SIZE);
         }
