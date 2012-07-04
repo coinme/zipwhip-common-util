@@ -1,6 +1,13 @@
 package com.zipwhip.util;
 
 import junit.framework.Assert;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import java.util.regex.Matcher;
+
+import junit.framework.Assert;
 import org.junit.Test;
 
 /**
@@ -38,6 +45,20 @@ public class StringUtilTest {
     @Test
     public void testSafeCleanMobileNumber() throws Exception {
 
+		String alphaNumerics = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890`~!@#$%^&*()-_={[}]|\\;:'\",<.>/?\n\t ";
+		String cleaned = StringUtil.cleanMobileNumber(alphaNumerics);
+		assertEquals("1234567890", cleaned);
+
+		cleaned = StringUtil.cleanMobileNumber("+84" + alphaNumerics);
+		assertEquals("+841234567890", cleaned);
+
+		assertEquals("2065551212", StringUtil.cleanMobileNumber("2065551212"));
+		assertEquals("2065551212", StringUtil.cleanMobileNumber("206 555 1212"));
+		assertEquals("2065551212", StringUtil.cleanMobileNumber("206-555-1212"));
+		assertEquals("+842065551212", StringUtil.cleanMobileNumber("+84206-555-1212"));
+		assertEquals("+842065551212", StringUtil.cleanMobileNumber("+84206 555 1212"));
+		assertEquals("+842065551212", StringUtil.cleanMobileNumber("+842065551212"));
+		assertEquals("+639281942713", StringUtil.cleanMobileNumber("+639281942713"));
     }
 
     @Test

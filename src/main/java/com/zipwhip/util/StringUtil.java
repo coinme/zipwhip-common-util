@@ -1,6 +1,11 @@
 package com.zipwhip.util;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA. User: Ali Date: Mar 22, 2010 Time: 2:04:58 PM
@@ -11,7 +16,8 @@ public class StringUtil {
 
     public static final String EMPTY_STRING = "";
 
-    private static final List<String> VALID_NUMBERS = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+	// private static final List<String> VALID_NUMBERS = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8",
+	// "9");
     private static final String PLUS_MOBIFONE = "+84";
     private static final String PLUS = "+";
 
@@ -115,11 +121,16 @@ public class StringUtil {
      * @param mobileNumber - mobile number string to parse
      * @return String - parsed mobile number
      */
-    private static String cleanMobileNumber(String mobileNumber) {
+	private static final Pattern validMobileNumber = Pattern.compile("^(\\+84)?\\d+$");
+	protected static String cleanMobileNumber(String mobileNumber) {
         if (isNullOrEmpty(mobileNumber)) {
             return EMPTY_STRING;
         }
 
+		Matcher match = validMobileNumber.matcher(mobileNumber);
+		if (match.find()) {
+			return mobileNumber;
+		} else {
         StringBuilder cleanMobileNumber = new StringBuilder();
 
         int index = 0;
@@ -129,13 +140,16 @@ public class StringUtil {
         }
 
         for (int i = index; i < mobileNumber.length(); i++) {
-            if (contains(VALID_NUMBERS, mobileNumber.charAt(i))) {
-                cleanMobileNumber.append(mobileNumber.charAt(i));
+				char c = mobileNumber.charAt(i);
+				if ((c == '+') || (((c >= 0x30) && (c <= 0x39)))) {
+					// if (contains(VALID_NUMBERS, mobileNumber.charAt(i))) {
+					cleanMobileNumber.append(c);
             }
         }
 
         return cleanMobileNumber.toString();
     }
+	}
 
     private static boolean contains(List<String> validNumbers, char toFind) {
         if (CollectionUtil.isNullOrEmpty(validNumbers)) {

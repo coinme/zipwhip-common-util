@@ -4,7 +4,7 @@
 
     <groupId>com.zipwhip</groupId>
     <artifactId>zipwhip-common-util</artifactId>
-    <version>1.3-SNAPSHOT</version>
+    <version>1.60.0-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>zipwhip-common-util</name>
 
