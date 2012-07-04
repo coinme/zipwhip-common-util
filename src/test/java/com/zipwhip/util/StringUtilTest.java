@@ -59,6 +59,7 @@ public class StringUtilTest {
 		assertEquals("+842065551212", StringUtil.cleanMobileNumber("+84206 555 1212"));
 		assertEquals("+842065551212", StringUtil.cleanMobileNumber("+842065551212"));
 		assertEquals("+639281942713", StringUtil.cleanMobileNumber("+639281942713"));
+		assertEquals("+84904695334", StringUtil.safeCleanMobileNumber("++++8490++++4695334+", true));
     }
 
     @Test
