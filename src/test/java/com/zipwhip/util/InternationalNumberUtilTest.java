@@ -12,6 +12,42 @@ import static org.junit.Assert.*;
  */
 public class InternationalNumberUtilTest {
 
+    public void exampleOfInternationalNumberFormatting() {
+
+        /*******************************************************************************************************************************************************
+         * Example #1 - Zipwhip Domestic (ZD) number
+         */
+        String userMobileZipwhipDomestic = "2067808080";
+
+        // The region will be 'US'. This call handles e.164 and ZD numbers. If all else fails 'ZZ' is returned which libphonenumber recognises as UNKNOWN_REGION
+        String userRegion = InternationalNumberUtil.getRegionCode(userMobileZipwhipDomestic);
+
+        // A local contact number
+        String userFriendNational = "5074527878";
+
+        // This string will look like '(507) 452-7878' -- THE MOST IMPORTANT ASPECT OF THIS CALL IS THAT userRegion IS THE USER'S REGION, NOT THE FRIEND'S
+        String userFriendNationalFormatted = InternationalNumberUtil.getRegionallyFormattedNumber(userFriendNational, userRegion);
+
+        // An international contact number
+        String userFriendInternational = "+841234567890";
+
+        // This string will look like '+84 123 456 7890' -- THE MOST IMPORTANT ASPECT OF THIS CALL IS THAT userRegion IS THE USER'S REGION, NOT THE FRIEND'S
+        String userFriendInternationalFormatted = InternationalNumberUtil.getRegionallyFormattedNumber(userFriendInternational, userRegion);
+
+        /*******************************************************************************************************************************************************
+         * Example #2 - International (e.164) number
+         */
+        String userMobileInternational = "+841234567890";
+
+        // The region will be 'VN'.
+        userRegion = InternationalNumberUtil.getRegionCode(userMobileInternational);
+
+        // A local contact number
+        userFriendNational = "5074527878";
+
+        // This string will look like '0507 452 3253' -- THE MOST IMPORTANT ASPECT OF THIS CALL IS THAT userRegion IS THE USER'S REGION, NOT THE FRIEND'S
+        userFriendNationalFormatted = InternationalNumberUtil.getRegionallyFormattedNumber(userFriendNational, userRegion);
+    }
 
     @Test
     public void testGetRegionCode() throws Exception {
