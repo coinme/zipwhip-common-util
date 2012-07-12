@@ -26,13 +26,13 @@ public class InternationalNumberUtilTest {
         String userFriendNational = "5074527878";
 
         // This string will look like '(507) 452-7878' -- THE MOST IMPORTANT ASPECT OF THIS CALL IS THAT userRegion IS THE USER'S REGION, NOT THE FRIEND'S
-        String userFriendNationalFormatted = InternationalNumberUtil.getRegionallyFormattedNumber(userFriendNational, userRegion);
+        String userFriendNationalFormatted = InternationalNumberUtil.getFormattedNumberForContact(userFriendNational, userRegion);
 
         // An international contact number
         String userFriendInternational = "+841234567890";
 
         // This string will look like '+84 123 456 7890' -- THE MOST IMPORTANT ASPECT OF THIS CALL IS THAT userRegion IS THE USER'S REGION, NOT THE FRIEND'S
-        String userFriendInternationalFormatted = InternationalNumberUtil.getRegionallyFormattedNumber(userFriendInternational, userRegion);
+        String userFriendInternationalFormatted = InternationalNumberUtil.getFormattedNumberForContact(userFriendInternational, userRegion);
 
         /*******************************************************************************************************************************************************
          * Example #2 - International (e.164) number
@@ -46,7 +46,7 @@ public class InternationalNumberUtilTest {
         userFriendNational = "5074527878";
 
         // This string will look like '0507 452 3253' -- THE MOST IMPORTANT ASPECT OF THIS CALL IS THAT userRegion IS THE USER'S REGION, NOT THE FRIEND'S
-        userFriendNationalFormatted = InternationalNumberUtil.getRegionallyFormattedNumber(userFriendNational, userRegion);
+        userFriendNationalFormatted = InternationalNumberUtil.getFormattedNumberForContact(userFriendNational, userRegion);
     }
 
     @Test
@@ -222,56 +222,95 @@ public class InternationalNumberUtilTest {
     }
 
     @Test
-    public void testGetRegionallyFormattedNumber() throws Exception {
+    public void testGetFormattedNumberForContact() throws Exception {
 
         // Display format for Vietnamese contact number for US user
-        String phoneNumber = "+841234567890";
+        String contactPhoneNumber = "+841234567890";
         String regionCode = "US";
-        assertEquals("+84 123 456 7890", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        assertEquals("+84 123 456 7890", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for Vietnamese contact number for Vietnamese user
-        phoneNumber = "1234567890";
+        contactPhoneNumber = "1234567890";
         regionCode = "VN";
-        assertEquals("0123 456 7890", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        assertEquals("0123 456 7890", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for Vietnamese contact number with leading 0 for Vietnamese user
-        phoneNumber = "01234567890";
+        contactPhoneNumber = "01234567890";
         regionCode = "VN";
-        assertEquals("0123 456 7890", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        assertEquals("0123 456 7890", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for US contact number for US user
-        phoneNumber = "2069308877";
+        contactPhoneNumber = "2069308877";
         regionCode = "US";
-        assertEquals("(206) 930-8877", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        assertEquals("(206) 930-8877", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for Vietnamese contact number with leading 0 in local format for US user
         // No formatting in this case, the number can't be routed anyway
-        phoneNumber = "01234567890";
-        assertEquals("01234567890", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        contactPhoneNumber = "01234567890";
+        regionCode = "US";
+        assertEquals("01234567890", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for short code for US user (no formatting)
-        phoneNumber = "20000001";
-        assertEquals("20000001", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        contactPhoneNumber = "20000001";
+        regionCode = "US";
+        assertEquals("20000001", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for US contact number for UK user
-        phoneNumber = "+12069308888";
+        contactPhoneNumber = "+12069308888";
         regionCode = "GB";
-        assertEquals("+1 206-930-8888", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        assertEquals("+1 206-930-8888", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for Filipino contact number for UK user
-        phoneNumber = "+639281942713";
+        contactPhoneNumber = "+639281942713";
         regionCode = "GB";
-        assertEquals("+63 928 194 2713", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        assertEquals("+63 928 194 2713", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for UK national contact number for UK user
-        phoneNumber = "7836191191";
+        contactPhoneNumber = "7836191191";
         regionCode = "GB";
-        assertEquals("07836 191191", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        assertEquals("07836 191191", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
         // Display format for UK national contact number with leading 0 for UK user
-        phoneNumber = "07836191191";
-        assertEquals("07836 191191", InternationalNumberUtil.getRegionallyFormattedNumber(phoneNumber, regionCode));
+        contactPhoneNumber = "07836191191";
+        regionCode = "GB";
+        assertEquals("07836 191191", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
+    }
+
+    @Test
+    public void testGetFormattedNumberForUser() throws Exception {
+
+        String contactPhoneNumber = "+841234567890";
+        String regionCode = "VN";
+        assertEquals("0123 456 7890", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
+
+        contactPhoneNumber = "1234567890";
+        regionCode = "VN";
+        assertEquals("0123 456 7890", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
+
+        contactPhoneNumber = "01234567890";
+        regionCode = "VN";
+        assertEquals("0123 456 7890", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
+
+        contactPhoneNumber = "2069308877";
+        regionCode = "US";
+        assertEquals("(206) 930-8877", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
+
+        contactPhoneNumber = "+12069308877";
+        regionCode = "US";
+        assertEquals("(206) 930-8877", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
+
+        contactPhoneNumber = "7836191191";
+        regionCode = "GB";
+        assertEquals("07836 191191", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
+
+        contactPhoneNumber = "07836191191";
+        regionCode = "GB";
+        assertEquals("07836 191191", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
+
+        contactPhoneNumber = "+447836191191";
+        regionCode = "GB";
+        assertEquals("07836 191191", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
     }
 
 }

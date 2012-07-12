@@ -117,27 +117,53 @@ public class InternationalNumberUtil {
     }
 
     /**
-     * @param mobileNumber The mobile number to be formatted for display.
-     * @param regionCode   The region code of the user's region, NOT necessarily the region of the mobileNumber.
+     * Use this method for formatting a user's contacts relative to the user's local region code.
+     *
+     * @param mobileNumber    The contact mobile number to be formatted for display.
+     * @param usersRegionCode The region code of the user's region, NOT necessarily the region of the mobileNumber.
      * @return The mobile number formatted to the local format or internal format of it is an international number.
      */
-    public static String getRegionallyFormattedNumber(String mobileNumber, String regionCode) {
+    public static String getFormattedNumberForContact(String mobileNumber, String usersRegionCode) {
 
-        Phonenumber.PhoneNumber phoneNumber;
         PhoneNumberUtil.PhoneNumberFormat format;
         String defaultRegion;
 
         if (isValidInternationalNumber(mobileNumber)) {
-            // If we have a valid e.164 number we can ignore the regionCode
+            // If we have a valid e.164 number we can ignore the usersRegionCode
             defaultRegion = UNKNOWN_REGION;
             format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
         } else {
-            defaultRegion = regionCode;
+            defaultRegion = usersRegionCode;
             format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
         }
 
+        return getFormattedNumber(mobileNumber, defaultRegion, format);
+    }
+
+    /**
+     * Use this method for formatting a user's mobile number relative to the user's local region code.
+     *
+     * @param mobileNumber    The user's mobile number to be formatted for display.
+     * @param usersRegionCode The region code of the user's region, NOT necessarily the region of the mobileNumber.
+     * @return The mobile number formatted to the local format or internal format of it is an international number.
+     */
+    public static String getFormattedNumberForUser(String mobileNumber, String usersRegionCode) {
+
+        String defaultRegion;
+
+        if (isValidInternationalNumber(mobileNumber)) {
+            // If we have a valid e.164 number we can ignore the usersRegionCode
+            defaultRegion = UNKNOWN_REGION;
+        } else {
+            defaultRegion = usersRegionCode;
+        }
+
+        return getFormattedNumber(mobileNumber, defaultRegion, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+    }
+
+    protected static String getFormattedNumber(String mobileNumber, String usersRegionCode, PhoneNumberUtil.PhoneNumberFormat format) {
         try {
-            phoneNumber = PhoneNumberUtil.getInstance().parse(mobileNumber, defaultRegion);
+            Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(mobileNumber, usersRegionCode);
             return PhoneNumberUtil.getInstance().format(phoneNumber, format);
         } catch (NumberParseException e) {
             return mobileNumber;
