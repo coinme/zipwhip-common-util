@@ -20,6 +20,7 @@ public class StringUtil {
 	// "9");
 	private static final String PLUS_MOBIFONE = "+84";
 	private static final String PLUS = "+";
+	private static final String NANP = "+1";
 
 	public static boolean equals(String string1, String string2) {
 		if (string1 == string2) {
@@ -137,6 +138,8 @@ public class StringUtil {
 			if (mobileNumber.startsWith(PLUS_MOBIFONE)) {
 				index++;
 				cleanMobileNumber.append(PLUS);
+			} else if (mobileNumber.startsWith(NANP)) {
+				index = 2;
 			}
 
 			for (int i = index; i < mobileNumber.length(); i++) {
