@@ -210,6 +210,14 @@ public class InternationalNumberUtilTest {
         // United States Virgin Islands - +1 340
         phoneNumber = "3405558888";
         assertTrue(InternationalNumberUtil.isValidZipwhipDomesticNumberFormat(phoneNumber));
+
+        //Phillipines number, nine digits.
+        phoneNumber = "335124578";
+        assertFalse(InternationalNumberUtil.isValidZipwhipDomesticNumberFormat(phoneNumber));
+
+        //Phillipines number, nine digits, with a preceding zero..
+        phoneNumber = "0335124578";
+        assertFalse(InternationalNumberUtil.isValidZipwhipDomesticNumberFormat(phoneNumber));
     }
 
     @Test

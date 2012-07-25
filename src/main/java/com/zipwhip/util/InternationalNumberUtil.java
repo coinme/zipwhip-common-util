@@ -17,6 +17,7 @@ public class InternationalNumberUtil {
 
     protected static final String PLUS = "+";
     protected static final String ONE = "1";
+    protected static final String ZERO = "0";
     protected static final String PLUS_ONE = "+1";
 
     /**
@@ -85,7 +86,7 @@ public class InternationalNumberUtil {
      */
     public static boolean isValidZipwhipDomesticNumberFormat(String mobileNumber) {
 
-        if (StringUtil.isNullOrEmpty(mobileNumber) || mobileNumber.startsWith(PLUS) || mobileNumber.startsWith(ONE) || mobileNumber.length() != 10) {
+        if (StringUtil.isNullOrEmpty(mobileNumber) || mobileNumber.startsWith(PLUS) || mobileNumber.startsWith(ZERO) || mobileNumber.startsWith(ONE) || mobileNumber.length() != 10) {
             return false;
         }
 
