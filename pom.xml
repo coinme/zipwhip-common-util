@@ -1,12 +1,20 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>7</version>
+    </parent>
 
     <groupId>com.zipwhip</groupId>
     <artifactId>zipwhip-common-util</artifactId>
-    <version>1.60.0-SNAPSHOT</version>
+    <version>1.60.0-FINAL</version>
     <packaging>jar</packaging>
+
     <name>zipwhip-common-util</name>
+    <description>Java utilities for use with clients powered by the Zipwhip Cloud</description>
+    <url>http://www.zipwhip.com/</url>
 
     <licenses>
         <license>
@@ -15,6 +23,20 @@
             <distribution>repo</distribution>
         </license>
     </licenses>
+
+    <scm>
+        <url>https://github.com/Zipwhip/zipwhip-common-util</url>
+        <connection>scm:git:git@github.com:Zipwhip/zipwhip-common-util.git</connection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>com.zipwhip</id>
+            <name>Zipwhip Developers</name>
+            <email>oss@zipwhip.com</email>
+            <url>http://www.zipwhip.com/</url>
+        </developer>
+    </developers>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
