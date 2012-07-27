@@ -133,6 +133,19 @@ public class InternationalNumberUtil {
             // If we have a valid e.164 number we can ignore the usersRegionCode
             defaultRegion = UNKNOWN_REGION;
             format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
+            
+            try {
+                Phonenumber.PhoneNumber number = PhoneNumberUtil.getInstance().parse(mobileNumber, UNKNOWN_REGION);
+
+                //In case the number that we're formatting has the same country code as the user's country code, use national
+                //formatting instead of international formatting.
+                if (PhoneNumberUtil.getInstance().getRegionCodeForNumber(number).equals(usersRegionCode)){
+                    format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
+                }
+            } catch (NumberParseException e) {
+                //In theory, this shouldn't happen, as we would have failed to parse at isValidInternationalNumber.
+                //However, just in case an exception is thrown, treat the number as an international number.
+            }
         } else {
             defaultRegion = usersRegionCode;
             format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;

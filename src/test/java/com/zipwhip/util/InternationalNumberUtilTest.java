@@ -283,6 +283,16 @@ public class InternationalNumberUtilTest {
         regionCode = "GB";
         assertEquals("07836 191191", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
 
+        // For an internationally formatted Phillipines number being displayed to a PH user, the number should be formatted in the national format.
+        contactPhoneNumber = "+639281972713";
+        regionCode = "PH";
+        assertEquals("0928 197 2713", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
+
+        // For a US user looking at a US number in the international format, we would expect the number to be formatted in the US national format.
+        contactPhoneNumber = "+13606712625";
+        regionCode = "US";
+        assertEquals("(360) 671-2625", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
+
     }
 
     @Test
