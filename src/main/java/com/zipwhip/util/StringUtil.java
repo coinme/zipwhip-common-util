@@ -123,7 +123,7 @@ public class StringUtil {
 	 * @return String - parsed mobile number
 	 */
 	private static final Pattern validMobileNumber = Pattern.compile("^(\\+84)?\\d+$");
-	protected static String cleanMobileNumber(String mobileNumber) {
+	public static String cleanMobileNumber(String mobileNumber) {
 		if (isNullOrEmpty(mobileNumber)) {
 			return EMPTY_STRING;
 		}
