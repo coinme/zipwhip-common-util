@@ -1,5 +1,8 @@
 package com.zipwhip.util;
 
+import com.google.i18n.phonenumbers.NumberParseException;
+import com.google.i18n.phonenumbers.PhoneNumberUtil;
+import com.google.i18n.phonenumbers.Phonenumber;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -292,6 +295,111 @@ public class InternationalNumberUtilTest {
         contactPhoneNumber = "+13606712625";
         regionCode = "US";
         assertEquals("(360) 671-2625", InternationalNumberUtil.getFormattedNumberForContact(contactPhoneNumber, regionCode));
+
+    }
+    
+    @Test
+    public void testIsNANPARegionCode(){
+        String[] invalidNANPCodes = new String[]{"QY", "KR", "HK", "AQ", "NF", "NU", "GB", "UK", "SV", "CR", "BO", "EC", "ME", "MK", "CZ", "IS", "AL", "FI", "BG", "EG", "SS", "GM", "MR", "GA", "CD", "AO", "SO", "DJ", "ZM", "AW", InternationalNumberUtil.UNKNOWN_REGION};
+        for (String nonNanpCode : invalidNANPCodes){
+            if (InternationalNumberUtil.isNANPARegionCode(nonNanpCode)){
+                fail("'" + nonNanpCode + "' is not being correctly recognized as an invalid NANP region code.");
+            }
+        }
+
+        String[] validNANPCodes = new String[]{"US", "CA", "AG", "AI", "AS", "BB", "BM", "BS", "DM", "DO", "GD", "GU", "JM", "KN", "KY", "LC", "MP", "MS", "PR", "SX", "TC", "TT", "VC", "VG", "VI"};
+        for (String nanpCode : validNANPCodes){
+            if (!InternationalNumberUtil.isNANPARegionCode(nanpCode)){
+                fail("'" + nanpCode + "' is not being correctly recognized as a valid NANP region code.");
+            }
+        }
+    }
+    
+    @Test
+    public void testGetE164Number() throws Exception {
+        //US user with a valid US number, both with and without formatting.
+        assertEquals("+13609900541", InternationalNumberUtil.getE164Number("(360) 990-0541", "US"));
+        assertEquals("+13609900541", InternationalNumberUtil.getE164Number("3609900541", "US"));
+        
+        //PH user with a valid PH escape code attached.
+        assertEquals("+13609900541", InternationalNumberUtil.getE164Number("001 360 990 0541", "PH"));
+
+        //VN user putting in a valid VN number should attach the VN international code.
+        assertEquals("+841234567890", InternationalNumberUtil.getE164Number("1234567890", "VN"));
+
+        //UK number with the preceding 0 (Which is apparently valid)
+        assertEquals("+447836191191", InternationalNumberUtil.getE164Number("07836191191", "GB"));
+
+        //UK number without the preceding 0 (Which is apparently valid)
+        assertEquals("+447836191191", InternationalNumberUtil.getE164Number("7836191191", "GB"));
+
+        //A valid E164 number should be left unchanged, independent of the country code.
+        assertEquals("+639281972713", InternationalNumberUtil.getE164Number("+639281972713", "PH"));
+        assertEquals("+12069308888", InternationalNumberUtil.getE164Number("+12069308888", "GB"));
+        assertEquals("+639281972713", InternationalNumberUtil.getE164Number("+639281972713", "US"));
+        assertEquals("+639281972713", InternationalNumberUtil.getE164Number("+639281972713", InternationalNumberUtil.UNKNOWN_REGION));
+
+
+        //As an E164 number, it should just have it's spaces removed.
+        assertEquals("+639281942713", InternationalNumberUtil.getE164Number("+63 928 194 2713", "GB"));
+
+        //Properly formatted PH domestic number.
+        assertEquals("+639281972713", InternationalNumberUtil.getE164Number("0928 197 2713", "PH"));
+
+        //As this is shortcode, we should expect an IllegalArgumentException, as the supplied number cannot be formatted to E164.
+        try {
+            InternationalNumberUtil.getE164Number("20000001", "US");
+            fail();
+        } catch (IllegalArgumentException e){}
+
+        try {
+            InternationalNumberUtil.getE164Number("(360) 671-2625", "PH");
+            fail();
+        } catch (IllegalArgumentException e){}
+
+        try {
+            InternationalNumberUtil.getE164Number("0928 197 2713", "US");
+            fail();
+        } catch (IllegalArgumentException e){}
+
+        try {
+            InternationalNumberUtil.getE164Number("0123456789", "US");
+            fail();
+        } catch (IllegalArgumentException e){}
+
+        try {
+            InternationalNumberUtil.getE164Number("01 360 990 0541", "PH");
+            fail();
+        } catch (IllegalArgumentException e){}
+
+        try {
+            InternationalNumberUtil.getE164Number("01 360 990 0541", "US");
+            fail();
+        } catch (IllegalArgumentException e){}
+
+        //As the supplied number isn't E164 formatted, and the region code isn't supplied, this should fail.
+        try {
+            InternationalNumberUtil.getE164Number("0928 197 2713", InternationalNumberUtil.UNKNOWN_REGION);
+            fail();
+        } catch (NumberParseException e){}
+
+        //Invalidly formatted UK number.
+        try {
+            InternationalNumberUtil.getE164Number("0928 197 2713", "UK");
+            fail();
+        } catch (NumberParseException e){}
+
+        //Missing number
+        try {
+            InternationalNumberUtil.getE164Number("", "US");
+            fail();
+        } catch (NumberParseException e){}
+
+        //Gibberish number
+        try {
+            InternationalNumberUtil.getE164Number("lj3l4k5j", "US");
+            fail();
+        } catch (NumberParseException e){}
 
     }
 

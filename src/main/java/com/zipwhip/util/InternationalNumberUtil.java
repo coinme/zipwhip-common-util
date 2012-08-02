@@ -118,6 +118,32 @@ public class InternationalNumberUtil {
     }
 
     /**
+     * Takes the supplied number, as well as the region code of the user who typed the number, and converts said number
+     * into the full E164 format (Without spaces).  Useful for saving values back to the cloud.
+     * @param mobileNumber
+     * @param regionCode
+     * @return
+     * @throws NumberParseException If the supplied mobile number cannot be properly parsed by PhoneNumberUtil.
+     * @throws IllegalArgumentException If the supplied mobile number is a valid number, but cannot be formatted to E164 (Such as shortcodes)
+     */
+    public static String getE164Number(String mobileNumber, String regionCode) throws NumberParseException, IllegalArgumentException {
+        Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(mobileNumber, regionCode);
+        if (!PhoneNumberUtil.getInstance().isValidNumber(phoneNumber)){
+            throw new IllegalArgumentException("'" + mobileNumber + "' is not a valid phone number for the '" + regionCode + "' region code.");
+        }
+        return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+    }
+
+    /**
+     * Tells whether a given region code is associated with a NANP region.
+     * @param regionCode
+     * @return
+     */
+    public static boolean isNANPARegionCode(String regionCode){
+        return PhoneNumberUtil.getInstance().isNANPACountry(regionCode);
+    }
+
+    /**
      * Use this method for formatting a user's contacts relative to the user's local region code.
      *
      * @param mobileNumber    The contact mobile number to be formatted for display.
