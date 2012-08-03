@@ -120,26 +120,40 @@ public class InternationalNumberUtil {
     /**
      * Takes the supplied number, as well as the region code of the user who typed the number, and converts said number
      * into the full E164 format (Without spaces).  Useful for saving values back to the cloud.
-     * @param mobileNumber
-     * @param regionCode
-     * @return
-     * @throws NumberParseException If the supplied mobile number cannot be properly parsed by PhoneNumberUtil.
+     *
+     * @param mobileNumber The number to be translated to e164.
+     * @param regionCode   The user's local region code.
+     * @return mobileNumber translated to e164 format.
+     * @throws NumberParseException     If the supplied mobile number cannot be properly parsed by PhoneNumberUtil.
      * @throws IllegalArgumentException If the supplied mobile number is a valid number, but cannot be formatted to E164 (Such as shortcodes)
      */
     public static String getE164Number(String mobileNumber, String regionCode) throws NumberParseException, IllegalArgumentException {
+
+        /**
+         * THE BLOCK BELOW IS FOR LEGACY SUPPORT OF NUMBERS IN THE NAMP THAT MAY HAVE HAD
+         * THE '+1' STRIPPED BY CARBON OR BY THE CLOUD. ONCE THE CLOUD HAS MIGRATED ALL
+         * THE STORED NUMBERS TO E164 WE WOULD EXPECT THAT THIS CODE WOULD BE DEAD.
+         */
+        if (isValidZipwhipDomesticNumberFormat(mobileNumber)) {
+            mobileNumber = internationalizeZipwhipDomesticNumber(mobileNumber);
+        }
+
         Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(mobileNumber, regionCode);
-        if (!PhoneNumberUtil.getInstance().isValidNumber(phoneNumber)){
+
+        if (!PhoneNumberUtil.getInstance().isValidNumber(phoneNumber)) {
             throw new IllegalArgumentException("'" + mobileNumber + "' is not a valid phone number for the '" + regionCode + "' region code.");
         }
+
         return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
     }
 
     /**
      * Tells whether a given region code is associated with a NANP region.
-     * @param regionCode
-     * @return
+     *
+     * @param regionCode The region code to be checked.
+     * @return True if the region code is from the NAMP region, otherwise false.
      */
-    public static boolean isNANPARegionCode(String regionCode){
+    public static boolean isNANPARegionCode(String regionCode) {
         return PhoneNumberUtil.getInstance().isNANPACountry(regionCode);
     }
 
@@ -159,13 +173,13 @@ public class InternationalNumberUtil {
             // If we have a valid e.164 number we can ignore the usersRegionCode
             defaultRegion = UNKNOWN_REGION;
             format = PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL;
-            
+
             try {
                 Phonenumber.PhoneNumber number = PhoneNumberUtil.getInstance().parse(mobileNumber, UNKNOWN_REGION);
 
                 //In case the number that we're formatting has the same country code as the user's country code, use national
                 //formatting instead of international formatting.
-                if (PhoneNumberUtil.getInstance().getRegionCodeForNumber(number).equals(usersRegionCode)){
+                if (PhoneNumberUtil.getInstance().getRegionCodeForNumber(number).equals(usersRegionCode)) {
                     format = PhoneNumberUtil.PhoneNumberFormat.NATIONAL;
                 }
             } catch (NumberParseException e) {
