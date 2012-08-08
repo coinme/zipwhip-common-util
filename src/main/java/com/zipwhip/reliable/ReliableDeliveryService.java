@@ -99,7 +99,6 @@ public final class ReliableDeliveryService {
 
                 heartbeatCount++;
 
-                //TODO: Add support work unit exclusions.
                 workUnits = this.database.getIncompleteWork(new HashSet<String>());
 
                 //Add each of the work units that we've received to the activeJobs list.  This is an added failsafe, in case
@@ -139,9 +138,10 @@ public final class ReliableDeliveryService {
                 synchronized(this){
                     try {
                         this.database.update(work);
-                    } catch (Exception e){
-                        //TODO: Log exception
-                        //TODO: What should we do here?
+                    } catch (DatabaseException e){
+                        //In truth, if the database can't be bothered to update a value that the database itself has given to
+                        //us, there's not a lot we can do at this point.  Log the exception, and move on.
+                        logger.warn("An exception occurred while attempting to update a work unit with unique ID '" + work.getUniqueKey() + "'", e);
                     }
                 }
             }
@@ -170,6 +170,18 @@ public final class ReliableDeliveryService {
             ReliableDeliveryWorker worker = this.workerLocator.get(work.getWorkType());
             if (worker != null){
                 ReliableDeliveryWorkParameters parameters = deserializeParameters(work.getParameters());
+                
+                try {
+                    worker.validateParameters(parameters);
+                } catch (IllegalArgumentException e){
+                    //An exception is caught here if, and only if, the applicable parameters have been previously validated
+                    //serialized, and have failed validation, only after being unserialized.  As such, there's not a lot
+                    //we can do at this point.
+                    logger.warn("An error occurred while attempting to deserialize input parameters.", e);
+                    return ReliableDeliveryResult.FAILSAFE_BROKEN;
+                }
+            
+                
                 ReliableDeliveryResult result = worker.executeWork(parameters);
 
                 //If the result that we get back from the worker is not a valid return type (An example of such
@@ -196,12 +208,11 @@ public final class ReliableDeliveryService {
             //at least take into consideration.
             logger.warn("An error occurred while attempting to deserialize input parameters.", e);
             return ReliableDeliveryResult.FAILSAFE_BROKEN;
-
         } catch (Exception e){
-            logger.warn("An unchecked exception was thrown while attempting to process a '" + work.getWorkType() + "' work unit.", e);
             //We aren't catching any explicit exceptions here.  Rather, we're only caring about unchecked exceptions,
             //such as NullPointerException, which could foul up further processing.  In such a circumstance, we really
             //shouldn't retry said object, so the only real option is to classify the result as FAILSAFE_BROKEN.
+            logger.warn("An unchecked exception was thrown while attempting to process a '" + work.getWorkType() + "' work unit.", e);
             return ReliableDeliveryResult.FAILSAFE_BROKEN;
         }
     }
@@ -289,7 +300,7 @@ public final class ReliableDeliveryService {
     }
 
     /**
-     * TODO:
+     * A utility method to serialize input parameters.
      * @param params
      * @return
      * @throws java.io.NotSerializableException
@@ -306,7 +317,7 @@ public final class ReliableDeliveryService {
     }
 
     /**
-     * TODO:
+     * A utility method to deserialize input paramters.
      * @param bytes
      * @return
      * @throws Exception

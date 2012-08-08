@@ -1,5 +1,6 @@
 package com.zipwhip.reliable.database;
 
+import com.zipwhip.exception.DatabaseException;
 import com.zipwhip.reliable.ReliableDeliveryResult;
 import com.zipwhip.reliable.ReliableDeliveryWork;
 import org.junit.Assert;
@@ -264,6 +265,14 @@ public class MemoryReliableDeliveryDatabaseTests {
 
     @Test
     public void testUpdatesWithInvalidUniqueKeys(){
-        //TODO:
+        try {
+            ReliableDeliveryWork work = this.database.getByUniqueKey(this.workUnitUniqueKeys[0]);
+
+            //In reality, this is a really bad idea, that should not be done in any practical circumstance.
+            work.setUniqueKey("SDFLKJSDLFKJ");
+            this.database.update(work);
+        } catch (DatabaseException e){
+            
+        }
     }
 }
