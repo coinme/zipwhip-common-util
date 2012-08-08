@@ -448,5 +448,37 @@ public class InternationalNumberUtilTest {
         regionCode = "GB";
         assertEquals("07836 191191", InternationalNumberUtil.getFormattedNumberForUser(contactPhoneNumber, regionCode));
     }
+    
+    @Test
+    public void testIsInternationalNumberNANPA(){
+        assertTrue(InternationalNumberUtil.isInternationalNumberNANPA("+13609900541"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("23412515"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("3609900541"));
+        assertTrue(InternationalNumberUtil.isInternationalNumberNANPA("+14564568749"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+1360449900541"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+1360990054"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+2360990054"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+12354900541")); //This fails because 235 is not a valid area code.
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("sfef"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("13609900541"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("900541"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+1360hjk9900541"));
+    }
+    
+    @Test
+    public void testGetZipwhipDomesticFromNANPAInternationalNumber(){
+        //Numbers that should change to their zipwhip domestic equivalents.
+        assertEquals("3609900541", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+13609900541"));
+        assertEquals("4564568749", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+14564568749"));
+        assertEquals("7315741311", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+17315741311"));
 
+        //Numbers that should not change, because they are either non-NANPA, or E164 formatted.
+        assertEquals("23412515", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("23412515"));
+        assertEquals("+1360449900541", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+1360449900541"));
+        assertEquals("+1360990054", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+1360990054"));
+        assertEquals("sfef", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("sfef"));
+        assertEquals("13609900541", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("13609900541"));
+        assertEquals("900541", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("900541"));
+        assertEquals("+1360hjk9900541", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+1360hjk9900541"));
+    }
 }

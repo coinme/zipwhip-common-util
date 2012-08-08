@@ -158,6 +158,29 @@ public class InternationalNumberUtil {
     }
 
     /**
+     * @param mobileNumber The mobile number to be checked, which should be pre-cleaned (no spaces).
+     * @return Whether or not the given number is internationally formatted, AND Is in the NANPA region (starts with +1)
+     * NOTE: This method calls isValidInternationalNumber, which means that NANPA numbers which link to invalid numbers
+     * (Such as those without a valid area code, or 555 numbers) will return false.
+     */
+    public static boolean isInternationalNumberNANPA(String mobileNumber){
+        return isValidInternationalNumber(mobileNumber) && mobileNumber.startsWith("+1");
+    }
+
+    /**
+     * @param mobileNumber The mobile number to be modified, which should be pre-cleaned (no spaces).
+     * @return If the mobile number is internationally formatted, and in the NANPA region, returns the mobile number
+     * in the zipwhip domestic format (Without the preceding +1).  Otherwise, the mobile number is returned unchanged.
+     */
+    public static String getZipwhipDomesticFromNANPAInternationalNumber(String mobileNumber){
+        if (isInternationalNumberNANPA(mobileNumber)){
+            return mobileNumber.substring(2);
+        } else {
+            return mobileNumber;
+        }
+    }
+
+    /**
      * Use this method for formatting a user's contacts relative to the user's local region code.
      *
      * @param mobileNumber    The contact mobile number to be formatted for display.
