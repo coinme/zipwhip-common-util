@@ -7,38 +7,29 @@ import java.util.UUID;
  * User: Erickson
  * Date: 6/25/12
  * Time: 4:17 PM
- * To change this template use File | Settings | File Templates.
+ * A basic implementation of the ReliableDeliveryWork class.  It is not necessary to use this
+ * particular class when working with ReliableDeliveryService (And in some cases, such as AndroidTabletTexter, it
+ * may not be easily possible).  For explanations of each of the values and their uses, look at the
+ * ReliableDeliveryWork interface.
  */
 public class ReliableDeliveryWorkImpl implements ReliableDeliveryWork {
 
-    //A uniquely generated key that denotes a particular unit of work.  No two units of work should have the same unique key.
     private String uniqueKey;
 
-    //The type of work that this particular item represents.
     private String workType;
 
-    //A timestamp representing when this task was enqueued.
     private long dateCreated;
 
-    //A timestamp representing when this task was completed, or when it was dropped.  A timestamp of -1 indicates that this work unit has not been completed.
-    //If this field contains a valid timestamp, no attempt should be made to re-attempt this task.
     private long dateCompleted;
 
-    //The input parameters associated with the given work unit.
     private byte[] parameters;
 
-    //The result code of the last attempt made for this work unit or NOT_ATTEMPTED(0) if this particular item of work has not yet been attempted.
     private int lastResultCode;
 
-    //The number of times that
     private int failedAttemptCount;
 
-    //A timestamp representing when this task should be re-attempted next.  A timestamp of -1 denotes we have never attempted this particular unit of work, or that it should be worked on at the next available opportunity.
     private long nextRetryAttempt;
 
-    //Denotes whether or not this work unit is being actively worked on, as well as when it was last queried to be actively worked on.  In situations where this item is not being actively worked on,
-    //this value will be -1.  We use a timestamp instead of a boolean to account for situations where the work unit is loaded, but does not complete.  We want to avoid situations where the work
-    //unit is forever marked as being worked on, and ends up getting ignored in the future.
     private long workingTimestamp;
 
     public String getUniqueKey() {

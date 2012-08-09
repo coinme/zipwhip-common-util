@@ -8,9 +8,6 @@ package com.zipwhip.reliable;
  * An interface which defines a class capable of processing ReliableDeliveryWork.  The mapping of work workers is handled in the ReliableDeliveryService.
  */
 public interface ReliableDeliveryWorker {
-
-    //TODO: Should we also pass in the work unit type?  This would allow a single work unit to handle several different work unit types, but could also be considered unnnecessary.
-
     /**
      * Validate the supplied parameters.  Validation is run when a work unit is first enqueued, as well as before being ran.
      * @param parameters The parameters to be validated.
@@ -18,27 +15,18 @@ public interface ReliableDeliveryWorker {
      */
     public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException;
 
-//    /**
-//     * Converts the provided parameters to a byte array.  It can be safely assumed that the supplied parameters
-//     * have already been pre-validated.
-//     * @param parameters The parameter object to be serialized.
-//     * @return
-//     * @throws NotSerializableException If an error occurs during the serialization process.
-//     */
-//    public byte[] serializeParameters(ReliableDeliveryWorkParameters parameters) throws NotSerializableException;
-//
-//    /**
-//     * Converts the provided byte array to a processable parameters object, which can be consumed through the executeWork call.
-//     * @param paramBytes The byte array to be deserialized.
-//     * @return
-//     * @throws Exception Thrown if an error occurs during deserialization.
-//     */
-//    public ReliableDeliveryWorkParameters deserializeParameters(byte[] paramBytes) throws Exception;
-
     /**
-     * TODO: Describe
-     * @param parameters
-     * @return
+     * Handles the processing of the work unit.
+     * @param parameters The parameters necessary to process the supplied work.  In situations where said parameters
+     *                   are sent into by way of the ReliableDeliveryService, all parameters have been pre-validated
+     *                   before being submitted to this method.
+     * @return A ReliableDeliveryResult object, which designates how the supplied work unit should be re-attempted.
+     *         Allowed values are OPERATION_SUCCESSFUL, OPERATION_FAILED_DO_NOT_REATTEMPT, OPERATION_FAILED_REATTEMPT_BLOCKING,
+     *         and OPERATION_FAILED_REATTEMPT_NOT_BLOCKING.  Returning a null, or any other value will cause the supplied
+     *         work unit to be classified as having broken a failsafe, and will not be re-attempted.
+     *         In addition, the ReliableDeliveryWorker should make all attempts to catch exceptions internally.  In situations
+     *         where an unchecked exception is thrown, the supplied work unit is classified as having broken a failsafe, and
+     *         will not be reattempted.
      */
     public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters);
 

@@ -7,7 +7,7 @@ import java.io.Serializable;
  * User: Erickson
  * Date: 8/7/12
  * Time: 11:46 AM
- * To change this template use File | Settings | File Templates.
+ * Defines a set of input parameters for a unit of reliable delivery work.
  */
 public interface ReliableDeliveryWorkParameters extends Serializable {
 

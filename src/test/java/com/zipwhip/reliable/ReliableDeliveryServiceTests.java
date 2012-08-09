@@ -52,20 +52,7 @@ public class ReliableDeliveryServiceTests {
             @Override
             public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException {
                 validateSleepInterval(parameters);
-//                if (parameters == null) throw new IllegalArgumentException("Sleep interval is null.");
-//                if (!(parameters instanceof Long)) throw new IllegalArgumentException("Sleep interval is not a long.");
-
             }
-
-//            @Override
-//            public byte[] serializeParameters(ReliableDeliveryWorkParameters parameters) throws NotSerializableException {
-//                return new byte[]{((Long)parameters).byteValue()};
-//            }
-//
-//            @Override
-//            public ReliableDeliveryWorkParameters deserializeParameters(byte[] paramBytes) throws IOException {
-//                return (long)paramBytes[0];
-//            }
 
             @Override
             public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {
@@ -84,16 +71,6 @@ public class ReliableDeliveryServiceTests {
             public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException {
                 validateSleepInterval(parameters);
             }
-
-//            @Override
-//            public byte[] serializeParameters(Object parameters) throws NotSerializableException {
-//                return new byte[]{((Long)parameters).byteValue()};
-//            }
-//
-//            @Override
-//            public Object deserializeParameters(byte[] paramBytes) throws Exception {
-//                return (long)paramBytes[0];
-//            }
 
             @Override
             public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {
@@ -117,16 +94,6 @@ public class ReliableDeliveryServiceTests {
                 validateSleepInterval(parameters);
             }
 
-//            @Override
-//            public byte[] serializeParameters(ReliableDeliveryWorkParameters parameters) throws NotSerializableException {
-//                return new byte[]{((Long)parameters).byteValue()};
-//            }
-//
-//            @Override
-//            public ReliableDeliveryWorkParameters deserializeParameters(byte[] paramBytes) throws IOException {
-//                return (long)paramBytes[0];
-//            }
-
             @Override
             public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {
                 try {
@@ -147,16 +114,6 @@ public class ReliableDeliveryServiceTests {
             public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException {
                 //To change body of implemented methods use File | Settings | File Templates.
             }
-
-//            @Override
-//            public byte[] serializeParameters(ReliableDeliveryWorkParameters parameters) throws NotSerializableException {
-//                return new byte[0];  //To change body of implemented methods use File | Settings | File Templates.
-//            }
-//
-//            @Override
-//            public ReliableDeliveryWorkParameters deserializeParameters(byte[] paramBytes) throws IOException {
-//                return null;  //To change body of implemented methods use File | Settings | File Templates.
-//            }
 
             @Override
             public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {

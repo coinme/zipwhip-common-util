@@ -18,7 +18,7 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
      * @param startingInterval The interval returned for getNextRetryInterval where failedAttemptCount == 1.
      * @param retryMultiplier The amount by which we should multiply each subsequent interval after the first.  
      *                        After the first attempt, interval is (startingInterval).  After the second attempt, interval is (startingInterval * retryMultiplier).  Third attempt is (startingInterval * retryMultiplier^2)
-     *                        NOTE: In situations where the retry interval is less than or equal to 1, we change the value to 1 (To prevent situations where the interval gets shorter and shorter after each call).
+     *                        NOTE: In situations where the retry multiplier is less than one, we change the value to one (To prevent situations where the interval gets shorter and shorter after each call).
      */
     public ExponentialBackoffRetryStrategy(int maxAttemptCount, int startingInterval, double retryMultiplier){
         this.maxAttemptCount = maxAttemptCount <= 0 ? 1 : maxAttemptCount;
