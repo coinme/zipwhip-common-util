@@ -132,7 +132,9 @@ public final class ReliableDeliveryService {
 
             //Now, process each individual work unit.  After each work unit has been processed, update it's values, and commit it back to the database.
             for (ReliableDeliveryWork work : workUnits){
+                //Execute the work unit.
                 ReliableDeliveryResult result = runWorkUnitExecution(work);
+                //Update the work unit object to reflect the new result.
                 processWorkUnitResult(work, result);
 
                 synchronized(this){
@@ -180,8 +182,7 @@ public final class ReliableDeliveryService {
                     logger.warn("An error occurred while attempting to deserialize input parameters.", e);
                     return ReliableDeliveryResult.FAILSAFE_BROKEN;
                 }
-            
-                
+
                 ReliableDeliveryResult result = worker.executeWork(parameters);
 
                 //If the result that we get back from the worker is not a valid return type (An example of such
