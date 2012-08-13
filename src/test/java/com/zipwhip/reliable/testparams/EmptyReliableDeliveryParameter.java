@@ -1,6 +1,6 @@
 package com.zipwhip.reliable.testparams;
 
-import com.zipwhip.reliable.ReliableDeliveryWorkParameters;
+import java.io.Serializable;
 
 /**
 * Created by IntelliJ IDEA.
@@ -9,7 +9,7 @@ import com.zipwhip.reliable.ReliableDeliveryWorkParameters;
 * Time: 12:41 PM
 * To change this template use File | Settings | File Templates.
 */
-public class EmptyReliableDeliveryParameter implements ReliableDeliveryWorkParameters {
+public class EmptyReliableDeliveryParameter implements Serializable {
 
     public EmptyReliableDeliveryParameter(){
     }
