@@ -372,7 +372,7 @@ public class CollectionUtil {
         if (isNullOrEmpty(objects)) {
             return null;
         }
-        if (index > objects.length) {
+        if (index >= objects.length) {
             return null;
         }
         return objects[index];
@@ -619,7 +619,7 @@ public class CollectionUtil {
      * The implementation is {@code HashSet} so iterating will become slow as you add to it.
      *
      * @param items Zero or more items of type T from which to create the Set
-     * @param <T> The type of Set to produce.
+     * @param <T>   The type of Set to produce.
      * @return A Set of type T containing the arguments.
      */
     public static <T> Set<T> asSet(T... items) {
@@ -707,9 +707,9 @@ public class CollectionUtil {
 
     /**
      * Returns the size of the of a Collection  or or -1 if c is null.
-     *
+     * <p/>
      * For example:
-     *
+     * <p/>
      * {@code If (CollectionUtil.size(c) <= 0)...}
      *
      * @param c The collection to test the size of.
