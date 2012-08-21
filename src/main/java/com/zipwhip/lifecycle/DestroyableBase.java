@@ -23,7 +23,7 @@ public abstract class DestroyableBase implements Destroyable {
 	protected Collection<Destroyable> destroyables = null;
 
 	@Override
-	public void destroy() {
+	public synchronized void destroy() {
 		if (this.destroyed) {
 			return;
 		}

@@ -16,7 +16,7 @@ import java.util.concurrent.Executor;
  * <p/>
  * A base class that simplifies the act of being observed
  */
-public class ObservableHelper<T> extends DestroyableBase implements Observable<T> {
+public class ObservableHelper<T> extends DestroyableBase implements Observable<T>, Observer<T> {
 
     private Executor executor;
     private final List<Observer<T>> observers = new CopyOnWriteArrayList<Observer<T>>();
@@ -93,4 +93,14 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
         }
     }
 
+    /**
+     * This allows you to forward events from one ObservableHelper to another. You can just nest them.
+     *
+     * @param sender The sender might not be the same object every time, so we'll let it just be object, rather than generics.
+     * @param item Rich object representing the notification.
+     */
+    @Override
+    public void notify(Object sender, T item) {
+        this.notifyObservers(sender, item);
+    }
 }
