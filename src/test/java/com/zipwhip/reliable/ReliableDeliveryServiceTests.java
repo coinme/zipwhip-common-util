@@ -48,14 +48,14 @@ public class ReliableDeliveryServiceTests {
         service.setWorkerLocator(new HashMap<String, ReliableDeliveryWorker>());
 
         //Add the three types of work units that we'll be processing to the work unit locator here.
-        service.getWorkerLocator().put(WORK_UNIT_SLEEP, new ReliableDeliveryWorker() {
+        service.getWorkerLocator().put(WORK_UNIT_SLEEP, new ReliableDeliveryWorker<SleepIntervalParameter>() {
             @Override
-            public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException {
+            public void validate(SleepIntervalParameter parameters) throws IllegalArgumentException {
                 validateSleepInterval(parameters);
             }
 
             @Override
-            public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {
+            public ReliableDeliveryResult execute(SleepIntervalParameter parameters) {
                 long sleepInterval = ((SleepIntervalParameter)parameters).getInterval();
                 try {
                     if (sleepInterval > 0) Thread.sleep(sleepInterval);
@@ -66,14 +66,14 @@ public class ReliableDeliveryServiceTests {
             }
         });
 
-        service.getWorkerLocator().put(WORK_UNIT_SLEEP_FAIL, new ReliableDeliveryWorker() {
+        service.getWorkerLocator().put(WORK_UNIT_SLEEP_FAIL, new ReliableDeliveryWorker<SleepIntervalParameter>() {
             @Override
-            public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException {
+            public void validate(SleepIntervalParameter parameters) throws IllegalArgumentException {
                 validateSleepInterval(parameters);
             }
 
             @Override
-            public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {
+            public ReliableDeliveryResult execute(SleepIntervalParameter parameters) {
                 try {
                     long sleepInterval = validateSleepInterval(parameters);
                     if (sleepInterval > 0) Thread.sleep(sleepInterval);
@@ -88,14 +88,14 @@ public class ReliableDeliveryServiceTests {
 
         });
 
-        service.getWorkerLocator().put(WORK_UNIT_SLEEP_FAIL_BLOCKING, new ReliableDeliveryWorker() {
+        service.getWorkerLocator().put(WORK_UNIT_SLEEP_FAIL_BLOCKING, new ReliableDeliveryWorker<SleepIntervalParameter>() {
             @Override
-            public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException {
+            public void validate(SleepIntervalParameter parameters) throws IllegalArgumentException {
                 validateSleepInterval(parameters);
             }
 
             @Override
-            public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {
+            public ReliableDeliveryResult execute(SleepIntervalParameter parameters) {
                 try {
                     long sleepInterval = validateSleepInterval(parameters);
                     if (sleepInterval > 0) Thread.sleep(sleepInterval);
@@ -109,14 +109,14 @@ public class ReliableDeliveryServiceTests {
             }
         });
 
-        service.getWorkerLocator().put(WORK_UNIT_INCREMENTER, new ReliableDeliveryWorker() {
+        service.getWorkerLocator().put(WORK_UNIT_INCREMENTER, new ReliableDeliveryWorker<EmptyReliableDeliveryParameter>() {
             @Override
-            public void validateParameters(ReliableDeliveryWorkParameters parameters) throws IllegalArgumentException {
+            public void validate(EmptyReliableDeliveryParameter parameters) throws IllegalArgumentException {
                 //To change body of implemented methods use File | Settings | File Templates.
             }
 
             @Override
-            public ReliableDeliveryResult executeWork(ReliableDeliveryWorkParameters parameters) {
+            public ReliableDeliveryResult execute(EmptyReliableDeliveryParameter parameters) {
                 try {
                     Thread.sleep(1000);
                 } catch (InterruptedException e){
@@ -344,7 +344,7 @@ public class ReliableDeliveryServiceTests {
 
 
     //Utility method for properly extracting the sleep interval from the parameters list.
-    private static long validateSleepInterval(ReliableDeliveryWorkParameters params) throws IllegalArgumentException {
+    private static long validateSleepInterval(SleepIntervalParameter params) throws IllegalArgumentException {
 
         if (params == null) throw new IllegalArgumentException("No sleep interval provided");
         if (!(params instanceof SleepIntervalParameter)) throw new IllegalArgumentException("Sleep interval is not a long.");

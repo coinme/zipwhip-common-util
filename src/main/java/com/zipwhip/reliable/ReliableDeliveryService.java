@@ -2,6 +2,7 @@ package com.zipwhip.reliable;
 
 import com.zipwhip.exception.DatabaseException;
 import com.zipwhip.reliable.retry.RetryStrategy;
+import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.RandomUtils;
 import org.apache.log4j.Logger;
 
@@ -55,7 +56,7 @@ public final class ReliableDeliveryService {
      * @throws IllegalArgumentException If the worker associated with the given work type determines that the supplied parameters are invalid.
      * @throws java.io.IOException If an error occurs while attempting to serialize the parameters object.
      */
-    public String enqueueWork(String type, ReliableDeliveryWorkParameters parameters) throws DatabaseException, IllegalArgumentException, IOException {
+    public String enqueueWork(String type, Serializable parameters) throws DatabaseException, IllegalArgumentException, IOException {
         if (this.database == null){
             throw new IllegalStateException("A backing database has not been supplied.");
         } else if (this.defaultRetryStrategy == null){
@@ -69,7 +70,7 @@ public final class ReliableDeliveryService {
         }
 
         //Confirm that the supplied parameters are valid.
-        worker.validateParameters(parameters);
+        worker.validate(parameters);
         byte[] paramBytes = serializeParameters(parameters);
 
         synchronized (this){
@@ -100,6 +101,10 @@ public final class ReliableDeliveryService {
                 heartbeatCount++;
 
                 workUnits = this.database.getIncompleteWork(new HashSet<String>());
+                if (CollectionUtil.isNullOrEmpty(workUnits)){
+                    //If the database doesn't return anything to work on, don't proceed.  Return here, and let the finally block do it's thing.
+                    return;
+                }
 
                 //Add each of the work units that we've received to the activeJobs list.  This is an added failsafe, in case
                 //a subsequent overlapping heartbeat returns the same job a second time while the first job is already active.
@@ -109,8 +114,9 @@ public final class ReliableDeliveryService {
 
                 //Mark each of the items as being worked on in the database.  This is because we may have multiple heartbeats running
                 //at the same time, and we don't want two different heartbeats to pick up the same unit of work.
-                for (int i=0; i<workUnits.size(); i++){
-                    ReliableDeliveryWork workUnit = workUnits.get(i);
+                Iterator<ReliableDeliveryWork> i = workUnits.iterator();
+                while (i.hasNext()){
+                    ReliableDeliveryWork workUnit = i.next();
                     workUnit.setWorkingTimestamp(System.currentTimeMillis());
                     try {
                         this.database.update(workUnit);
@@ -119,9 +125,7 @@ public final class ReliableDeliveryService {
                         //If, for some unknown reason, we are unable to update this particular work unit in the database,
                         //drop it from the list of work units, as we shouldn't process something that we can't mark in the database
                         //as being actively worked on.
-                        workUnits.remove(i);
-                        i--;
-                        continue;
+                        i.remove();
                     }
                 }
 
@@ -171,10 +175,10 @@ public final class ReliableDeliveryService {
         try {
             ReliableDeliveryWorker worker = this.workerLocator.get(work.getWorkType());
             if (worker != null){
-                ReliableDeliveryWorkParameters parameters = deserializeParameters(work.getParameters());
+                Serializable parameters = deserializeParameters(work.getParameters());
                 
                 try {
-                    worker.validateParameters(parameters);
+                    worker.validate(parameters);
                 } catch (IllegalArgumentException e){
                     //An exception is caught here if, and only if, the applicable parameters have been previously validated
                     //serialized, and have failed validation, only after being unserialized.  As such, there's not a lot
@@ -183,7 +187,7 @@ public final class ReliableDeliveryService {
                     return ReliableDeliveryResult.FAILSAFE_BROKEN;
                 }
 
-                ReliableDeliveryResult result = worker.executeWork(parameters);
+                ReliableDeliveryResult result = worker.execute(parameters);
 
                 //If the result that we get back from the worker is not a valid return type (An example of such
                 //a return type is ReliableDeliveryResult.NOT_ATTEMPTED), then there's not a lot we can do.
@@ -225,7 +229,7 @@ public final class ReliableDeliveryService {
      * @param result
      */
     private void processWorkUnitResult(ReliableDeliveryWork work, ReliableDeliveryResult result){
-        RetryStrategy retryStrategy  = this.getApplicableRetryStrategy(work.getWorkType());
+        RetryStrategy retryStrategy  = this.getRetryStrategy(work.getWorkType());
 
         //Now that the work has been completed, update the necessary values in the work unit accordingly, and save the work unit back to
         //the database.
@@ -258,19 +262,19 @@ public final class ReliableDeliveryService {
      * @param workUnits
      */
     private void removeExcludedWorkUnits(List<ReliableDeliveryWork> workUnits){
-        for (int i=0; i<workUnits.size(); i++){
-            boolean skipWorkUnit = false;
+        Iterator<ReliableDeliveryWork> i = workUnits.iterator();
+        while (i.hasNext()){
+            ReliableDeliveryWork toCheck = i.next();
 
             //If we're already working on the given work unit, skip it.
-            skipWorkUnit |= activeJobs.contains(workUnits.get(i).getUniqueKey());
+            boolean skipWorkUnit = activeJobs.contains(toCheck.getUniqueKey());
 
             //If the work unit has already been completed (For any reason) skip it.
-            skipWorkUnit |= workUnits.get(i).getDateCompleted() > 0;
+            skipWorkUnit |= toCheck.getDateCompleted() > 0;
 
             if (skipWorkUnit){
+                i.remove();
                 workUnits.remove(i);
-                i--;
-                continue;
             }
         }
     }
@@ -295,7 +299,7 @@ public final class ReliableDeliveryService {
         }
     }
 
-    private RetryStrategy getApplicableRetryStrategy(String workType){
+    private RetryStrategy getRetryStrategy(String workType){
         if (this.customRetryStrategies == null || !this.customRetryStrategies.containsKey(workType)) return this.defaultRetryStrategy;
         return this.customRetryStrategies.get(workType);
     }
@@ -306,7 +310,7 @@ public final class ReliableDeliveryService {
      * @return
      * @throws java.io.NotSerializableException
      */
-    private byte[] serializeParameters(ReliableDeliveryWorkParameters params) throws NotSerializableException {
+    private byte[] serializeParameters(Serializable params) throws NotSerializableException {
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             new ObjectOutputStream(bos).writeObject(params);
@@ -323,8 +327,8 @@ public final class ReliableDeliveryService {
      * @return
      * @throws Exception
      */
-    private ReliableDeliveryWorkParameters deserializeParameters(byte[] bytes) throws Exception {
-        return (ReliableDeliveryWorkParameters)new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
+    private Serializable deserializeParameters(byte[] bytes) throws Exception {
+        return (Serializable)new ObjectInputStream(new ByteArrayInputStream(bytes)).readObject();
     }
 
     /**
