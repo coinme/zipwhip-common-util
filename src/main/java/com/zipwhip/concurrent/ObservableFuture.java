@@ -2,12 +2,13 @@ package com.zipwhip.concurrent;
 
 import com.zipwhip.events.Observer;
 
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
  * An interface that represents a unit of work that will
  */
-public interface ObservableFuture<V> {
+public interface ObservableFuture<V> extends Future<V> {
 
     /**
      * @return {@code true} if and only if this future is
