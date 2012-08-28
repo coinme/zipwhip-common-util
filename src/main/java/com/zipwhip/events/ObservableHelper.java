@@ -27,7 +27,7 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
 
     public ObservableHelper(Executor executor) {
         if (executor == null){
-            this.executor = new SimpleExecutor();
+            this.executor = SimpleExecutor.getInstance();
         } else {
             this.executor = executor;
         }
@@ -64,7 +64,12 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
         }
 
         for (Observer<T> observer : observers) {
-            notifyObserver(observer, sender, result);
+            try {
+                notifyObserver(observer, sender, result);
+            } catch (Exception e) {
+                // We don't have a logger, oh well...
+                e.printStackTrace();
+            }
         }
     }
 
