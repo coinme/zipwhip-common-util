@@ -244,7 +244,7 @@ public class InternationalNumberUtil {
             Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(mobileNumber, usersRegionCode);
             return PhoneNumberUtil.getInstance().format(phoneNumber, format);
         } catch (NumberParseException e) {
-            LOGGER.error("==X Failed to parse mobile number, returning the number \"as is\"", e);
+            LOGGER.error("==X Failed to parse mobile number, returning the number \"as is\": " + mobileNumber, e);
             return mobileNumber;
         }
     }
