@@ -24,10 +24,15 @@ public interface ObservableFuture<V> extends Future<V> {
     boolean isCancelled();
 
     /**
-     * @return {@code true} if and only if the I/O operation was completed
+     * @return {@code true} if and only if the operation was completed
      *         successfully.
      */
     boolean isSuccess();
+
+    /**
+     * @return {@code true} if and only if the operation failed.
+     */
+    boolean isFailed();
 
     /**
      * Returns the cause of the failed I/O operation if the I/O operation has

@@ -43,6 +43,11 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
+    public boolean isFailed() {
+        return cause != null;
+    }
+
+    @Override
     public Throwable getCause() {
         return cause;
     }
