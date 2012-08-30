@@ -177,6 +177,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     private void notifyObservers() {
         observableHelper.notifyObservers(this.sender, this);
+        observableHelper.destroy();
     }
 
 }
