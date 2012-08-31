@@ -3,6 +3,7 @@ package com.zipwhip.events;
 import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.DestroyableBase;
 import com.zipwhip.util.CollectionUtil;
+import com.zipwhip.util.StringUtil;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,16 +19,28 @@ import java.util.concurrent.Executor;
  */
 public class ObservableHelper<T> extends DestroyableBase implements Observable<T>, Observer<T> {
 
+    private String name;
     private Executor executor;
     private final List<Observer<T>> observers = new CopyOnWriteArrayList<Observer<T>>();
 
     public ObservableHelper() {
-        this(null);
+        this(null, null);
     }
 
     public ObservableHelper(Executor executor) {
+        this(null, executor);
+    }
+
+    public ObservableHelper(String name) {
+        this(name, null);
+    }
+
+    public ObservableHelper(String name, Executor executor) {
+
+        this.name = name;
+
         if (executor == null){
-            this.executor = new SimpleExecutor();
+            this.executor = SimpleExecutor.getInstance();
         } else {
             this.executor = executor;
         }
@@ -64,7 +77,12 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
         }
 
         for (Observer<T> observer : observers) {
-            notifyObserver(observer, sender, result);
+            try {
+                notifyObserver(observer, sender, result);
+            } catch (Exception e) {
+                // We don't have a logger, oh well...
+                e.printStackTrace();
+            }
         }
     }
 
@@ -103,4 +121,13 @@ public class ObservableHelper<T> extends DestroyableBase implements Observable<T
     public void notify(Object sender, T item) {
         this.notifyObservers(sender, item);
     }
+
+    @Override
+    public String toString() {
+        if (StringUtil.isNullOrEmpty(name)) {
+            return super.toString();
+        }
+        return StringUtil.join("[name=", name, ", number=", observers.size(), "]");
+    }
+
 }

@@ -12,6 +12,15 @@ import java.util.concurrent.Executor;
  */
 public class SimpleExecutor implements Executor {
 
+    private static SimpleExecutor instance;
+
+    public static SimpleExecutor getInstance() {
+        if (instance == null) {
+            instance = new SimpleExecutor();
+        }
+        return instance;
+    }
+
     @Override
     public void execute(Runnable command) {
         command.run();

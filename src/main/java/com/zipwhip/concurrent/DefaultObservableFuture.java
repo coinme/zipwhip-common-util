@@ -3,9 +3,7 @@ package com.zipwhip.concurrent;
 import com.zipwhip.events.ObservableHelper;
 import com.zipwhip.events.Observer;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  *
@@ -45,6 +43,11 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
+    public boolean isFailed() {
+        return cause != null;
+    }
+
+    @Override
     public Throwable getCause() {
         return cause;
     }
@@ -65,7 +68,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
-    public boolean setSuccess(V result) {
+    public synchronized boolean setSuccess(V result) {
         if (isDone()) {
             return false;
         }
@@ -81,7 +84,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
-    public boolean setFailure(Throwable cause) {
+    public synchronized boolean setFailure(Throwable cause) {
         if (isDone()){
             return false;
         }
@@ -156,12 +159,30 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
         return this.isDone();
     }
 
+    @Override
+    public V get() throws InterruptedException, ExecutionException {
+        this.await();
+        return result;
+    }
+
+    @Override
+    public V get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
+        this.await(l, timeUnit);
+        return result;
+    }
+
+    @Override
+    public boolean cancel(boolean b) {
+        return cancel();
+    }
+
     private void notifyObserver(Observer<ObservableFuture<V>> observer) {
         observableHelper.notifyObserver(observer, this.sender, this);
     }
 
     private void notifyObservers() {
         observableHelper.notifyObservers(this.sender, this);
+        observableHelper.destroy();
     }
 
 }

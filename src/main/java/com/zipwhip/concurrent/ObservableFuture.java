@@ -2,12 +2,13 @@ package com.zipwhip.concurrent;
 
 import com.zipwhip.events.Observer;
 
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 /**
  * An interface that represents a unit of work that will
  */
-public interface ObservableFuture<V> {
+public interface ObservableFuture<V> extends Future<V> {
 
     /**
      * @return {@code true} if and only if this future is
@@ -23,10 +24,15 @@ public interface ObservableFuture<V> {
     boolean isCancelled();
 
     /**
-     * @return {@code true} if and only if the I/O operation was completed
+     * @return {@code true} if and only if the operation was completed
      *         successfully.
      */
     boolean isSuccess();
+
+    /**
+     * @return {@code true} if and only if the operation failed.
+     */
+    boolean isFailed();
 
     /**
      * Returns the cause of the failed I/O operation if the I/O operation has
