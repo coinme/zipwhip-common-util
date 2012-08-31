@@ -68,7 +68,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
-    public boolean setSuccess(V result) {
+    public synchronized boolean setSuccess(V result) {
         if (isDone()) {
             return false;
         }
@@ -84,7 +84,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
-    public boolean setFailure(Throwable cause) {
+    public synchronized boolean setFailure(Throwable cause) {
         if (isDone()){
             return false;
         }
