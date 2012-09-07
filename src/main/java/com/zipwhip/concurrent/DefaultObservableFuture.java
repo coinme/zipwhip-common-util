@@ -43,6 +43,11 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
+    public boolean isFailed() {
+        return cause != null;
+    }
+
+    @Override
     public Throwable getCause() {
         return cause;
     }
@@ -63,7 +68,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
-    public boolean setSuccess(V result) {
+    public synchronized boolean setSuccess(V result) {
         if (isDone()) {
             return false;
         }
@@ -79,7 +84,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
-    public boolean setFailure(Throwable cause) {
+    public synchronized boolean setFailure(Throwable cause) {
         if (isDone()){
             return false;
         }
@@ -111,10 +116,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     @Override
     public void removeObserver(Observer<ObservableFuture<V>> observer) {
-        if (isDone()){
-            notifyObserver(observer);
-            return;
-        }
+        // remove it regardless of completion. Otherwise is infinite loop if observer removes self.
 
         observableHelper.removeObserver(observer);
     }
@@ -182,6 +184,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     private void notifyObservers() {
         observableHelper.notifyObservers(this.sender, this);
+        observableHelper.destroy();
     }
 
 }
