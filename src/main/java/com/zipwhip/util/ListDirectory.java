@@ -17,7 +17,7 @@ public class ListDirectory <TKey, TValue> extends GenericLocalDirectory<TKey, TV
 	public ListDirectory() {
 		super(new Factory<Collection<TValue>>() {
 			@Override
-			public Collection<TValue> create() throws Exception {
+			public Collection<TValue> create() {
 				return Collections.synchronizedList(new ArrayList<TValue>());
 			}
 		});

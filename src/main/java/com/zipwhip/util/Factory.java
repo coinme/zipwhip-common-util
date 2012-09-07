@@ -16,8 +16,8 @@ public interface Factory<T> extends Serializable {
 	 * Create an item via our factory strategy.
 	 *
 	 * @return the new item that u just created
-	 * @throws Exception If it was unable to create an instance
+	 * @throws RuntimeException If it was unable to create an instance
 	 */
-	T create() throws Exception;
+	T create();
 
 }
