@@ -116,10 +116,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     @Override
     public void removeObserver(Observer<ObservableFuture<V>> observer) {
-        if (isDone()){
-            notifyObserver(observer);
-            return;
-        }
+        // remove it regardless of completion. Otherwise is infinite loop if observer removes self.
 
         observableHelper.removeObserver(observer);
     }
