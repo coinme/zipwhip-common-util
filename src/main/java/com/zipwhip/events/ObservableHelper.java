@@ -1,7 +1,7 @@
 package com.zipwhip.events;
 
 import com.zipwhip.executors.SimpleExecutor;
-import com.zipwhip.lifecycle.DestroyableBase;
+import com.zipwhip.lifecycle.CascadingDestroyableBase;
 import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.StringUtil;
 
@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
  * <p/>
  * A base class that simplifies the act of being observed
  */
-public class ObservableHelper<T> extends DestroyableBase implements Observable<T>, Observer<T> {
+public class ObservableHelper<T> extends CascadingDestroyableBase implements Observable<T>, Observer<T> {
 
     private String name;
     private Executor executor;
