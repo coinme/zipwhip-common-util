@@ -10,8 +10,10 @@ import java.io.Serializable;
  * An interface which defines a class capable of processing ReliableDeliveryWork.  The mapping of work workers is handled in the ReliableDeliveryService.
  */
 public interface ReliableDeliveryWorker<T extends Serializable> {
+
     /**
      * Validate the supplied parameters.  Validation is run when a work unit is first enqueued, as well as before being ran.
+     *
      * @param parameters The parameters to be validated.
      * @throws IllegalArgumentException To be thrown if the supplied parameters are invalid.
      */
@@ -19,6 +21,7 @@ public interface ReliableDeliveryWorker<T extends Serializable> {
 
     /**
      * Handles the processing of the work unit.
+     *
      * @param parameters The parameters necessary to process the supplied work.  In situations where said parameters
      *                   are sent into by way of the ReliableDeliveryService, all parameters have been pre-validated
      *                   before being submitted to this method.

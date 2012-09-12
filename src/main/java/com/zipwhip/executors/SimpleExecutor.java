@@ -18,7 +18,12 @@ public class SimpleExecutor extends AbstractExecutorService {
 
     public static SimpleExecutor getInstance() {
         if (instance == null) {
-            instance = new SimpleExecutor();
+            instance = new SimpleExecutor() {
+                @Override
+                public void shutdown() {
+                    throw new RuntimeException("Cannot shutdown the shared instance");
+                }
+            };
         }
         return instance;
     }

@@ -4,6 +4,8 @@ import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.CascadingDestroyableBase;
 import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.StringUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -18,6 +20,8 @@ import java.util.concurrent.Executor;
  * A base class that simplifies the act of being observed
  */
 public class ObservableHelper<T> extends CascadingDestroyableBase implements Observable<T>, Observer<T> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObservableHelper.class);
 
     private String name;
     private Executor executor;
@@ -79,8 +83,9 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
         for (Observer<T> observer : observers) {
             try {
                 notifyObserver(observer, sender, result);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 // We don't have a logger, oh well...
+                LOGGER.error(String.format("Got an exception trying to notifyObserver %s of [%s, %s]:", observer, sender, result), e);
                 e.printStackTrace();
             }
         }

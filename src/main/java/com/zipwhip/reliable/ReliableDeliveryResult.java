@@ -38,6 +38,7 @@ public enum ReliableDeliveryResult {
     private boolean allowsReattempt;
     private boolean successful;
     private boolean validReturnValue;
+
     private ReliableDeliveryResult(int intValue, boolean successful, boolean allowsReattempt, boolean validReturnValue){
         this.intValue = intValue;
         this.allowsReattempt = allowsReattempt;

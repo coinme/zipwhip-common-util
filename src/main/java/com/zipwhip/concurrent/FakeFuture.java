@@ -1,4 +1,4 @@
-package com.zipwhip.executors;
+package com.zipwhip.concurrent;
 
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
