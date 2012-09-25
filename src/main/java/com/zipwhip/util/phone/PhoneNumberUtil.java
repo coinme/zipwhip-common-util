@@ -20,7 +20,7 @@ import static com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat.NAT
 public class PhoneNumberUtil {
 
     private static final Logger LOGGER = Logger.getLogger(PhoneNumberUtil.class);
-    private static final com.google.i18n.phonenumbers.PhoneNumberUtil PHONE_NUMBER_UTIL = com.google.i18n.phonenumbers.PhoneNumberUtil.getInstance();
+    static final com.google.i18n.phonenumbers.PhoneNumberUtil PHONE_NUMBER_UTIL = com.google.i18n.phonenumbers.PhoneNumberUtil.getInstance();
     private static BasePhoneNumberParser<String> E_164_PARSER;
 
     public static final String REGION_CODE_US = "US";
