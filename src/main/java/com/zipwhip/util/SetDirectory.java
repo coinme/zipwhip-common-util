@@ -1,8 +1,8 @@
 package com.zipwhip.util;
 
-import com.zipwhip.lifecycle.DestroyableBase;
-
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.TreeSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +15,7 @@ public class SetDirectory<TKey, TValue> extends GenericLocalDirectory<TKey, TVal
     public SetDirectory() {
         super(new Factory<Collection<TValue>>() {
             @Override
-            public Collection<TValue> create() throws Exception {
+            public Collection<TValue> create() {
                 return Collections.synchronizedSet(new TreeSet<TValue>(COMPARATOR));
             }
         });

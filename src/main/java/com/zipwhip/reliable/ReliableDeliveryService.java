@@ -35,7 +35,8 @@ public final class ReliableDeliveryService {
     private double databaseCleaningRatePercentage = 5d;
     //The number of actively running heartbeats in the application.
     private int heartbeatCount = 0;
-    
+    private int maxAttemptCount = 100;
+
     public ReliableDeliveryService(){
 
     }
@@ -241,7 +242,7 @@ public final class ReliableDeliveryService {
             work.setFailedAttemptCount(work.getFailedAttemptCount()+1);
         }
 
-        if (!result.isAllowsReattempt() || !retryStrategy.continueReattempts(work.getFailedAttemptCount())){
+        if (!result.isAllowsReattempt() || work.getFailedAttemptCount() >= maxAttemptCount){
             //In this case, we will not be attempting this particular work unit, either because
             //the work unit said we should make no attempt to continue (Due to a business side error),
             //or the retry strategy is telling us to give up, because we've reached the limit of attempts made.

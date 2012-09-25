@@ -9,7 +9,7 @@
 
     <groupId>com.zipwhip</groupId>
     <artifactId>zipwhip-common-util</artifactId>
-    <version>1.60.1-SNAPSHOT</version>
+    <version>1.60.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>zipwhip-common-util</name>
@@ -63,6 +63,13 @@
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
             <version>1.2.12</version>
+        </dependency>
+        <dependency>
+          <groupId>org.slf4j</groupId>
+          <artifactId>slf4j-api</artifactId>
+          <version>1.6.4</version>
+          <scope>compile</scope>
+          <optional>true</optional>
         </dependency>
     </dependencies>
 

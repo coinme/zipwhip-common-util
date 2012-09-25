@@ -1,4 +1,4 @@
-package com.zipwhip.executors;
+package com.zipwhip.concurrent;
 
 import com.zipwhip.concurrent.DefaultObservableFuture;
 

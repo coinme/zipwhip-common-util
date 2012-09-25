@@ -116,10 +116,7 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     @Override
     public void removeObserver(Observer<ObservableFuture<V>> observer) {
-        if (isDone()){
-            notifyObserver(observer);
-            return;
-        }
+        // remove it regardless of completion. Otherwise is infinite loop if observer removes self.
 
         observableHelper.removeObserver(observer);
     }
@@ -142,7 +139,9 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
     @Override
     public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
 
-        doneCountDownLatch.await(timeout, unit);
+        if (!doneCountDownLatch.await(timeout, unit)) {
+            return false;
+        }
 
         return this.isDone();
     }
@@ -167,7 +166,10 @@ public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     @Override
     public V get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
-        this.await(l, timeUnit);
+        if (!this.await(l, timeUnit)) {
+            throw new TimeoutException("Didn't complete within " + l + " " + timeUnit);
+        }
+
         return result;
     }
 

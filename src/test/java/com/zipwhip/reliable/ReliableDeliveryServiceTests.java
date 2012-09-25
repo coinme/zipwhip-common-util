@@ -44,7 +44,7 @@ public class ReliableDeliveryServiceTests {
 
         service = new ReliableDeliveryService();
         service.setDatabase(database);
-        service.setDefaultRetryStrategy(new ConstantIntervalRetryStrategy(10, 2000)); //Make at most ten attempts, waiting 2 seconds inbetween.
+        service.setDefaultRetryStrategy(new ConstantIntervalRetryStrategy(2000)); //Make at most ten attempts, waiting 2 seconds inbetween.
         service.setWorkerLocator(new HashMap<String, ReliableDeliveryWorker>());
 
         //Add the three types of work units that we'll be processing to the work unit locator here.
