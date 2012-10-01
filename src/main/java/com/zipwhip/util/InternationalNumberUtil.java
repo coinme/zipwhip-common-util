@@ -3,15 +3,16 @@ package com.zipwhip.util;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
+import org.apache.log4j.Logger;
 
 /**
- * Created with IntelliJ IDEA.
  * User: jed
  * Date: 7/9/12
  * Time: 1:38 PM
  */
 public class InternationalNumberUtil {
 
+    private static final Logger LOGGER = Logger.getLogger(InternationalNumberUtil.class);
     // Region-code for the unknown region as defined internally in libphonenumber
     public static final String UNKNOWN_REGION = "ZZ";
 
@@ -160,20 +161,20 @@ public class InternationalNumberUtil {
     /**
      * @param mobileNumber The mobile number to be checked, which should be pre-cleaned (no spaces).
      * @return Whether or not the given number is internationally formatted, AND Is in the NANPA region (starts with +1)
-     * NOTE: This method calls isValidInternationalNumber, which means that NANPA numbers which link to invalid numbers
-     * (Such as those without a valid area code, or 555 numbers) will return false.
+     *         NOTE: This method calls isValidInternationalNumber, which means that NANPA numbers which link to invalid numbers
+     *         (Such as those without a valid area code, or 555 numbers) will return false.
      */
-    public static boolean isInternationalNumberNANPA(String mobileNumber){
+    public static boolean isInternationalNumberNANPA(String mobileNumber) {
         return isValidInternationalNumber(mobileNumber) && mobileNumber.startsWith("+1");
     }
 
     /**
      * @param mobileNumber The mobile number to be modified, which should be pre-cleaned (no spaces).
      * @return If the mobile number is internationally formatted, and in the NANPA region, returns the mobile number
-     * in the zipwhip domestic format (Without the preceding +1).  Otherwise, the mobile number is returned unchanged.
+     *         in the zipwhip domestic format (Without the preceding +1).  Otherwise, the mobile number is returned unchanged.
      */
-    public static String getZipwhipDomesticFromNANPAInternationalNumber(String mobileNumber){
-        if (isInternationalNumberNANPA(mobileNumber)){
+    public static String getZipwhipDomesticFromNANPAInternationalNumber(String mobileNumber) {
+        if (isInternationalNumberNANPA(mobileNumber)) {
             return mobileNumber.substring(2);
         } else {
             return mobileNumber;
@@ -238,11 +239,12 @@ public class InternationalNumberUtil {
         return getFormattedNumber(mobileNumber, defaultRegion, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
     }
 
-    protected static String getFormattedNumber(String mobileNumber, String usersRegionCode, PhoneNumberUtil.PhoneNumberFormat format) {
+    public static String getFormattedNumber(String mobileNumber, String usersRegionCode, PhoneNumberUtil.PhoneNumberFormat format) {
         try {
             Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(mobileNumber, usersRegionCode);
             return PhoneNumberUtil.getInstance().format(phoneNumber, format);
         } catch (NumberParseException e) {
+            LOGGER.error("==X Failed to parse mobile number, returning the number \"as is\": " + mobileNumber, e);
             return mobileNumber;
         }
     }
