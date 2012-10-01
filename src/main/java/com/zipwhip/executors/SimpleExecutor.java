@@ -1,7 +1,12 @@
 package com.zipwhip.executors;
 
+import com.zipwhip.lifecycle.Destroyable;
+import com.zipwhip.lifecycle.DestroyableBase;
+
 import java.util.List;
 import java.util.concurrent.AbstractExecutorService;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -14,18 +19,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class SimpleExecutor extends AbstractExecutorService {
 
-    private static SimpleExecutor instance;
+    private static SimpleExecutor INSTANCE;
+
+    private final CountDownLatch latch = new CountDownLatch(1);
 
     public static SimpleExecutor getInstance() {
-        if (instance == null) {
-            instance = new SimpleExecutor() {
+        if (INSTANCE == null) {
+            INSTANCE = new SimpleExecutor() {
                 @Override
                 public void shutdown() {
                     throw new RuntimeException("Cannot shutdown the shared instance");
                 }
             };
         }
-        return instance;
+        return INSTANCE;
     }
 
     private boolean destroyed = false;
@@ -37,12 +44,13 @@ public class SimpleExecutor extends AbstractExecutorService {
 
     @Override
     public void shutdown() {
-        destroyed = true;
+        latch.countDown();
     }
 
     @Override
     public List<Runnable> shutdownNow() {
         shutdown();
+
         return null;
     }
 
@@ -58,7 +66,12 @@ public class SimpleExecutor extends AbstractExecutorService {
 
     @Override
     public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException {
-        destroyed = true;
-        return true;
+        return latch.await(timeout, unit);
     }
+
+    @Override
+    public String toString() {
+        return "[SimpleExecutor]";
+    }
+
 }
