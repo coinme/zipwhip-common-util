@@ -5,6 +5,9 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import org.apache.log4j.Logger;
 
+import java.util.Set;
+import java.util.TreeSet;
+
 /**
  * User: jed
  * Date: 7/9/12
@@ -65,7 +68,6 @@ public class InternationalNumberUtil {
      * @return true if the number is valid.
      */
     public static boolean isValidInternationalNumber(String mobileNumber) {
-
         Phonenumber.PhoneNumber phoneNumber;
 
         try {
