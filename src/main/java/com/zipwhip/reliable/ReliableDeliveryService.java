@@ -4,7 +4,8 @@ import com.zipwhip.exceptions.DatabaseException;
 import com.zipwhip.reliable.retry.RetryStrategy;
 import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.RandomUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public final class ReliableDeliveryService {
 
-    private static final Logger logger = Logger.getLogger(ReliableDeliveryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReliableDeliveryService.class);
     
     //The database which holds all the relevant information about jobs to be worked on.
     private ReliableDeliveryDatabase database;
