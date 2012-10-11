@@ -3,10 +3,8 @@ package com.zipwhip.util;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.log4j.Logger;
-
-import java.util.Set;
-import java.util.TreeSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * User: jed
@@ -15,7 +13,7 @@ import java.util.TreeSet;
  */
 public class InternationalNumberUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(InternationalNumberUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InternationalNumberUtil.class);
     // Region-code for the unknown region as defined internally in libphonenumber
     public static final String UNKNOWN_REGION = "ZZ";
 
