@@ -132,9 +132,9 @@ public class CollectionUtil {
 
         int result = param.intValue();
 
-        if (result == -1) {
-            return null;
-        }
+        //if (result == -1) {
+        //    return null;
+        //}
 
         return result;
     }
@@ -158,9 +158,9 @@ public class CollectionUtil {
 
         long result = param.longValue();
 
-        if (result == -1L) {
-            return null;
-        }
+        //if (result == -1L) {
+        //    return null;
+        //}
 
         return result;
     }
@@ -171,9 +171,9 @@ public class CollectionUtil {
         if (param == null) {
             return null;
         }
-        if (param == -1L) {
-            return null;
-        }
+        //if (param == -1L) {
+        //    return null;
+        //}
 
         return new Date(param);
     }
