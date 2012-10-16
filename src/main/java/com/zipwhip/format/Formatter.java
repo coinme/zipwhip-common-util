@@ -1,4 +1,4 @@
-package com.zipwhip.util;
+package com.zipwhip.format;
 
 /**
  * Created with IntelliJ IDEA.

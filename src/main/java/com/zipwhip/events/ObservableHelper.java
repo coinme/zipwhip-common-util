@@ -3,11 +3,15 @@ package com.zipwhip.events;
 import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.CascadingDestroyableBase;
 import com.zipwhip.util.CollectionUtil;
+import com.zipwhip.util.HashCodeComparator;
 import com.zipwhip.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
@@ -25,7 +29,7 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
 
     private String name;
     private Executor executor;
-    private final List<Observer<T>> observers = new CopyOnWriteArrayList<Observer<T>>();
+    private final Set<Observer<T>> observers = Collections.synchronizedSet(new TreeSet<Observer<T>>(HashCodeComparator.getInstance()));
 
     public ObservableHelper() {
         this(null, null);
@@ -80,13 +84,15 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
             return;
         }
 
-        for (Observer<T> observer : observers) {
-            try {
-                notifyObserver(observer, sender, result);
-            } catch (Throwable e) {
-                // We don't have a logger, oh well...
-                LOGGER.error(String.format("Got an exception trying to notifyObserver %s of [%s, %s]:", observer, sender, result), e);
-                e.printStackTrace();
+        synchronized (observers) {
+            for (Observer<T> observer : observers) {
+                try {
+                    notifyObserver(observer, sender, result);
+                } catch (Throwable e) {
+                    // We don't have a logger, oh well...
+                    LOGGER.error(String.format("Got an exception trying to notifyObserver %s of [%s, %s]:", observer, sender, result), e);
+                    e.printStackTrace();
+                }
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.zipwhip.util;
 
 import com.google.i18n.phonenumbers.NumberParseException;
+import com.zipwhip.format.Formatter;
 
 /**
  * Created with IntelliJ IDEA.
