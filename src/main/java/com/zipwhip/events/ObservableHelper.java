@@ -3,16 +3,12 @@ package com.zipwhip.events;
 import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.CascadingDestroyableBase;
 import com.zipwhip.util.CollectionUtil;
-import com.zipwhip.util.HashCodeComparator;
 import com.zipwhip.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
 /**
@@ -29,7 +25,7 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
 
     private String name;
     private Executor executor;
-    private final Set<Observer<T>> observers = Collections.synchronizedSet(new TreeSet<Observer<T>>(HashCodeComparator.getInstance()));
+    private final Set<Observer<T>> observers = Collections.synchronizedSet(new CopyOnWriteArraySet<Observer<T>>());
 
     public ObservableHelper() {
         this(null, null);
@@ -44,7 +40,6 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
     }
 
     public ObservableHelper(String name, Executor executor) {
-
         this.name = name;
 
         if (executor == null){
@@ -79,7 +74,6 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
      * @param result the result that the observers will hear about.
      */
     public void notifyObservers(final Object sender, final T result) {
-
         if (CollectionUtil.isNullOrEmpty(observers)) {
             return;
         }
@@ -91,7 +85,6 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
                 } catch (Throwable e) {
                     // We don't have a logger, oh well...
                     LOGGER.error(String.format("Got an exception trying to notifyObserver %s of [%s, %s]:", observer, sender, result), e);
-                    e.printStackTrace();
                 }
             }
         }
