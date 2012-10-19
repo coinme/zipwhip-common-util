@@ -148,6 +148,14 @@ public class InternationalNumberUtil {
         return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
     }
 
+    public static String getNationalNumber(String e164) throws NumberParseException, IllegalArgumentException {
+        Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(e164, null);
+
+        String number = PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+
+        return PhoneNumberUtil.normalizeDigitsOnly(number);
+    }
+
     /**
      * Tells whether a given region code is associated with a NANP region.
      *
