@@ -42,7 +42,7 @@ public class MultipartFormatterAdapter extends FormatterAdapterBase<String> {
                 try {
                     part = super.format(part);
                 } catch (Exception e) {
-                    LOGGER.error("Weird exception! Ignoring.", e);
+                    LOGGER.debug("Error formatting - short code? " + part);
                 }
 
                 sb.append(",").append(part);
@@ -51,7 +51,7 @@ public class MultipartFormatterAdapter extends FormatterAdapterBase<String> {
             try {
                 sb.append(super.format(input));
             } catch (Exception e) {
-                LOGGER.error("Weird exception! Ignoring.", e);
+                LOGGER.debug("Error formatting - short code? " + input);
                 sb.append(input);
             }
         }
