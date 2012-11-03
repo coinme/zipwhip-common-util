@@ -24,7 +24,7 @@ public class MultipartFormatterAdapter extends FormatterAdapterBase<String> {
             try {
                 return super.format(input);
             } catch (Exception e) {
-                LOGGER.error("Weird exception! Ignoring.", e);
+                LOGGER.debug("Error formatting - null input");
             }
 
             return input;
