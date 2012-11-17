@@ -103,6 +103,11 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
             public void run() {
                 observer.notify(sender, result);
             }
+
+            @Override
+            public String toString() {
+                return String.format("[Observer: %s, result: %s]", observer.toString(), result);
+            }
         });
     }
 
