@@ -1,4 +1,4 @@
-package com.zipwhip.util;
+package com.zipwhip.format;
 
 import java.text.DateFormat;
 import java.text.FieldPosition;

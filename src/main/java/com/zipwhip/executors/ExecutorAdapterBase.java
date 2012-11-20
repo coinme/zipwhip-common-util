@@ -102,7 +102,7 @@ public abstract class ExecutorAdapterBase extends AbstractExecutorService implem
     @Override
     public String toString() {
         if (executor == null) {
-            return String.format("[%s: null]", this.getClass().getCanonicalName());
+            return String.format("[%s]", this.getClass().getCanonicalName());
         }
 
         return String.format("[%s: %s]", this.getClass().getCanonicalName(), executor.toString());

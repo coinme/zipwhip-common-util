@@ -1,5 +1,7 @@
 package com.zipwhip.events;
 
+import java.util.concurrent.CountDownLatch;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jed
@@ -14,6 +16,7 @@ public class MockObserver<T> implements Observer<T> {
     private T lastItem;
     private boolean called;
     private int hitCount;
+    private CountDownLatch latch = new CountDownLatch(1);
 
     @Override
     public void notify(Object sender, T item) {
@@ -21,6 +24,7 @@ public class MockObserver<T> implements Observer<T> {
         this.lastItem = item;
         this.called = true;
         this.hitCount++;
+        this.latch.countDown();
     }
 
     public Object getLastSender() {
@@ -55,4 +59,7 @@ public class MockObserver<T> implements Observer<T> {
         this.hitCount = hitCount;
     }
 
+    public CountDownLatch getLatch() {
+        return latch;
+    }
 }

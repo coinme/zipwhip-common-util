@@ -1,10 +1,11 @@
 package com.zipwhip.reliable;
 
-import com.zipwhip.exception.DatabaseException;
+import com.zipwhip.exceptions.DatabaseException;
 import com.zipwhip.reliable.retry.RetryStrategy;
 import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.RandomUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
@@ -18,7 +19,7 @@ import java.util.*;
  */
 public final class ReliableDeliveryService {
 
-    private static final Logger logger = Logger.getLogger(ReliableDeliveryService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReliableDeliveryService.class);
     
     //The database which holds all the relevant information about jobs to be worked on.
     private ReliableDeliveryDatabase database;
@@ -53,7 +54,7 @@ public final class ReliableDeliveryService {
      * @param parameters The parameters to be associated with the specified work unit.
      * @return The unique key of the newly enqueued work unit.
      * @throws IllegalStateException If the database or default retry strategy are not defined, or if there is no equivalent worker for the supplied work type.
-     * @throws com.zipwhip.exception.DatabaseException If an error occurs saving the new work unit to the database.
+     * @throws com.zipwhip.exceptions.DatabaseException If an error occurs saving the new work unit to the database.
      * @throws IllegalArgumentException If the worker associated with the given work type determines that the supplied parameters are invalid.
      * @throws java.io.IOException If an error occurs while attempting to serialize the parameters object.
      */

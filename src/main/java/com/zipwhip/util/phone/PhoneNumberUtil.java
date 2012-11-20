@@ -4,7 +4,8 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.zipwhip.util.InternationalNumberUtil;
 import com.zipwhip.util.StringUtil;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Locale;
 import java.util.Set;
@@ -19,7 +20,7 @@ import static com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat.NAT
  */
 public class PhoneNumberUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(PhoneNumberUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhoneNumberUtil.class);
     static final com.google.i18n.phonenumbers.PhoneNumberUtil PHONE_NUMBER_UTIL = com.google.i18n.phonenumbers.PhoneNumberUtil.getInstance();
     private static BasePhoneNumberParser<String> E_164_PARSER;
 

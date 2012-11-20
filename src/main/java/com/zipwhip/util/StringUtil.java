@@ -3,10 +3,7 @@ package com.zipwhip.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,6 +70,7 @@ public class StringUtil {
             out[0] = s;
             return out;
         }
+
         return s.split(regex);
     }
 
@@ -172,6 +170,20 @@ public class StringUtil {
 
     public static boolean exists(String string) {
         return !isNullOrEmpty(string);
+    }
+
+    public static boolean anyNullOrEmpty(String... strings) {
+        if (CollectionUtil.isNullOrEmpty(strings)) {
+            return true;
+        }
+
+        for (String string : strings) {
+            if (StringUtil.isNullOrEmpty(string)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static boolean isNullOrEmpty(String string) {
@@ -430,6 +442,36 @@ public class StringUtil {
             } catch (IOException ignore) {
             }
         }
+    }
+
+    /**
+     * Takes a delimited values string and returns is as a set
+     *
+     * @param string
+     * @param delimiter
+     * @return Set<String>
+     */
+    public static Set<String> splitUnique(String string, String delimiter) {
+        if (StringUtil.isNullOrEmpty(string) || StringUtil.isNullOrEmpty(delimiter)) {
+            return null;
+        }
+
+        String[] toArray = string.split(delimiter);
+        if (CollectionUtil.isNullOrEmpty(toArray)) {
+            return null;
+        }
+
+        Set<String> result = new HashSet<String>(toArray.length);
+        for (String value : toArray) {
+            // Don't allow blank entries in the set
+            if (StringUtil.isNullOrEmpty(value)) {
+                continue;
+            }
+
+            result.add(value);
+        }
+
+        return result;
     }
 
 }

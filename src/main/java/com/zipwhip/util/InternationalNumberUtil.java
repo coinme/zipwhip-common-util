@@ -3,7 +3,8 @@ package com.zipwhip.util;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * User: jed
@@ -12,7 +13,7 @@ import org.apache.log4j.Logger;
  */
 public class InternationalNumberUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(InternationalNumberUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InternationalNumberUtil.class);
     // Region-code for the unknown region as defined internally in libphonenumber
     public static final String UNKNOWN_REGION = "ZZ";
 
@@ -65,7 +66,6 @@ public class InternationalNumberUtil {
      * @return true if the number is valid.
      */
     public static boolean isValidInternationalNumber(String mobileNumber) {
-
         Phonenumber.PhoneNumber phoneNumber;
 
         try {
@@ -146,6 +146,14 @@ public class InternationalNumberUtil {
         }
 
         return PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.E164);
+    }
+
+    public static String getNationalNumber(String e164) throws NumberParseException, IllegalArgumentException {
+        Phonenumber.PhoneNumber phoneNumber = PhoneNumberUtil.getInstance().parse(e164, null);
+
+        String number = PhoneNumberUtil.getInstance().format(phoneNumber, PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+
+        return PhoneNumberUtil.normalizeDigitsOnly(number);
     }
 
     /**

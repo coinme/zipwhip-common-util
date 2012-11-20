@@ -1,6 +1,6 @@
 package com.zipwhip.reliable;
 
-import com.zipwhip.exception.DatabaseException;
+import com.zipwhip.exceptions.DatabaseException;
 
 import java.util.List;
 import java.util.Set;
@@ -21,7 +21,7 @@ public interface ReliableDeliveryDatabase {
      * @param type
      * @param params
      * @return
-     * @throws com.zipwhip.exception.DatabaseException
+     * @throws com.zipwhip.exceptions.DatabaseException
      */
     public String enqueue(String type, byte[] params) throws DatabaseException;
 
@@ -47,7 +47,7 @@ public interface ReliableDeliveryDatabase {
      * Updates a designated work unit, based on the work unit's unique key.  In situations where an attempt
      * is made to update an entry in the database for which there is no matching unique key, a DatabaseException is thrown.
      * @param work The work unit whose changes are to be saved in the database.
-     * @throws com.zipwhip.exception.DatabaseException If an error occurs while updating the supplied value.
+     * @throws com.zipwhip.exceptions.DatabaseException If an error occurs while updating the supplied value.
      */
     public void update(ReliableDeliveryWork work) throws DatabaseException;
 

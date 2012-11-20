@@ -1,6 +1,6 @@
 package com.zipwhip.reliable.database;
 
-import com.zipwhip.exception.DatabaseException;
+import com.zipwhip.exceptions.DatabaseException;
 import com.zipwhip.reliable.ReliableDeliveryResult;
 import com.zipwhip.reliable.ReliableDeliveryWork;
 import org.junit.Assert;

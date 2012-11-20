@@ -1,4 +1,4 @@
-package com.zipwhip.exception;
+package com.zipwhip.exceptions;
 
 /**
  * Created by IntelliJ IDEA.
