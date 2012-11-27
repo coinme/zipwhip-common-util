@@ -25,9 +25,9 @@ public class ProxyUtil {
     private static final String SOCKS_PROXY_PORT = "socksProxyPort";
     private static final String FTP_PROXY_HOST = "ftp.proxHost";
     private static final String FTP_PROXY_PORT = "ftp.proxyPort";
-    static final String DEFAULT_HTTP_TEST_URL = "http://network.zipwhip.com";
-    static final String DEFAULT_HTTPS_TEST_URL = "https://network.zipwhip.com";
-    static final String DEFAULT_SOCKETS_TEST_URL = "socket://network.zipwhip.com";
+    public static final String DEFAULT_HTTP_TEST_URL = "http://network.zipwhip.com";
+    public static final String DEFAULT_HTTPS_TEST_URL = "https://network.zipwhip.com";
+    public static final String DEFAULT_SOCKETS_TEST_URL = "socket://network.zipwhip.com";
     private static final ProxyConfig PROXY_CONFIG = new FileProxyConfig(new AutoProxyConfig(null));
 
     private ProxyUtil() {/*

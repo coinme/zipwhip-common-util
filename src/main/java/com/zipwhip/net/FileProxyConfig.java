@@ -74,7 +74,7 @@ public class FileProxyConfig extends ProxyConfigFallback {
     public List<Proxy> get() {
         if (!isProxyEnabled()) return super.get();
 
-        final Proxy httpProxy = read(null);
+        final Proxy httpProxy = read(ProxyType.HTTP);
         List<Proxy> proxies = null;
         if (httpProxy != null) {
             proxies = new ArrayList<Proxy>(1);
