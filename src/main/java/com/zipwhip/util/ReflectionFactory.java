@@ -1,14 +1,19 @@
 package com.zipwhip.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Michael
  * Date: 2/8/11
  * Time: 4:52 PM
  *
- * Uses refletion to create the object.
+ * Uses reflection to create the object.
  */
 public class ReflectionFactory<T> implements Factory<T> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReflectionFactory.class);
 
     Class<T> clazz;
 
@@ -20,9 +25,9 @@ public class ReflectionFactory<T> implements Factory<T> {
         try {
             return clazz.newInstance();
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            LOGGER.error("Exception instantiating class: " + e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error("IllegalAccessException instantiating class: " + e);
         }
         return null;
     }
