@@ -17,9 +17,9 @@ import java.util.TreeSet;
  */
 public abstract class CascadingDestroyableBase extends DestroyableBase implements CascadingDestroyable {
 
-    private static final Comparator<Destroyable> COMPARATOR = new HashCodeComparator<Destroyable>();
+    private static final Comparator<Destroyable> COMPARATOR = HashCodeComparator.getInstance();
 
-    protected Collection<Destroyable> destroyables = null;
+    private volatile Collection<Destroyable> destroyables = null;
 
     public void link(Destroyable destroyable) {
         if (destroyable == null) {
@@ -29,6 +29,8 @@ public abstract class CascadingDestroyableBase extends DestroyableBase implement
         if (destroyables == null) {
             synchronized (this) {
                 if (destroyables == null) {
+                    // need a set because add needs to be idempotent.
+                    // need a treeset because remove operations need to be fast.
                     destroyables = Collections.synchronizedSet(new TreeSet<Destroyable>(COMPARATOR));
                 }
             }
@@ -52,12 +54,14 @@ public abstract class CascadingDestroyableBase extends DestroyableBase implement
         }
 
         if (destroyables != null) {
-            synchronized (destroyables) {
-                for (Destroyable destroyable : destroyables) {
-                    destroyable.destroy();
+            synchronized (this) {
+                synchronized (destroyables) {
+                    for (Destroyable destroyable : destroyables) {
+                        destroyable.destroy();
+                    }
+                    destroyables.clear();
+                    destroyables = null;
                 }
-                destroyables.clear();
-                destroyables = null;
             }
         }
 

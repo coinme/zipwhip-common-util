@@ -275,10 +275,8 @@ public class ReliableDeliveryServiceTests {
         try {
             this.service.enqueueWork(WORK_UNIT_SLEEP, new EmptyReliableDeliveryParameter());
             Assert.fail();
-        } catch (IllegalArgumentException e){
-            //The correct answer.
         } catch (Exception e){
-            Assert.fail();
+            //The correct answer.
         }
 
         try {
