@@ -11,6 +11,7 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
 
     private static final int DEFAULT_STARTING_INTERVAL = 1000;
     private static final double DEFAULT_RETRY_MULTIPLIER = 1.5d;
+    private static final int DEFAULT_MAX_RETRIES = 15;
 
     private int maxAttemptCount;
     private int startingInterval;
@@ -22,22 +23,24 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
 
     /**
      * @param startingInterval The interval returned for getNextRetryInterval where failedAttemptCount == 1.
-     * @param retryMultiplier The amount by which we should multiply each subsequent interval after the first.
-     *                        After the first attempt, interval is (startingInterval).  After the second attempt, interval is (startingInterval * retryMultiplier).  Third attempt is (startingInterval * retryMultiplier^2)
-     *                        NOTE: In situations where the retry multiplier is less than one, we change the value to one (To prevent situations where the interval gets shorter and shorter after each call).
+     * @param retryMultiplier  The amount by which we should multiply each subsequent interval after the first.
+     *                         After the first attempt, interval is (startingInterval).  After the second attempt, interval is (startingInterval * retryMultiplier).  Third attempt is (startingInterval * retryMultiplier^2)
+     *                         NOTE: In situations where the retry multiplier is less than one, we change the value to one (To prevent situations where the interval gets shorter and shorter after each call).
      */
-    public ExponentialBackoffRetryStrategy(int startingInterval, double retryMultiplier){
-        this.maxAttemptCount = maxAttemptCount <= 0 ? 1 : maxAttemptCount;
+    public ExponentialBackoffRetryStrategy(int startingInterval, double retryMultiplier) {
+        this.maxAttemptCount = maxAttemptCount <= 0 ? DEFAULT_MAX_RETRIES : maxAttemptCount;
         this.startingInterval = startingInterval;
         this.retryMultiplier = retryMultiplier < 1 ? 1 : retryMultiplier;
     }
 
     @Override
     public long getNextRetryInterval(int attemptCount) {
-        if (attemptCount <= 1){
+        if (attemptCount <= 1) {
             return this.startingInterval;
+        } else if (attemptCount > maxAttemptCount) {
+            return (long) Math.floor(this.startingInterval * Math.pow(this.retryMultiplier, maxAttemptCount - 1));
         } else {
-            return (long)Math.floor(this.startingInterval * Math.pow(this.retryMultiplier, attemptCount - 1));
+            return (long) Math.floor(this.startingInterval * Math.pow(this.retryMultiplier, attemptCount - 1));
         }
     }
 }
