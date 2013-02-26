@@ -79,8 +79,8 @@ public class ProxyUtil {
             httpConn = (HttpURLConnection) urlConn;
             httpConn.setRequestMethod("HEAD");
             httpConn.setUseCaches(false);
-            httpConn.setConnectTimeout(2000);
-            httpConn.setReadTimeout(3000);
+            httpConn.setConnectTimeout(10000);
+            httpConn.setReadTimeout(11000);
             httpConn.connect();
             LOGGER.debug("==> Connected to: " + httpUrl + ", using proxy: " + proxy);
 
