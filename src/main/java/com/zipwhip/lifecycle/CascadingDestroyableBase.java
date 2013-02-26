@@ -19,7 +19,7 @@ public abstract class CascadingDestroyableBase extends DestroyableBase implement
 
     private static final Comparator<Destroyable> COMPARATOR = HashCodeComparator.getInstance();
 
-    private volatile Collection<Destroyable> destroyables = null;
+    protected volatile Collection<Destroyable> destroyables = null;
 
     public void link(Destroyable destroyable) {
         if (destroyable == null) {
