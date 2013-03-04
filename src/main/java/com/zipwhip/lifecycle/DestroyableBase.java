@@ -1,12 +1,5 @@
 package com.zipwhip.lifecycle;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.TreeSet;
-
-import com.zipwhip.util.HashCodeComparator;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Michael
@@ -17,29 +10,15 @@ import com.zipwhip.util.HashCodeComparator;
  */
 public abstract class DestroyableBase implements Destroyable {
 
-	private boolean destroyed;
+    private boolean destroyed;
 
-	private static final Comparator<Destroyable> COMPARATOR = new HashCodeComparator<Destroyable>();
-	protected Collection<Destroyable> destroyables = null;
-
-	@Override
+    @Override
 	public synchronized void destroy() {
 		if (this.destroyed) {
 			return;
 		}
+
 		this.destroyed = true;
-
-		if (destroyables != null) {
-			synchronized (destroyables) {
-
-				for (Destroyable destroyable : destroyables) {
-					destroyable.destroy();
-				}
-
-				destroyables.clear();
-			}
-			destroyables = null;
-		}
 
 		this.onDestroy();
 	}
@@ -51,10 +30,4 @@ public abstract class DestroyableBase implements Destroyable {
 		return this.destroyed;
 	}
 
-	protected synchronized void createDestroyableList()
-	{
-		if (destroyables == null) {
-			destroyables = Collections.synchronizedCollection(new TreeSet<Destroyable>(COMPARATOR));
-		}
-	}
 }

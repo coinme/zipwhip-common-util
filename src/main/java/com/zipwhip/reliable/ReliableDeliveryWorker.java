@@ -35,7 +35,4 @@ public interface ReliableDeliveryWorker<T extends Serializable> {
      */
     public ReliableDeliveryResult execute(T parameters);
 
-
-
-    
 }

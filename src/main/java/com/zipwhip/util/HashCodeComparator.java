@@ -13,15 +13,7 @@ import java.util.Comparator;
  */
 public class HashCodeComparator<T> implements Comparator<T>, Serializable {
 
-	private static HashCodeComparator instance;
-
-	public static HashCodeComparator getInstance() {
-		if (instance == null) {
-			instance = new HashCodeComparator();
-		}
-		return instance;
-	}
-
+	private static HashCodeComparator INSTANCE;
 	private static final long serialVersionUID = 1L;
 
 	@Override
@@ -47,5 +39,13 @@ public class HashCodeComparator<T> implements Comparator<T>, Serializable {
 		}
 	}
 
+    public static <T> HashCodeComparator<T> getInstance() {
+        if (INSTANCE == null) {
+            // NOTE: This is not thread safe. Different threads might get different values. That's ok.
+            INSTANCE = new HashCodeComparator<T>();
+        }
+
+        return INSTANCE;
+    }
 
 }
