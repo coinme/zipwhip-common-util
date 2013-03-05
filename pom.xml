@@ -10,7 +10,7 @@
 
     <groupId>com.zipwhip</groupId>
     <artifactId>zipwhip-common-util</artifactId>
-    <version>1.60.6-SNAPSHOT</version>
+    <version>1.60.7-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <name>zipwhip-common-util</name>
@@ -58,7 +58,7 @@
         <dependency>
             <groupId>com.googlecode.libphonenumber</groupId>
             <artifactId>libphonenumber</artifactId>
-            <version>4.9</version>
+            <version>5.3</version>
         </dependency>
         <dependency>
             <groupId>log4j</groupId>
