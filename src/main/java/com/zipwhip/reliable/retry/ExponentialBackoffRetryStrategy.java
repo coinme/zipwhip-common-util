@@ -11,7 +11,7 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
 
     private static final int DEFAULT_STARTING_INTERVAL = 1000;
     private static final double DEFAULT_RETRY_MULTIPLIER = 1.5d;
-    private static final int DEFAULT_MAX_RETRIES = 15;
+    private static final int DEFAULT_MAX_RETRIES = 19;
 
     private int maxAttemptCount;
     private int startingInterval;
