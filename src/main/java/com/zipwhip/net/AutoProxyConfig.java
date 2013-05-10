@@ -1,6 +1,7 @@
 package com.zipwhip.net;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.Proxy;
 import java.net.ProxySelector;
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public class AutoProxyConfig extends ProxyConfigFallback {
 
-    private static final Logger LOGGER = Logger.getLogger(AutoProxyConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AutoProxyConfig.class);
     private static final String JAVA_NET_USE_SYSTEM_PROXIES = "java.net.useSystemProxies";
     /**
      * URIs to test with. Order important here

@@ -1,7 +1,7 @@
 package com.zipwhip.net;
 
 import com.zipwhip.util.StringUtil;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class ProxyUtil {
 
-    private static final Logger LOGGER = Logger.getLogger(ProxyUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProxyUtil.class);
     private static final String HTTP_PROXY_HOST = "http.proxyHost";
     private static final String HTTP_PROXY_PORT = "http.proxyPort";
     private static final String HTTPS_PROXY_HOST = "https.proxyHost";

@@ -65,7 +65,6 @@ public class ThreadPoolManager {
      * @return ExecutorService to execute tasks.
      */
     public synchronized final ExecutorService getFixedThreadPool() {
-
         if (fixedThreadPool == null) {
             fixedThreadPool = Executors.newFixedThreadPool(MAX_POOL_SIZE);
         }
@@ -73,6 +72,7 @@ public class ThreadPoolManager {
         if (fixedThreadPool.isShutdown()) {
             fixedThreadPool = Executors.newFixedThreadPool(MAX_POOL_SIZE);
         }
+
         return fixedThreadPool;
     }
 

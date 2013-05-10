@@ -3,7 +3,8 @@ package com.zipwhip.net;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.lang.math.NumberUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,7 +19,7 @@ import java.util.Map;
  */
 public class FileProxyConfig extends ProxyConfigFallback {
 
-    private static final Logger LOGGER = Logger.getLogger(FileProxyConfig.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileProxyConfig.class);
     private static final String CONFIG_FILE = "proxy.properties";
     private static final String KEY_PROXY_DEFAULT = "proxy.default";
     private PropertiesConfiguration propertiesConfiguration = null;
