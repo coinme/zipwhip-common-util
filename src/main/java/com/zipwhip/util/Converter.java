@@ -11,8 +11,6 @@ package com.zipwhip.util;
  */
 public interface Converter<TSource, TUnderlying> {
 
-    TUnderlying convert(TSource source) throws Exception;
-
-    TSource restore(TUnderlying underlying) throws Exception;
+    TUnderlying convert(TSource source) throws DataConversionException;
 
 }
