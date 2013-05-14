@@ -21,7 +21,7 @@ public class SetDirectory<TKey, TValue> extends GenericLocalDirectory<TKey, TVal
         });
     }
 
-    public SetDirectory(Collection<TValue> values, InputCallable<TKey,TValue> sorter) {
+    public SetDirectory(Collection<TValue> values, InputCallable<TValue, TKey> sorter) {
         this();
 
         if (CollectionUtil.isNullOrEmpty(values)){

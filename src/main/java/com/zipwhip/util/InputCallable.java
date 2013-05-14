@@ -11,6 +11,6 @@ package com.zipwhip.util;
  */
 public interface InputCallable<K,V> {
 
-    K call(V input);
+    V call(K input);
 
 }
