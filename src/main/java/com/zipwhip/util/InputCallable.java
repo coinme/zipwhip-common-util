@@ -11,6 +11,6 @@ package com.zipwhip.util;
  */
 public interface InputCallable<K,V> {
 
-    V call(K input);
+    V call(K input) throws Exception;
 
 }

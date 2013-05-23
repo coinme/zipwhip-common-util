@@ -23,7 +23,7 @@ public class ListDirectory <TKey, TValue> extends GenericLocalDirectory<TKey, TV
 		});
 	}
 
-	public ListDirectory(Collection<TValue> values, InputCallable<TValue, TKey> sorter) {
+	public ListDirectory(Collection<TValue> values, InputCallable<TValue, TKey> sorter) throws Exception {
 		this();
 
 		if (CollectionUtil.isNullOrEmpty(values)){
