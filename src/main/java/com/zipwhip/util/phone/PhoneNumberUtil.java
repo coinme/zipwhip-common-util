@@ -7,6 +7,9 @@ import com.zipwhip.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Set;
 
@@ -23,9 +26,20 @@ public class PhoneNumberUtil {
     private static final Logger LOGGER = LoggerFactory.getLogger(PhoneNumberUtil.class);
     static final com.google.i18n.phonenumbers.PhoneNumberUtil PHONE_NUMBER_UTIL = com.google.i18n.phonenumbers.PhoneNumberUtil.getInstance();
     private static BasePhoneNumberParser<String> E_164_PARSER;
+    private static int ID = 0;
 
     public static final String REGION_CODE_US = "US";
     public static final String REGION_CODE_UNKNOWN = "ZZ";
+
+    static {
+        final Method[] ms = PHONE_NUMBER_UTIL.getClass().getMethods();
+        for (Method m : ms) {
+            if (m.getName().equals("getSupportedRegions")) {
+                ID = 1;
+                break;
+            }
+        }
+    }
 
     /*Utility class*/
     private PhoneNumberUtil() {
@@ -157,6 +171,25 @@ public class PhoneNumberUtil {
     }
 
     /**
+     * Formats the phone number based on the regionCode.
+     * if region code matches the region code derived from the phone number, the number is formatted int the National format.
+     * Otherwise, it uses the international format.
+     * <p/>
+     * Example:
+     * number "2062221234" and region code "US" is formatted as (206) 222-1234
+     * number "+12062221234" and region code "FR" is formatted as +1 206-222-1234
+     * number "2062221234" and region code "FR" is invalid and will return null.
+     *
+     * @param phoneNumber - phone number
+     * @param regionCode  - region code
+     * @return formatted phone number. null if we fail to parse the number/region code combination
+     */
+    public static String optPhoneNumberForDisplay(final String phoneNumber, final String regionCode, final String defaultVal) {
+        final String val = optPhoneNumberForDisplay(phoneNumber, regionCode);
+        return (StringUtil.isNullOrEmpty(val)) ? defaultVal : val;
+    }
+
+    /**
      * Formats the phone number to the e164 format based on the regionCode.
      *
      * @param phoneNumber - phone number
@@ -194,6 +227,18 @@ public class PhoneNumberUtil {
             LOGGER.error("==X Failed to parse " + phoneNumber + " and region code " + regionCode + " for display", e);
             return null;
         }
+    }
+
+    /**
+     * Formats the phone number to the e164 format based on the regionCode.
+     *
+     * @param phoneNumber - phone number
+     * @param regionCode  - region code
+     * @return e164 formatted number or (e164 number  - region code) for US or unsupported region codes. default value if we cannot parse the number.
+     */
+    public static String optPhoneNumberForStorage(final String phoneNumber, final String regionCode, final String defaultVal) {
+        final String val = optPhoneNumberForStorage(phoneNumber, regionCode);
+        return (StringUtil.isNullOrEmpty(val)) ? defaultVal : val;
     }
 
     /**
@@ -283,7 +328,19 @@ public class PhoneNumberUtil {
      * @return region codes
      */
     public static Set<String> getSupportedRegions() {
-        return PHONE_NUMBER_UTIL.getSupportedRegions();
+        // Some android sdks are packaged with older version of lib phone number and use getSupportedCountries instead of getSupportedRegions.
+        try {
+            final Set<String> regionCodes = ID == 1 ? PHONE_NUMBER_UTIL.getSupportedRegions() : (Set<String>) PHONE_NUMBER_UTIL.getClass().getMethod("getSupportedCountries").invoke(PHONE_NUMBER_UTIL);
+            if (regionCodes != null && !regionCodes.isEmpty()) return Collections.unmodifiableSet(regionCodes);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException(e);
+        } catch (InvocationTargetException e) {
+            throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(e);
+        }
+
+        return null;
     }
 
 }
