@@ -16,7 +16,7 @@ import org.apache.commons.pool.impl.GenericObjectPoolFactory;
  */
 public class PoolUtil {
 
-    private static final GenericObjectPool.Config CONFIG = new GenericObjectPool.Config();
+    public static final GenericObjectPool.Config CONFIG = new GenericObjectPool.Config();
 
     static {
         CONFIG.whenExhaustedAction = GenericObjectPool.WHEN_EXHAUSTED_GROW;
