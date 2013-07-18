@@ -141,7 +141,7 @@ public class NestedObservableFuture<T> extends DefaultObservableFuture<T> {
      * @param source
      * @param destination
      */
-    public static void syncFailure(ObservableFuture<?> source, NestedObservableFuture<?> destination) {
+    public static void syncFailure(ObservableFuture<?> source, ObservableFuture<?> destination) {
         if (!source.isDone()) {
             throw new IllegalStateException("The sourceFuture isn't done yet!");
         } else if (source.isSuccess()) {
