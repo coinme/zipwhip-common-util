@@ -1,8 +1,8 @@
 package com.zipwhip.util;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,7 +18,7 @@ public class ListDirectory <TKey, TValue> extends GenericLocalDirectory<TKey, TV
 		super(new Factory<Collection<TValue>>() {
 			@Override
 			public Collection<TValue> create() {
-				return Collections.synchronizedList(new ArrayList<TValue>());
+				return Collections.synchronizedList(new LinkedList<TValue>());
 			}
 		});
 	}
