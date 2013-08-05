@@ -1,5 +1,6 @@
 package com.zipwhip.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,15 +13,10 @@ import java.util.LinkedList;
  *
  * An in memory implementation backed by a {@code List} implementation.
  */
-public class ListDirectory <TKey, TValue> extends GenericLocalDirectory<TKey, TValue> {
+public class ListDirectory<TKey, TValue> extends GenericLocalDirectory<TKey, TValue> {
 
 	public ListDirectory() {
-		super(new Factory<Collection<TValue>>() {
-			@Override
-			public Collection<TValue> create() {
-				return Collections.synchronizedList(new LinkedList<TValue>());
-			}
-		});
+		super(new SFactory<TValue>());
 	}
 
 	public ListDirectory(Collection<TValue> values, InputCallable<TValue, TKey> sorter) throws Exception {
@@ -42,5 +38,13 @@ public class ListDirectory <TKey, TValue> extends GenericLocalDirectory<TKey, TV
 		}
 
 	}
+
+    private static class SFactory<T> implements Factory<Collection<T>>, Serializable {
+
+        @Override
+        public Collection<T> create() {
+            return Collections.synchronizedList(new LinkedList<T>());
+        }
+    }
 
 }
