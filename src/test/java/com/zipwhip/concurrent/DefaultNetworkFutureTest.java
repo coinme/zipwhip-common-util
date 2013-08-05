@@ -19,7 +19,7 @@ public class DefaultNetworkFutureTest {
 
     @Test
     public void testSuccess() throws Exception {
-        ObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
+        MutableObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
 
         assertVirgin(future);
 
@@ -56,7 +56,7 @@ public class DefaultNetworkFutureTest {
 
     @Test
     public void testThrowable() throws Exception {
-        ObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
+        MutableObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
 
         assertVirgin(future);
 

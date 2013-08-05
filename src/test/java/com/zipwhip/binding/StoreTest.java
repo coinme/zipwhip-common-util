@@ -1,6 +1,7 @@
 package com.zipwhip.binding;
 
 import com.zipwhip.concurrent.DefaultObservableFuture;
+import com.zipwhip.concurrent.MutableObservableFuture;
 import com.zipwhip.concurrent.ObservableFuture;
 import com.zipwhip.events.OrderedDataEventObject;
 import org.junit.Before;
@@ -97,7 +98,7 @@ public class StoreTest {
             @Override
             public ObservableFuture<Object> load() throws Exception {
 
-                final ObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
+                final MutableObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
 
                 Thread t = new Thread(new Runnable() {
                     @Override
