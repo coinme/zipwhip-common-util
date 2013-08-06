@@ -160,7 +160,6 @@ public class StoreTest {
         assertTrue(store.size() == 1);
         assertIndex(newRecord[0], 0);
         assertTrue(((SimpleRecord)store.getAt(0)).get(RecordTest.FIELD_NAME).equals("Michael Smyers"));
-
     }
 
     @Test
