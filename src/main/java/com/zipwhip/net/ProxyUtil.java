@@ -1,8 +1,10 @@
 package com.zipwhip.net;
 
 import com.zipwhip.util.StringUtil;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.*;
 import java.util.List;
@@ -28,7 +30,7 @@ public class ProxyUtil {
     public static final String DEFAULT_HTTP_TEST_URL = "http://network.zipwhip.com";
     public static final String DEFAULT_HTTPS_TEST_URL = "https://network.zipwhip.com";
     public static final String DEFAULT_SOCKETS_TEST_URL = "socket://network.zipwhip.com";
-    private static final ProxyConfig PROXY_CONFIG = new FileProxyConfig(new AutoProxyConfig(null));
+    private static ProxyConfig PROXY_CONFIG = null;
 
     private ProxyUtil() {/*
          * Utility class
@@ -41,6 +43,17 @@ public class ProxyUtil {
      * @return list of proxies, null if none detected
      */
     public static List<Proxy> getProxy() {
+        return getProxy(null);
+    }
+
+    /**
+     * Attempts to detect the proxy settings
+     *
+     * @param proxyConfigFile - proxy configuration properties file
+     * @return list of proxies, null if none detected
+     */
+    public static List<Proxy> getProxy(final File proxyConfigFile) {
+        if (PROXY_CONFIG == null) init(proxyConfigFile);
         return PROXY_CONFIG.get();
     }
 
@@ -203,5 +216,10 @@ public class ProxyUtil {
         System.clearProperty(FTP_PROXY_HOST);
         System.clearProperty(FTP_PROXY_PORT);
         LOGGER.debug("==> Clearing proxy settings");
+    }
+
+    private static void init(final File proxyConfigFile) {
+        PROXY_CONFIG = new FileProxyConfig(proxyConfigFile, new AutoProxyConfig(null));
+
     }
 }

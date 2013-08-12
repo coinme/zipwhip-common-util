@@ -20,9 +20,10 @@ import java.util.Map;
 public class FileProxyConfig extends ProxyConfigFallback {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileProxyConfig.class);
-    private static final String CONFIG_FILE = "proxy.properties";
+    public static final String DEFAULT_PROXY_CONFIG_FILE_NAME = "proxy.properties";
     private static final String KEY_PROXY_DEFAULT = "proxy.default";
     private PropertiesConfiguration propertiesConfiguration = null;
+    private final File proxyConfigFile;
 
     public enum ProxyType {
 
@@ -55,19 +56,27 @@ public class FileProxyConfig extends ProxyConfigFallback {
     }
 
     public FileProxyConfig(final ProxyConfig fallback) {
+        this(new File(DEFAULT_PROXY_CONFIG_FILE_NAME), fallback);
+    }
+
+    public FileProxyConfig(final File proxyConfigFile, final ProxyConfig fallback) {
         super(fallback);
+
+        this.proxyConfigFile = proxyConfigFile != null ? proxyConfigFile : new File(DEFAULT_PROXY_CONFIG_FILE_NAME);
         init();
     }
 
     private void init() {
         // Create the config file if it does not exist
-        final File configFile = new File(CONFIG_FILE);
-        if (!configFile.exists()) {
+        if (!this.proxyConfigFile.exists()) {
             try {
-                (new File(CONFIG_FILE)).createNewFile();
+                final boolean success = this.proxyConfigFile.createNewFile();
+                if (success) LOGGER.debug(String.format("==> Proxy config file created successfully [%s]", this.proxyConfigFile.getAbsolutePath()));
             } catch (IOException ex) {
-                throw new RuntimeException("Failed to create proxy config file", ex);
+                throw new IllegalStateException(String.format("Failed to create proxy config file [%s]", this.proxyConfigFile.getAbsolutePath()), ex);
             }
+        } else {
+            LOGGER.debug(String.format("==> Proxy config file exists [%s]", this.proxyConfigFile.getAbsolutePath()));
         }
     }
 
@@ -125,10 +134,10 @@ public class FileProxyConfig extends ProxyConfigFallback {
         if (propertiesConfiguration != null) return propertiesConfiguration;
 
         try {
-            propertiesConfiguration = new PropertiesConfiguration(CONFIG_FILE);
+            propertiesConfiguration = new PropertiesConfiguration(proxyConfigFile);
             propertiesConfiguration.setAutoSave(true);
         } catch (ConfigurationException ex) {
-            throw new RuntimeException("Failed to initialize proxy config file", ex);
+            throw new IllegalStateException(String.format("Failed to initialize proxy config file [%s]", this.proxyConfigFile.getAbsolutePath()), ex);
         }
         return propertiesConfiguration;
     }
