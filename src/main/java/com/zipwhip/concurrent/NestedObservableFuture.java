@@ -10,7 +10,7 @@ import java.util.concurrent.Executor;
  */
 public class NestedObservableFuture<T> extends DefaultObservableFuture<T> {
 
-    protected ObservableFuture<T> nestedFuture;
+    protected MutableObservableFuture<T> nestedFuture;
     boolean nesting = false;
     boolean alreadySyncedStateWithNestedFuture = false;
 
@@ -26,7 +26,7 @@ public class NestedObservableFuture<T> extends DefaultObservableFuture<T> {
         return nestedFuture;
     }
 
-    public synchronized void setNestedFuture(final ObservableFuture<T> nestedFuture) {
+    public synchronized void setNestedFuture(final MutableObservableFuture<T> nestedFuture) {
         this.nesting = true;
         if (this.nestedFuture != null) {
             throw new RuntimeException("We were lazy and didnt implement this scenario.");
@@ -105,11 +105,11 @@ public class NestedObservableFuture<T> extends DefaultObservableFuture<T> {
         }
     }
 
-    public static <T> void syncState(ObservableFuture<T> source, ObservableFuture<T> destination) {
+    public static <T> void syncState(ObservableFuture<T> source, MutableObservableFuture<T> destination) {
         syncState(source, destination, source.getResult());
     }
 
-    public static <T> void syncState(ObservableFuture<?> source, ObservableFuture<T> destination, T result) {
+    public static <T> void syncState(ObservableFuture<?> source, MutableObservableFuture<T> destination, T result) {
         if (source.isDone()) {
             if (source.isCancelled()) {
                 destination.cancel();
@@ -121,7 +121,7 @@ public class NestedObservableFuture<T> extends DefaultObservableFuture<T> {
         }
     }
 
-    public static <T> void syncStateBoolean(ObservableFuture<T> source, ObservableFuture<Boolean> destination) {
+    public static <T> void syncStateBoolean(ObservableFuture<T> source, MutableObservableFuture<Boolean> destination) {
         if (source.isDone()) {
             if (source.isCancelled()) {
                 destination.cancel();
@@ -141,7 +141,7 @@ public class NestedObservableFuture<T> extends DefaultObservableFuture<T> {
      * @param source
      * @param destination
      */
-    public static void syncFailure(ObservableFuture<?> source, ObservableFuture<?> destination) {
+    public static void syncFailure(ObservableFuture<?> source, MutableObservableFuture<?> destination) {
         if (!source.isDone()) {
             throw new IllegalStateException("The sourceFuture isn't done yet!");
         } else if (source.isSuccess()) {

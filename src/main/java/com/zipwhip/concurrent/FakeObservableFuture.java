@@ -70,16 +70,6 @@ public class FakeObservableFuture<V> implements ObservableFuture<V> {
     }
 
     @Override
-    public boolean setSuccess(V result) {
-        return false;
-    }
-
-    @Override
-    public boolean setFailure(Throwable cause) {
-        return false;
-    }
-
-    @Override
     public void addObserver(Observer<ObservableFuture<V>> observer) {
         observer.notify(sender, this);
     }

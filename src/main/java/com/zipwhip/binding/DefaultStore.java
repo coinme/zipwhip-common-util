@@ -1,5 +1,6 @@
 package com.zipwhip.binding;
 
+import com.zipwhip.concurrent.MutableObservableFuture;
 import com.zipwhip.events.*;
 import com.zipwhip.util.AutoNumberGenerator;
 import com.zipwhip.util.Generator;
@@ -60,7 +61,7 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
     private DataReader<D> reader;
 
     // for async hits to load() data
-    private ObservableFuture<Void> lastLoadingFuture;
+    private MutableObservableFuture<Void> lastLoadingFuture;
     private ObservableFuture<D> lastProxyLoadingFuture;
 
     // this will listen for dataSource updates
@@ -104,7 +105,6 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
      * @throws Exception
      */
     public ObservableFuture<Void> load() throws Exception {
-
         if (lastLoadingFuture != null) {
             // cancel the old ones.
             lastLoadingFuture.cancel();
@@ -139,7 +139,7 @@ public class DefaultStore<R extends Record, D> implements Store<R> {
      * @throws Exception
      * @return if it was done or not
      */
-    private synchronized boolean handleImmediatelyDone(ObservableFuture<D> internal, ObservableFuture<Void> external) throws Exception {
+    private synchronized boolean handleImmediatelyDone(ObservableFuture<D> internal, MutableObservableFuture<Void> external) throws Exception {
         // if it's already done, we need to do some work.
         if (internal.isDone()) {
             if (internal.isSuccess()){
