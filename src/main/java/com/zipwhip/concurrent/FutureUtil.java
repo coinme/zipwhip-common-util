@@ -33,7 +33,7 @@ public class FutureUtil {
             throw new IllegalArgumentException("The executor can't be null!");
         }
 
-        final MutableObservableFuture<T> future = new DefaultObservableFuture<T>(sender);
+        final ObservableFuture<T> future = new DefaultObservableFuture<T>(sender);
 
         executor.execute(new Runnable() {
             @Override
@@ -64,7 +64,7 @@ public class FutureUtil {
             executor = EVENTS;
         }
 
-        final MutableObservableFuture<T> result = new DefaultObservableFuture<T>(sender, eventExecutor);
+        final ObservableFuture<T> result = new DefaultObservableFuture<T>(sender, eventExecutor);
 
         executor.execute(new Runnable() {
             @Override

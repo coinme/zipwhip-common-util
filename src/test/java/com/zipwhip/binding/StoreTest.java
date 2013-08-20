@@ -1,10 +1,8 @@
 package com.zipwhip.binding;
 
 import com.zipwhip.concurrent.DefaultObservableFuture;
-import com.zipwhip.concurrent.MutableObservableFuture;
 import com.zipwhip.concurrent.ObservableFuture;
 import com.zipwhip.events.OrderedDataEventObject;
-import com.zipwhip.util.HashCodeComparator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -99,7 +97,7 @@ public class StoreTest {
             @Override
             public ObservableFuture<Object> load() throws Exception {
 
-                final MutableObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
+                final ObservableFuture<Object> future = new DefaultObservableFuture<Object>(this);
 
                 Thread t = new Thread(new Runnable() {
                     @Override
@@ -142,7 +140,7 @@ public class StoreTest {
              * @throws Exception
              */
             public Set<Record> read(Object data) throws Exception {
-                Set<Record> records = new TreeSet<Record>(HashCodeComparator.getInstance());
+                Set<Record> records = new TreeSet<Record>();
                 newRecord[0] = RecordTest.createRecord(String.valueOf(data));
                 records.add(newRecord[0]);
                 return records;

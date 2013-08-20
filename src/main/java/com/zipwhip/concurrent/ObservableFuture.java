@@ -11,6 +11,19 @@ import java.util.concurrent.TimeUnit;
 public interface ObservableFuture<V> extends Future<V> {
 
     /**
+     * @return {@code true} if and only if this future is
+     *         complete, regardless of whether the operation was successful, failed,
+     *         or cancelled.
+     */
+    boolean isDone();
+
+    /**
+     * @return {@code true} if and only if this future was
+     *         cancelled by a {@link #cancel()} method.
+     */
+    boolean isCancelled();
+
+    /**
      * @return {@code true} if and only if the operation was completed
      *         successfully.
      */
@@ -40,6 +53,28 @@ public interface ObservableFuture<V> extends Future<V> {
      *         completed.
      */
     boolean cancel();
+
+    /**
+     * Marks this future as a success and notifies all
+     * listeners.
+     *
+     * @param result The result of the successful computation.
+     * @return {@code true} if and only if successfully marked this future as
+     *         a success. Otherwise {@code false} because this future is
+     *         already marked as either a success or a failure.
+     */
+    boolean setSuccess(V result);
+
+    /**
+     * Marks this future as a failure and notifies all
+     * listeners.
+     *
+     * @param cause The {@code Throwable} that caused the failure.
+     * @return {@code true} if and only if successfully marked this future as
+     *         a failure. Otherwise {@code false} because this future is
+     *         already marked as either a success or a failure.
+     */
+    boolean setFailure(Throwable cause);
 
     /**
      * Adds the specified listener to this future.  The
@@ -101,7 +136,7 @@ public interface ObservableFuture<V> extends Future<V> {
     boolean awaitUninterruptibly(long timeout, TimeUnit unit);
 
     /**
-     * Gets the result or null if it hasn't completed (you  {@code isDone} to check if this is done).
+     * Gets the result or null if it hasn't completed (you  {@code isSuccess} to check if this is done).
      *
      * @return V
      */

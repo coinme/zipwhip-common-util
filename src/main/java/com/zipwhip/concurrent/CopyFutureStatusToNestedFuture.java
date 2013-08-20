@@ -11,9 +11,9 @@ public class CopyFutureStatusToNestedFuture<T> implements Observer<ObservableFut
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CopyFutureStatusToNestedFuture.class);
 
-    final MutableObservableFuture<T> nestedFuture;
+    final ObservableFuture<T> nestedFuture;
 
-    public CopyFutureStatusToNestedFuture(MutableObservableFuture<T> nestedFuture) {
+    public CopyFutureStatusToNestedFuture(ObservableFuture<T> nestedFuture) {
         this.nestedFuture = nestedFuture;
     }
 

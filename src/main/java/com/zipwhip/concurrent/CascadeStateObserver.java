@@ -11,10 +11,10 @@ import com.zipwhip.events.Observer;
 */
 public class CascadeStateObserver<T, TOther> implements Observer<ObservableFuture<TOther>> {
 
-    private final MutableObservableFuture<T> future;
+    private final ObservableFuture<T> future;
     private final T result;
 
-    public CascadeStateObserver(MutableObservableFuture<T> future, T result) {
+    public CascadeStateObserver(ObservableFuture<T> future, T result) {
         this.future = future;
         this.result = result;
     }

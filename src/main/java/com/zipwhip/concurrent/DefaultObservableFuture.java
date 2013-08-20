@@ -2,17 +2,13 @@ package com.zipwhip.concurrent;
 
 import com.zipwhip.events.ObservableHelper;
 import com.zipwhip.events.Observer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
 /**
  *
  */
-public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultObservableFuture.class);
+public class DefaultObservableFuture<V> implements ObservableFuture<V> {
 
     private boolean cancelled;
     private boolean success;
@@ -132,15 +128,17 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
 
     @Override
     public void awaitUninterruptibly() {
+
         try {
             doneCountDownLatch.await();
         } catch (InterruptedException e) {
-            LOGGER.error("Count down threw exception", e);
+            e.printStackTrace();
         }
     }
 
     @Override
     public boolean await(long timeout, TimeUnit unit) throws InterruptedException {
+
         if (!doneCountDownLatch.await(timeout, unit)) {
             return false;
         }
@@ -150,10 +148,11 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
 
     @Override
     public boolean awaitUninterruptibly(long timeout, TimeUnit unit) {
+
         try {
             doneCountDownLatch.await(timeout, unit);
         } catch (InterruptedException e) {
-            LOGGER.error("Count down threw exception", e);
+            e.printStackTrace();
         }
 
         return this.isDone();
@@ -162,13 +161,6 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
     @Override
     public V get() throws InterruptedException, ExecutionException {
         this.await();
-
-        if (isFailed()) {
-            throw new ExecutionException(getCause());
-        } else if (isCancelled()) {
-            throw new CancellationException("Cancelled before finished");
-        }
-
         return result;
     }
 
@@ -176,12 +168,6 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
     public V get(long l, TimeUnit timeUnit) throws InterruptedException, ExecutionException, TimeoutException {
         if (!this.await(l, timeUnit)) {
             throw new TimeoutException("Didn't complete within " + l + " " + timeUnit);
-        }
-
-        if (isFailed()) {
-            throw new ExecutionException(getCause());
-        } else if (isCancelled()) {
-            throw new CancellationException("Cancelled before finished");
         }
 
         return result;

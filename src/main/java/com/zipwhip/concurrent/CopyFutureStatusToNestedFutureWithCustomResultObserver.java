@@ -11,10 +11,10 @@ public class CopyFutureStatusToNestedFutureWithCustomResultObserver<T1, T2> impl
 
     private final static Logger LOGGER = LoggerFactory.getLogger(CopyFutureStatusToNestedFutureWithCustomResultObserver.class);
 
-    final MutableObservableFuture<T2> nestedFuture;
+    final ObservableFuture<T2> nestedFuture;
     final T2 result;
 
-    public CopyFutureStatusToNestedFutureWithCustomResultObserver(MutableObservableFuture<T2> nestedFuture, T2 result) {
+    public CopyFutureStatusToNestedFutureWithCustomResultObserver(ObservableFuture<T2> nestedFuture, T2 result) {
         this.nestedFuture = nestedFuture;
         this.result = result;
     }

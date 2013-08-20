@@ -1,5 +1,7 @@
 package com.zipwhip.util;
 
+import java.io.Serializable;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Michael
@@ -8,7 +10,7 @@ package com.zipwhip.util;
  * <p/>
  * An interface for generic factory
  */
-public interface Factory<T> {
+public interface Factory<T> extends Serializable {
 
 	/**
 	 * Create an item via our factory strategy.
