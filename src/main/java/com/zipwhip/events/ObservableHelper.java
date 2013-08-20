@@ -114,8 +114,8 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
 
     @Override
     protected void onDestroy() {
-        synchronized (observers) {
-            if (observers != null){
+        if (observers != null){
+            synchronized (observers) {
                 observers.clear();
             }
         }
