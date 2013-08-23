@@ -14,12 +14,14 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultObservableFuture.class);
 
-    private boolean cancelled;
-    private boolean success;
-    private Throwable cause;
+    private volatile boolean cancelled;
+    private volatile boolean success;
+    private volatile boolean failed;
+    private volatile V result;
+    private volatile Throwable cause;
+
     private ObservableHelper<ObservableFuture<V>> observableHelper;
     private CountDownLatch doneCountDownLatch = new CountDownLatch(1);
-    private V result;
     private Object sender;
 
     public DefaultObservableFuture(Object sender) {
@@ -33,7 +35,7 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
 
     @Override
     public boolean isDone() {
-        return isCancelled() || isSuccess() || (cause != null);
+        return isCancelled() || isSuccess() || isFailed();
     }
 
     @Override
@@ -48,7 +50,7 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
 
     @Override
     public boolean isFailed() {
-        return cause != null;
+        return failed;
     }
 
     @Override
@@ -93,6 +95,9 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
             return false;
         }
 
+        // setFailure accepts null as a possible "cause". In order to recognize the done state, we need to set
+        // failed = true.
+        this.failed = true;
         this.cause = cause;
         this.success = false;
         this.cancelled = false;
