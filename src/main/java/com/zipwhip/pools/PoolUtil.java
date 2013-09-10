@@ -33,6 +33,20 @@ public class PoolUtil {
         }
     }
 
+    public static <T> T safeBorrow(Class<T> clazz, ObjectPool pool) {
+        try {
+            return (T) pool.borrowObject();
+        } catch (Exception e) {
+            try {
+                return clazz.newInstance();
+            } catch (InstantiationException e1) {
+                throw new RuntimeException(e1);
+            } catch (IllegalAccessException e1) {
+                throw new RuntimeException(e1);
+            }
+        }
+    }
+
     public static void release(ObjectPool pool, Object item) {
         try {
             pool.returnObject(item);
