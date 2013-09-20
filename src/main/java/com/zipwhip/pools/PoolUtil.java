@@ -5,6 +5,7 @@ import org.apache.commons.pool.ObjectPoolFactory;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.apache.commons.pool.impl.GenericObjectPoolFactory;
+import org.slf4j.Logger;
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,11 +34,28 @@ public class PoolUtil {
         }
     }
 
-    public static <T> T safeBorrow(Class<T> clazz, ObjectPool pool) {
+    /**
+     * Borrow an object from a pool. If it fails, it will reflectively create a new instance.
+     *
+     * Will log any errors.
+     *
+     * If reflection fails, will throw a runtime exception.
+     *
+     * @param LOGGER
+     * @param clazz
+     * @param pool
+     * @param <T>
+     * @throws RuntimeException if the reflection fails
+     * @return
+     */
+    public static <T> T borrowSafely(Logger LOGGER, Class<T> clazz, ObjectPool pool) {
         try {
             return (T) pool.borrowObject();
         } catch (Exception e) {
+            LOGGER.error("Failed to borrowObject!", e);
+
             try {
+                // If this call fails, we'll have to throw.
                 return clazz.newInstance();
             } catch (InstantiationException e1) {
                 throw new RuntimeException(e1);
@@ -52,6 +70,14 @@ public class PoolUtil {
             pool.returnObject(item);
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void releaseSafely(Logger LOGGER, ObjectPool pool, Object item) {
+        try {
+            pool.returnObject(item);
+        } catch (Exception e) {
+            LOGGER.error("Failed to returnObject", e);
         }
     }
 
