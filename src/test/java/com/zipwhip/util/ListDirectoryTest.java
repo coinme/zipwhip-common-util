@@ -1,6 +1,8 @@
 package com.zipwhip.util;
 
-import static org.junit.Assert.assertTrue;
+import junit.framework.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,10 +11,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +36,6 @@ public class ListDirectoryTest {
 	@Test
 	public void testSerializable() throws IOException
 	{
-
 		directory.add("KEY", "VALUE");
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -1,5 +1,6 @@
 package com.zipwhip.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,15 +13,12 @@ import java.util.LinkedList;
  *
  * An in memory implementation backed by a {@code List} implementation.
  */
-public class ListDirectory <TKey, TValue> extends GenericLocalDirectory<TKey, TValue> {
+public class ListDirectory<TKey, TValue> extends GenericLocalDirectory<TKey, TValue> {
 
-	public ListDirectory() {
-		super(new Factory<Collection<TValue>>() {
-			@Override
-			public Collection<TValue> create() {
-				return Collections.synchronizedList(new LinkedList<TValue>());
-			}
-		});
+    private static final long serialVersionUID = 1217950736713706717L;
+
+    public ListDirectory() {
+		super(SerializableFactory.<TValue>getInstance());
 	}
 
 	public ListDirectory(Collection<TValue> values, InputCallable<TValue, TKey> sorter) throws Exception {
@@ -43,4 +41,20 @@ public class ListDirectory <TKey, TValue> extends GenericLocalDirectory<TKey, TV
 
 	}
 
+    private static class SerializableFactory<T> implements Factory<Collection<T>>, Serializable {
+
+        private static final long serialVersionUID = -8463768013903366748L;
+
+        private static final SerializableFactory INSTANCE = new SerializableFactory();
+
+        @Override
+        public Collection<T> create() {
+            return Collections.synchronizedList(new LinkedList<T>());
+        }
+
+        @SuppressWarnings("unchecked")
+        public static <T> Factory<Collection<T>> getInstance() {
+            return INSTANCE;
+        }
+    }
 }
