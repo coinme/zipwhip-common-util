@@ -1,5 +1,6 @@
 package com.zipwhip.util;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.TreeSet;
@@ -12,13 +13,10 @@ import java.util.TreeSet;
  */
 public class SetDirectory<TKey, TValue> extends GenericLocalDirectory<TKey, TValue> {
 
+    private static final long serialVersionUID = -7397620823732731308L;
+
     public SetDirectory() {
-        super(new Factory<Collection<TValue>>() {
-            @Override
-            public Collection<TValue> create() {
-                return Collections.synchronizedSet(new TreeSet<TValue>(COMPARATOR));
-            }
-        });
+        super(SerializableFactory.<TValue>getInstance());
     }
 
     public SetDirectory(Collection<TValue> values, InputCallable<TValue, TKey> sorter) throws Exception {
@@ -41,4 +39,20 @@ public class SetDirectory<TKey, TValue> extends GenericLocalDirectory<TKey, TVal
 
     }
 
+    private static class SerializableFactory<T> implements Factory<Collection<T>>, Serializable {
+
+        private static final long serialVersionUID = -6191224293092850629L;
+
+        private static final SerializableFactory INSTANCE = new SerializableFactory();
+
+        @Override
+        public Collection<T> create() {
+            return Collections.synchronizedSet(new TreeSet<T>(COMPARATOR));
+        }
+
+        @SuppressWarnings("unchecked")
+        public static <T> Factory<Collection<T>> getInstance() {
+            return INSTANCE;
+        }
+    }
 }
