@@ -2,6 +2,7 @@ package com.zipwhip.net;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
 import org.apache.commons.lang.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -136,6 +137,7 @@ public class FileProxyConfig extends ProxyConfigFallback {
         try {
             propertiesConfiguration = new PropertiesConfiguration(proxyConfigFile);
             propertiesConfiguration.setAutoSave(true);
+            propertiesConfiguration.setReloadingStrategy(new FileChangedReloadingStrategy());
         } catch (ConfigurationException ex) {
             throw new IllegalStateException(String.format("Failed to initialize proxy config file [%s]", this.proxyConfigFile.getAbsolutePath()), ex);
         }
