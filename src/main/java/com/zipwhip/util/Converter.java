@@ -6,11 +6,10 @@ package com.zipwhip.util;
  * Date: 1/28/11
  * Time: 11:40 PM
  *
- * Converts out of and into bytes.
- *
+ * Converts from TSource to TDestination
  */
-public interface Converter<TSource, TUnderlying> {
+public interface Converter<TSource, TDestination> {
 
-    TUnderlying convert(TSource source) throws DataConversionException;
+    TDestination convert(TSource source) throws DataConversionException;
 
 }
