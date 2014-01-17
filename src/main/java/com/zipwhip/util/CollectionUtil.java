@@ -718,5 +718,4 @@ public class CollectionUtil {
     public static int size(Collection c) {
         return c == null ? -1 : c.size();
     }
-
 }
