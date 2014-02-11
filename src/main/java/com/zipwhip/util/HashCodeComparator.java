@@ -18,7 +18,6 @@ public class HashCodeComparator<T> implements Comparator<T>, Serializable {
 
 	@Override
 	public int compare(T o1, T o2) {
-
 		if ((o1 == null) && (o2 == null)) {
 			return 0;
 		} else if ((o1 == null) && (o2 != null)) {
