@@ -27,10 +27,14 @@ public class ConstantIncrementalRetryStrategy implements RetryStrategy {
     }
 
     @Override
-    public long getNextRetryInterval(int attemptCount) {
-        final long retryCount = attemptCount < 1 ? 1 : (attemptCount <= maxRetry ? attemptCount : (attemptCount % maxRetry));
+    public long getNextRetryInterval(final int attemptCount) {
+        // try immediately if it is the first attempt
+        final int tmpAttemptCount = attemptCount - 1;
+        if (tmpAttemptCount < 1) return 0;
+
+        final long retryCount = tmpAttemptCount < 1 ? 1 : (tmpAttemptCount <= maxRetry ? tmpAttemptCount : (tmpAttemptCount % maxRetry));
         final long nextRetry = retryCount < 1 ? constantInterval * maxRetry : retryCount * constantInterval;
-        LOGGER.debug(String.format("==> %s: [constantInterval: %d], [maxRetry: %d], [attemptCount: %d], [nextRetry: %d], [total Waiting interval: %d]", RetryStrategy.class.getSimpleName(), constantInterval, maxRetry, attemptCount, nextRetry, (attemptCount * constantInterval)));
+        LOGGER.debug(String.format("==> %s: [constantInterval: %d], [maxRetry: %d], [attemptCount: %d], [nextRetry: %d], [total Waiting interval: %d]", RetryStrategy.class.getSimpleName(), constantInterval, maxRetry, attemptCount, nextRetry, (tmpAttemptCount * constantInterval)));
 
         return nextRetry;
     }

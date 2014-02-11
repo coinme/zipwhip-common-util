@@ -56,6 +56,8 @@ public class ConstantIncrementalRetryStrategyTest {
             }
         }
 
+        retryIntervals2.add(0, 0l);
+        retryIntervals2.remove(retryIntervals2.size() - 1);
         return retryIntervals2;
     }
 }
