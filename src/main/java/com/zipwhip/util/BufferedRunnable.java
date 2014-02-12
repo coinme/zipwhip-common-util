@@ -44,17 +44,7 @@ public class BufferedRunnable implements Runnable, TimerTask {
 
     @Override
     public void run(Timeout timeout) throws Exception {
-        if (timeout.isCancelled()) {
-            return;
-        }
-
         runnable.run();
-    }
-
-    public synchronized void cancel() {
-        if (timeout != null) {
-            timeout.cancel();
-        }
     }
 
     public Timer getTimer() {
