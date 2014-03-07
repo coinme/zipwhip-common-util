@@ -27,5 +27,7 @@ public class CountryResolverTest {
 
         // if that doesn't work, it's unknown (ZZ)
         assertEquals("ZZ", countryResolver.resolve("0344548655"));
+        assertEquals("ZZ", countryResolver.resolve("+14564568749"));
+
     }
 }

@@ -1,8 +1,6 @@
 package com.zipwhip.util;
 
 import com.google.i18n.phonenumbers.NumberParseException;
-import com.google.i18n.phonenumbers.PhoneNumberUtil;
-import com.google.i18n.phonenumbers.Phonenumber;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -454,7 +452,7 @@ public class InternationalNumberUtilTest {
         assertTrue(InternationalNumberUtil.isInternationalNumberNANPA("+13609900541"));
         assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("23412515"));
         assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("3609900541"));
-        assertTrue(InternationalNumberUtil.isInternationalNumberNANPA("+14564568749"));
+        assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+14564568749")); // not a valid number
         assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+1360449900541"));
         assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+1360990054"));
         assertFalse(InternationalNumberUtil.isInternationalNumberNANPA("+2360990054"));
@@ -469,7 +467,6 @@ public class InternationalNumberUtilTest {
     public void testGetZipwhipDomesticFromNANPAInternationalNumber(){
         //Numbers that should change to their zipwhip domestic equivalents.
         assertEquals("3609900541", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+13609900541"));
-        assertEquals("4564568749", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+14564568749"));
         assertEquals("7315741311", InternationalNumberUtil.getZipwhipDomesticFromNANPAInternationalNumber("+17315741311"));
 
         //Numbers that should not change, because they are either non-NANPA, or E164 formatted.
