@@ -7,5 +7,7 @@ package com.zipwhip.util;
  * Time: 4:38 PM
  */
 public interface Resolver<T, V> {
-    V resolve(T source);
+
+    V resolve(T source) throws Exception;
+
 }

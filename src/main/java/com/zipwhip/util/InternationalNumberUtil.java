@@ -33,7 +33,6 @@ public class InternationalNumberUtil {
      * @return The region code for the number or 'ZZ' if the region can not be determined.
      */
     public static String getRegionCode(String mobileNumber) {
-
         if (isValidZipwhipDomesticNumberFormat(mobileNumber)) {
             mobileNumber = internationalizeZipwhipDomesticNumber(mobileNumber);
         }
@@ -52,6 +51,7 @@ public class InternationalNumberUtil {
 
         if (phoneNumber.hasCountryCode()) {
             String regionCode = PhoneNumberUtil.getInstance().getRegionCodeForNumber(phoneNumber);
+
             return StringUtil.exists(regionCode) ? regionCode : UNKNOWN_REGION;
         }
 
@@ -86,7 +86,6 @@ public class InternationalNumberUtil {
      * @return true if mobileNumber has a length of 10 and does not start with '+1'
      */
     public static boolean isValidZipwhipDomesticNumberFormat(String mobileNumber) {
-
         if (StringUtil.isNullOrEmpty(mobileNumber) || mobileNumber.startsWith(PLUS) || mobileNumber.startsWith(ZERO) || mobileNumber.startsWith(ONE) || mobileNumber.length() != 10) {
             return false;
         }
@@ -110,7 +109,6 @@ public class InternationalNumberUtil {
      * @return The internationalized Zipwhip Domestic mobile number.
      */
     public static String internationalizeZipwhipDomesticNumber(String mobileNumber) {
-
         if (!isValidZipwhipDomesticNumberFormat(mobileNumber)) {
             return mobileNumber;
         }
@@ -129,7 +127,6 @@ public class InternationalNumberUtil {
      * @throws IllegalArgumentException If the supplied mobile number is a valid number, but cannot be formatted to E164 (Such as shortcodes)
      */
     public static String getE164Number(String mobileNumber, String regionCode) throws NumberParseException, IllegalArgumentException {
-
         /**
          * THE BLOCK BELOW IS FOR LEGACY SUPPORT OF NUMBERS IN THE NAMP THAT MAY HAVE HAD
          * THE '+1' STRIPPED BY CARBON OR BY THE CLOUD. ONCE THE CLOUD HAS MIGRATED ALL
@@ -197,7 +194,6 @@ public class InternationalNumberUtil {
      * @return The mobile number formatted to the local format or internal format of it is an international number.
      */
     public static String getFormattedNumberForContact(String mobileNumber, String usersRegionCode) {
-
         PhoneNumberUtil.PhoneNumberFormat format;
         String defaultRegion;
 
@@ -234,7 +230,6 @@ public class InternationalNumberUtil {
      * @return The mobile number formatted to the local format or internal format of it is an international number.
      */
     public static String getFormattedNumberForUser(String mobileNumber, String usersRegionCode) {
-
         String defaultRegion;
 
         if (isValidInternationalNumber(mobileNumber)) {

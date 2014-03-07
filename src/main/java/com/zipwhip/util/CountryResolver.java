@@ -15,6 +15,10 @@ package com.zipwhip.util;
  */
 public class CountryResolver implements Resolver<String, String> {
 
+    /**
+     * @param phoneNumber - expected to be in e164
+     * @return two-char country code
+     */
     @Override
     public String resolve(String phoneNumber) {
         return InternationalNumberUtil.getRegionCode(phoneNumber);
