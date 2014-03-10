@@ -1,5 +1,7 @@
 package com.zipwhip.util;
 
+import com.zipwhip.util.phone.PhoneNumberUtil;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Russ
@@ -21,6 +23,6 @@ public class CountryResolver implements Resolver<String, String> {
      */
     @Override
     public String resolve(String phoneNumber) {
-        return InternationalNumberUtil.getRegionCode(phoneNumber);
+        return PhoneNumberUtil.getRegionCode(phoneNumber, "US");
     }
 }

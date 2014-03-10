@@ -343,4 +343,7 @@ public class PhoneNumberUtil {
         return null;
     }
 
+    public static String getRegionCode(String phoneNumber, String regionCode) {
+        return InternationalNumberUtil.getRegionCode(optPhoneNumberForStorage(phoneNumber, regionCode));
+    }
 }
