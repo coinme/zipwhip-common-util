@@ -24,6 +24,7 @@ public class CountryResolverTest {
         // if not in E164, we'll try it with a +1
         assertEquals("US", countryResolver.resolve("2066181111"));
         assertEquals("CA", countryResolver.resolve("5198365495"));
+        assertEquals("CA", countryResolver.resolve("+17057902054"));
 
         // if that doesn't work, it's unknown (ZZ)
         assertEquals("ZZ", countryResolver.resolve("0344548655"));
