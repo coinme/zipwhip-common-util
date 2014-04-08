@@ -53,6 +53,10 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
     @Override
     public void addObserver(Observer<T> observer) {
         synchronized (observers) {
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format("Added observer [%s] to me [%s]", observer, this));
+            }
+
             observers.add(observer);
         }
     }
@@ -62,6 +66,10 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
         synchronized (observers) {
             if (observers == null) {
                 return;
+            }
+
+            if (LOGGER.isTraceEnabled()) {
+                LOGGER.trace(String.format("Removed observer [%s] to me [%s]", observer, this));
             }
 
             observers.remove(observer);
@@ -102,6 +110,10 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
         executor.execute(new Runnable() {
             @Override
             public void run() {
+                if (LOGGER.isTraceEnabled()) {
+                    LOGGER.trace(String.format("[%s] notifying [%s](%s)", name, observer, result));
+                }
+
                 observer.notify(sender, result);
             }
 
