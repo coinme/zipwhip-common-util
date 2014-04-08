@@ -21,9 +21,9 @@ public abstract class CascadingDestroyableBase extends DestroyableBase implement
 
     protected volatile Collection<Destroyable> destroyables = null;
 
-    public void link(Destroyable destroyable) {
+    public <T extends Destroyable> T link(T destroyable) {
         if (destroyable == null) {
-            return;
+            return null;
         }
 
         if (destroyables == null) {
@@ -37,14 +37,18 @@ public abstract class CascadingDestroyableBase extends DestroyableBase implement
         }
 
         destroyables.add(destroyable);
+
+        return destroyable;
     }
 
-    public void unlink(Destroyable destroyable) {
+    public <T extends Destroyable> T unlink(T destroyable) {
         if (destroyable == null || destroyables == null) {
-            return;
+            return destroyable;
         }
 
         destroyables.remove(destroyable);
+
+        return destroyable;
     }
 
     @Override

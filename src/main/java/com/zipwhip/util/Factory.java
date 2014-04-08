@@ -14,8 +14,8 @@ public interface Factory<T> {
 	 * Create an item via our factory strategy.
 	 *
 	 * @return the new item that u just created
-	 * @throws RuntimeException If it was unable to create an instance
+	 * @throws Exception If it was unable to create an instance
 	 */
-	T create();
+	T create() throws Exception;
 
 }

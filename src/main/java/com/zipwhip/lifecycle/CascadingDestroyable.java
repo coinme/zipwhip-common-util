@@ -15,14 +15,16 @@ public interface CascadingDestroyable extends Destroyable {
      * When you destroy this object, cascade the destruction it to the "destroyable" passed in.
      *
      * @param destroyable
+     * @return the same object as the input. For cascading calls together.
      */
-    void link(Destroyable destroyable);
+    <T extends Destroyable> T link(T destroyable);
 
-    /**
-     * Prevent the cascading destruction.
-     *
-     * @param destroyable
-     */
-    void unlink(Destroyable destroyable);
+        /**
+         * Prevent the cascading destruction.
+         *
+         * @param destroyable
+         * @return the same object as the input. For cascading calls together.
+         */
+    <T extends Destroyable> T unlink(T destroyable);
 
 }

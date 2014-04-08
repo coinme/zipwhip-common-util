@@ -76,13 +76,13 @@ public abstract class ExecutorAdapterBase extends AbstractExecutorService implem
     }
 
     @Override
-    public void link(Destroyable destroyable) {
-        destroyableHelper.link(destroyable);
+    public <T extends Destroyable> T link(T destroyable) {
+        return destroyableHelper.link(destroyable);
     }
 
     @Override
-    public void unlink(Destroyable destroyable) {
-        destroyableHelper.unlink(destroyable);
+    public <T extends Destroyable> T unlink(T destroyable) {
+        return destroyableHelper.unlink(destroyable);
     }
 
     @Override
