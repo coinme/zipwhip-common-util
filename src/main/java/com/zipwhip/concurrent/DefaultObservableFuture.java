@@ -2,6 +2,7 @@ package com.zipwhip.concurrent;
 
 import com.zipwhip.events.ObservableHelper;
 import com.zipwhip.events.Observer;
+import com.zipwhip.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +36,7 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
 
     public DefaultObservableFuture(Object sender, Executor executor, String name) {
         this.sender = sender;
-        this.observableHelper = new ObservableHelper<ObservableFuture<V>>(executor);
+        this.observableHelper = new ObservableHelper<ObservableFuture<V>>(name, executor);
         this.name = name;
     }
 
@@ -217,7 +218,11 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
             state = "PENDING";
         }
 
-        return String.format("(DefaultObservableFuture:\"%s\", state:\"%s\")", name, state);
+        if (StringUtil.isNullOrEmpty(name)) {
+            return String.format("[DefaultObservableFuture state:\"%s\"]", state);
+        } else {
+            return String.format("[DefaultObservableFuture name:\"%s\", state:\"%s\"]", name, state);
+        }
     }
 
     private void notifyObserver(Observer<ObservableFuture<V>> observer) {

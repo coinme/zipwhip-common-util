@@ -24,8 +24,8 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObservableHelper.class);
 
-    private String name;
-    private Executor executor;
+    private final String name;
+    private final Executor executor;
     private final Set<Observer<T>> observers = Collections.synchronizedSet(new CopyOnWriteArraySet<Observer<T>>());
 
     public ObservableHelper() {
