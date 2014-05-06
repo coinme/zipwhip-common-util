@@ -20,17 +20,23 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
     private volatile V result;
     private volatile Throwable cause;
 
-    private ObservableHelper<ObservableFuture<V>> observableHelper;
-    private CountDownLatch doneCountDownLatch = new CountDownLatch(1);
-    private Object sender;
+    private final ObservableHelper<ObservableFuture<V>> observableHelper;
+    private final CountDownLatch doneCountDownLatch = new CountDownLatch(1);
+    private final Object sender;
+    private final String name;
 
     public DefaultObservableFuture(Object sender) {
         this(sender, null);
     }
 
     public DefaultObservableFuture(Object sender, Executor executor) {
+        this(sender, executor, null);
+    }
+
+    public DefaultObservableFuture(Object sender, Executor executor, String name) {
         this.sender = sender;
-        observableHelper = new ObservableHelper<ObservableFuture<V>>(executor);
+        this.observableHelper = new ObservableHelper<ObservableFuture<V>>(executor);
+        this.name = name;
     }
 
     @Override
@@ -195,6 +201,23 @@ public class DefaultObservableFuture<V> implements MutableObservableFuture<V> {
     @Override
     public boolean cancel(boolean b) {
         return cancel();
+    }
+
+    @Override
+    public String toString() {
+        String state;
+
+        if (isFailed()) {
+            state = String.format("FAILED[%s]", cause != null ? cause.getMessage() : null);
+        } else if (isCancelled()) {
+            state = "CANCELLED";
+        } else if (isSuccess()) {
+            state = String.format("SUCCESS[%s]", getResult());
+        } else {
+            state = "PENDING";
+        }
+
+        return String.format("(DefaultObservableFuture:\"%s\", state:\"%s\")", name, state);
     }
 
     private void notifyObserver(Observer<ObservableFuture<V>> observer) {
