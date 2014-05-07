@@ -9,7 +9,7 @@ package com.zipwhip.reliable.retry;
  */
 public class ExponentialBackoffRetryStrategy implements RetryStrategy {
 
-    private static final int DEFAULT_STARTING_INTERVAL = 1000;
+    private static final int DEFAULT_STARTING_INTERVAL = 1;
     private static final double DEFAULT_RETRY_MULTIPLIER = 1.5d;
     private static final int DEFAULT_MAX_RETRIES = 19;
 
@@ -22,11 +22,11 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
     }
 
     public ExponentialBackoffRetryStrategy(int startingInterval, double retryMultiplier) {
-        this(startingInterval, retryMultiplier, -1);
+        this(startingInterval, retryMultiplier, DEFAULT_MAX_RETRIES);
     }
 
     /**
-     * @param startingInterval The interval returned for getNextRetryInterval where failedAttemptCount == 1.
+     * @param startingInterval The interval returned for retryIntervalInSeconds where failedAttemptCount == 1.
      * @param retryMultiplier  The amount by which we should multiply each subsequent interval after the first.
      *                         After the first attempt, interval is (startingInterval).  After the second attempt, interval is (startingInterval * retryMultiplier).  Third attempt is (startingInterval * retryMultiplier^2)
      *                         NOTE: In situations where the retry multiplier is less than one, we change the value to one (To prevent situations where the interval gets shorter and shorter after each call).
@@ -38,13 +38,13 @@ public class ExponentialBackoffRetryStrategy implements RetryStrategy {
     }
 
     @Override
-    public long getNextRetryInterval(int attemptCount) {
+    public int retryIntervalInSeconds(int attemptCount) {
         if (attemptCount <= 1) {
             return this.startingInterval;
         } else if (attemptCount > maxAttemptCount) {
-            return (long) Math.floor(this.startingInterval * Math.pow(this.retryMultiplier, maxAttemptCount - 1));
+            return (int) Math.floor(this.startingInterval * Math.pow(this.retryMultiplier, maxAttemptCount - 1));
         } else {
-            return (long) Math.floor(this.startingInterval * Math.pow(this.retryMultiplier, attemptCount - 1));
+            return (int) Math.floor(this.startingInterval * Math.pow(this.retryMultiplier, attemptCount - 1));
         }
     }
 }

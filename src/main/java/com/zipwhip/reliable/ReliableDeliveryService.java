@@ -252,7 +252,7 @@ public final class ReliableDeliveryService {
         } else {
             //In this case, we will be re-attempting this item at some later point.  As such, set the timestamp for the next
             //retry attempt, based on the interval provided by the applicable retry strategy.
-            work.setNextRetryAttempt(System.currentTimeMillis() + retryStrategy.getNextRetryInterval(work.getFailedAttemptCount()));
+            work.setNextRetryAttempt(System.currentTimeMillis() + retryStrategy.retryIntervalInSeconds(work.getFailedAttemptCount()));
         }
 
     }

@@ -20,12 +20,12 @@ public class ConstantIncrementalRetryStrategyTest {
         final int maxRetry = (5 * 60) / 23;
         final ConstantIncrementalRetryStrategy strategy = new ConstantIncrementalRetryStrategy(interval, maxRetry);
 
-        final List<Long> retryIntervalsStrategy = new ArrayList<Long>(listSize);
+        final List<Integer> retryIntervalsStrategy = new ArrayList<Integer>(listSize);
         for (int i = 1; i <= listSize; i++) {
-            retryIntervalsStrategy.add(strategy.getNextRetryInterval(i));
+            retryIntervalsStrategy.add(strategy.retryIntervalInSeconds(i));
         }
 
-        final List<Long> testRetryIntervals = getRetryInterval(interval, maxRetry, listSize);
+        final List<Integer> testRetryIntervals = getRetryInterval(interval, maxRetry, listSize);
         Assert.assertEquals(testRetryIntervals.size(), retryIntervalsStrategy.size());
 
 
@@ -35,8 +35,8 @@ public class ConstantIncrementalRetryStrategyTest {
 
     }
 
-    private List<Long> getRetryInterval(final long interval, final int maxRetry, final int listSize) {
-        final List<Long> retryIntervals = new ArrayList<Long>(maxRetry);
+    private List<Integer> getRetryInterval(final int interval, final int maxRetry, final int listSize) {
+        final List<Integer> retryIntervals = new ArrayList<Integer>(maxRetry);
 
         for (int i = 1; i <= maxRetry; i++) {
             retryIntervals.add(i * interval);
@@ -45,7 +45,7 @@ public class ConstantIncrementalRetryStrategyTest {
         final int iterations = listSize / maxRetry;
         final int lastIteration = listSize % maxRetry;
 
-        final List<Long> retryIntervals2 = new ArrayList<Long>(listSize);
+        final List<Integer> retryIntervals2 = new ArrayList<Integer>(listSize);
         for (int i = 1; i <= iterations; i++) {
             retryIntervals2.addAll(retryIntervals);
         }
@@ -56,7 +56,7 @@ public class ConstantIncrementalRetryStrategyTest {
             }
         }
 
-        retryIntervals2.add(0, 0l);
+        retryIntervals2.add(0, 0);
         retryIntervals2.remove(retryIntervals2.size() - 1);
         return retryIntervals2;
     }

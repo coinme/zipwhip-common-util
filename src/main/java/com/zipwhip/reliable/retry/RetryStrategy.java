@@ -7,7 +7,7 @@ package com.zipwhip.reliable.retry;
  * Time: 5:45 PM
  *
  * This class lets us encapsulate different delay algorithms. For example, we might want to reconnect (or retry)
- * every 5 seconds. Another strategy might be "expontial decay" where it starts out fast and then slows down.
+ * every 5 seconds. Another strategy might be "exponential decay" where it starts out fast and then slows down.
  */
 public interface RetryStrategy {
 
@@ -15,8 +15,8 @@ public interface RetryStrategy {
      * The interval we should wait before re-attempting this operation, which may require attemptCount to make said determination.
      *
      * @param attemptCount
-     * @return
+     * @return seconds
      */
-    public long getNextRetryInterval(int attemptCount);
+    public int retryIntervalInSeconds(int attemptCount);
 
 }

@@ -21,10 +21,10 @@ public class RetryStrategyTests {
 //        assertTrue(retry.continueReattempts(9));
 //        assertFalse(retry.continueReattempts(10));
 
-        assertEquals(1000l, retry.getNextRetryInterval(0));
-        assertEquals(1000l, retry.getNextRetryInterval((-4))); //Yes, we allow negative numbers.
-        assertEquals(1000l, retry.getNextRetryInterval((9)));
-        assertEquals(1000l, retry.getNextRetryInterval((10)));
+        assertEquals(1000, retry.retryIntervalInSeconds(0));
+        assertEquals(1000, retry.retryIntervalInSeconds((-4))); //Yes, we allow negative numbers.
+        assertEquals(1000, retry.retryIntervalInSeconds((9)));
+        assertEquals(1000, retry.retryIntervalInSeconds((10)));
 
     }
 
@@ -36,10 +36,10 @@ public class RetryStrategyTests {
 //        assertTrue(retry.continueReattempts(9));
 //        assertFalse(retry.continueReattempts(10));
 
-        assertEquals(1000l, retry.getNextRetryInterval(0));
-        assertEquals(1000l, retry.getNextRetryInterval((-4))); //Yes, we allow negative numbers.
-        assertEquals(25628l, retry.getNextRetryInterval((9)));
-        assertEquals(38443l, retry.getNextRetryInterval((10)));
+        assertEquals(1000, retry.retryIntervalInSeconds(0));
+        assertEquals(1000, retry.retryIntervalInSeconds((-4))); //Yes, we allow negative numbers.
+        assertEquals(25628, retry.retryIntervalInSeconds((9)));
+        assertEquals(38443, retry.retryIntervalInSeconds((10)));
 
     }
 }

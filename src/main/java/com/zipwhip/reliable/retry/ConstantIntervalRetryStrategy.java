@@ -10,17 +10,17 @@ package com.zipwhip.reliable.retry;
  */
 public class ConstantIntervalRetryStrategy implements RetryStrategy {
 
-    private long retryInterval;
+    private int retryInterval;
 
     /**
-     * @param retryInterval The interval returned for getNextRetryInterval under all circumstances;
+     * @param retryInterval The interval returned for retryIntervalInSeconds under all circumstances;
      */
-    public ConstantIntervalRetryStrategy(long retryInterval){
+    public ConstantIntervalRetryStrategy(int retryInterval){
         this.retryInterval = retryInterval;
     }
 
     @Override
-    public long getNextRetryInterval(int attemptCount) {
+    public int retryIntervalInSeconds(int attemptCount) {
         return retryInterval;
     }
 
