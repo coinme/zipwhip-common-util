@@ -12,6 +12,8 @@ import java.util.EventObject;
  */
 public class DataEventObject<T> extends EventObject {
 
+    private static final long serialVersionUID = -6216814771966359748L;
+
     private T data;
 
     /**
