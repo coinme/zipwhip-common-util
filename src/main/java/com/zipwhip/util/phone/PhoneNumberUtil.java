@@ -57,7 +57,6 @@ public class PhoneNumberUtil {
         try {
             return getE164PhoneNumber(phoneNumber, regionCode);
         } catch (FallbackParserException e) {
-            LOGGER.error("==X Failed to parse " + phoneNumber + " and region code " + regionCode + " to a valid e164 number", e);
             return null;
         }
     }
@@ -165,7 +164,6 @@ public class PhoneNumberUtil {
         try {
             return getPhoneNumberForDisplay(phoneNumber, regionCode);
         } catch (FallbackParserException e) {
-            LOGGER.error("==X Failed to parse " + phoneNumber + " and region code " + regionCode + " for display", e);
             return null;
         }
     }
@@ -224,7 +222,6 @@ public class PhoneNumberUtil {
         try {
             return getPhoneNumberForStorage(phoneNumber, regionCode);
         } catch (FallbackParserException e) {
-            LOGGER.error("==X Failed to parse " + phoneNumber + " and region code " + regionCode + " for display", e);
             return null;
         }
     }
@@ -287,9 +284,8 @@ public class PhoneNumberUtil {
      *
      * @param regionCode - region code
      * @return A three-letter abbreviation of this locale's country.
-     * @throws java.util.MissingResourceException
-     *          Throws MissingResourceException if the
-     *          three-letter country abbreviation is not available for this locale.
+     * @throws java.util.MissingResourceException Throws MissingResourceException if the
+     *                                            three-letter country abbreviation is not available for this locale.
      */
     public static String getISO3Country(final String regionCode) {
         return getISO3Country(new Locale("", regionCode));
@@ -306,9 +302,8 @@ public class PhoneNumberUtil {
      *
      * @param locale - locale
      * @return A three-letter abbreviation of this locale's country.
-     * @throws java.util.MissingResourceException
-     *          Throws MissingResourceException if the
-     *          three-letter country abbreviation is not available for this locale.
+     * @throws java.util.MissingResourceException Throws MissingResourceException if the
+     *                                            three-letter country abbreviation is not available for this locale.
      */
     public static String getISO3Country(final Locale locale) {
         return locale.getISO3Country();
