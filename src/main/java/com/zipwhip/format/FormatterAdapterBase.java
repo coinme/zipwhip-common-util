@@ -1,6 +1,7 @@
 package com.zipwhip.format;
 
 import com.zipwhip.format.Formatter;
+import com.zipwhip.util.DataConversionException;
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,7 +20,7 @@ public class FormatterAdapterBase<T> implements Formatter<T> {
     }
 
     @Override
-    public T format(T input) {
+    public T format(T input) throws DataConversionException {
         return formatter.format(input);
     }
 }

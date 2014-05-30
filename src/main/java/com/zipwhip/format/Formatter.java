@@ -1,5 +1,7 @@
 package com.zipwhip.format;
 
+import com.zipwhip.util.DataConversionException;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Michael
@@ -10,6 +12,6 @@ package com.zipwhip.format;
  */
 public interface Formatter<T> {
 
-    T format(T input);
+    T format(T input) throws DataConversionException;
 
 }
