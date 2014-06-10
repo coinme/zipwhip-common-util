@@ -184,16 +184,13 @@ public class CollectionUtil {
     }
 
     public static Date getDate(Map params, String key, Date defaultDate) {
-        Long param = getLong(params, key);
+        Date date = getDate(params, key);
 
-        if (param == null) {
-            return defaultDate;
-        }
-        if (param < 0) {
+        if (date == null) {
             return defaultDate;
         }
 
-        return new Date(param);
+        return date;
     }
 
     public static String getString(Map params, String key) {
