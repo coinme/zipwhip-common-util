@@ -166,16 +166,21 @@ public class CollectionUtil {
     }
 
     public static Date getDate(Map params, String key) {
-        Long param = getLong(params, key);
+        Object object = getParam(params, key);
 
-        if (param == null) {
-            return null;
-        }
-        if (param == -1L) {
-            return null;
+        if (object instanceof Number) {
+            Long param = ((Number)object).longValue();
+
+            if (param == -1L) {
+                return null;
+            }
+
+            return new Date(param);
+        } else if (object instanceof Date) {
+            return (Date)object;
         }
 
-        return new Date(param);
+        return null;
     }
 
     public static Date getDate(Map params, String key, Date defaultDate) {
