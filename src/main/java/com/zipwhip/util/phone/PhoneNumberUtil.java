@@ -4,6 +4,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.Phonenumber;
 import com.zipwhip.util.InternationalNumberUtil;
 import com.zipwhip.util.StringUtil;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -315,6 +316,18 @@ public class PhoneNumberUtil {
 
     public static String getDisplayCountry(final Locale locale) {
         return locale.getDisplayCountry(Locale.getDefault());
+    }
+
+    /**
+     * Translate the input from a phone dialer to a valid phone number.
+     * <p/>
+     * Example: 855zipwhip -> 8559479447
+     *
+     * @param input - dialer input
+     * @return phone number or null if the input is blank.
+     */
+    public static String translateDialerInput(final String input) {
+        return StringUtils.isBlank(input) ? null : StringUtils.replaceChars(input.toUpperCase(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "22233344455566677778889999");
     }
 
     /**

@@ -164,6 +164,22 @@ public class PhoneNumberUtilTest {
     }
 
 
+    @Test
+    public void testTranslateDialer() throws Exception {
+
+        final String testString = "abcdefghijklmnopqrstuvwxyz";
+        final String resultString = "22233344455566677778889999";
+
+        String testChar = null;
+        String testResult = null;
+        for (int i = 0; i < testString.length(); i++) {
+            testChar = Character.toString(testString.charAt(i));
+            testResult = Character.toString(resultString.charAt(i));
+            assertEquals(testResult, PhoneNumberUtil.translateDialerInput(testChar));
+            assertEquals(testResult, PhoneNumberUtil.translateDialerInput(testChar.toUpperCase()));
+        }
+    }
+
     private void testGetPhoneNumberForStorage(final String expected, final String number, final String regionCode) {
 //        final String result = PhoneNumberUtil.getPhoneNumberForStorage(number, regionCode);
         final String result = com.zipwhip.util.phone.PhoneNumberUtil.optPhoneNumberForStorage(number, regionCode);
