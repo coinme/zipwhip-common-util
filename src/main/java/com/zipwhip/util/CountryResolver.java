@@ -17,6 +17,8 @@ import com.zipwhip.util.phone.PhoneNumberUtil;
  */
 public class CountryResolver implements Resolver<String, String> {
 
+    private static final CountryResolver INSTANCE = new CountryResolver();
+
     /**
      * @param phoneNumber - expected to be in e164
      * @return two-char country code
@@ -24,5 +26,9 @@ public class CountryResolver implements Resolver<String, String> {
     @Override
     public String resolve(String phoneNumber) {
         return PhoneNumberUtil.getRegionCode(phoneNumber, "US");
+    }
+
+    public static CountryResolver getInstance() {
+        return INSTANCE;
     }
 }
