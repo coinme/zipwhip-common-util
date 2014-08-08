@@ -57,24 +57,22 @@ public abstract class CascadingDestroyableBase extends DestroyableBase implement
             return;
         }
 
-        if (destroyables != null) {
-            synchronized (this) {
-                if (isDestroyed()) {
-                    return;
-                }
-
-                if (destroyables != null) {
-                    synchronized (destroyables) {
-                        for (Destroyable destroyable : destroyables) {
-                            destroyable.destroy();
-                        }
-                        destroyables.clear();
-                        destroyables = null;
-                    }
-                }
-
-                super.destroy();
+        synchronized (this) {
+            if (isDestroyed()) {
+                return;
             }
+
+            if (destroyables != null) {
+                synchronized (destroyables) {
+                    for (Destroyable destroyable : destroyables) {
+                        destroyable.destroy();
+                    }
+                    destroyables.clear();
+                    destroyables = null;
+                }
+            }
+
+            super.destroy();
         }
     }
 }
