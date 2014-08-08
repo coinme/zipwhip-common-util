@@ -3,11 +3,11 @@ package com.zipwhip.timers;
 import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.Directory;
 import com.zipwhip.util.ListDirectory;
+import com.zipwhip.util.LocalDirectory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,11 +16,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class MockTimer implements Timer {
 
-    private Directory<Long, Timeout> map = new ListDirectory<Long, Timeout>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MockTimer.class);
+
+    private LocalDirectory<Long, Timeout> map = new ListDirectory<Long, Timeout>();
     private long currentTime;
 
     @Override
-    public Timeout newTimeout(TimerTask task, long delay, TimeUnit unit) {
+    public synchronized Timeout newTimeout(TimerTask task, long delay, TimeUnit unit) {
         if (task == null) {
             throw new NullPointerException("task");
         }
@@ -29,7 +31,29 @@ public class MockTimer implements Timer {
 
         map.add(currentTime + unit.toMillis(delay), timeout);
 
+        LOGGER.debug("(Timeout: {}) scheduled for {}", timeout, currentTime + unit.toMillis(delay));
+
+        notifyAll();
+
         return timeout;
+    }
+
+    public synchronized void waitUntilSomethingScheduled() {
+        try {
+            if (map.isEmpty()) {
+                this.wait();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void waitUntilSomethingNewIsScheduled() {
+        try {
+            this.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public void moveForward(long delayForward, TimeUnit timeUnit) throws Exception {
@@ -39,6 +63,7 @@ public class MockTimer implements Timer {
 
         long start = currentTime;
         long end = currentTime + timeUnit.toMillis(delayForward);
+        LocalDirectory<Long, Timeout> removes = new ListDirectory<Long, Timeout>();
 
         for(long i = start; i <= end; i++) {
             currentTime = i;
@@ -50,7 +75,19 @@ public class MockTimer implements Timer {
             }
 
             for (Timeout timeout : timeouts) {
+                LOGGER.debug("(Timeout: {}) ran at {}", timeout, i);
                 timeout.getTask().run(timeout);
+                removes.add(i, timeout);
+            }
+        }
+
+        for (Long time : removes.keySet()) {
+            Collection<Timeout> timeouts = removes.get(time);
+
+            if (CollectionUtil.exists(timeouts)) {
+                for (Timeout timeout : timeouts) {
+                    map.remove(time, timeout);
+                }
             }
         }
     }
@@ -95,6 +132,15 @@ public class MockTimer implements Timer {
         @Override
         public void cancel() {
             cancelled = true;
+        }
+
+        @Override
+        public String toString() {
+            if (task == null) {
+                return "[MockTimeout task:null]";
+            }
+
+            return task.toString();
         }
     }
 }
