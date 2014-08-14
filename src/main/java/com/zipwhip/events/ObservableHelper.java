@@ -2,8 +2,11 @@ package com.zipwhip.events;
 
 import com.zipwhip.executors.SimpleExecutor;
 import com.zipwhip.lifecycle.CascadingDestroyableBase;
+import com.zipwhip.pools.PoolUtil;
 import com.zipwhip.util.CollectionUtil;
 import com.zipwhip.util.StringUtil;
+import org.apache.commons.pool.ObjectPool;
+import org.apache.commons.pool.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +30,7 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
     private final String name;
     private final Executor executor;
     private final Set<Observer<T>> observers = Collections.synchronizedSet(new CopyOnWriteArraySet<Observer<T>>());
+    private final ObjectPool pool = PoolUtil.getPool(PooledObserverRunnable.class);
 
     public ObservableHelper() {
         this(null, null);
@@ -63,11 +67,11 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
 
     @Override
     public void removeObserver(Observer<T> observer) {
-        synchronized (observers) {
-            if (observers == null) {
-                return;
-            }
+        if (observers == null) {
+            return;
+        }
 
+        synchronized (observers) {
             if (LOGGER.isTraceEnabled()) {
                 LOGGER.trace(String.format("Removed observer [%s] to me [%s]", observer, this));
             }
@@ -107,21 +111,46 @@ public class ObservableHelper<T> extends CascadingDestroyableBase implements Obs
      * @param result the result that the observers will hear about.
      */
     public void notifyObserver(final Observer<T> observer, final Object sender, final T result) {
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
+        PooledObserverRunnable<T> runnable = PoolUtil.borrowSafely(LOGGER, PooledObserverRunnable.class, pool);
+
+        runnable.pool = pool;
+        runnable.name = name;
+        runnable.observer = observer;
+        runnable.sender = sender;
+        runnable.result = result;
+
+        executor.execute(runnable);
+    }
+
+    public static class PooledObserverRunnable<T> implements Runnable {
+
+        private ObjectPool pool;
+        private String name;
+        private Observer<T> observer;
+        private Object sender;
+        private T result;
+
+        @Override
+        public void run() {
+            try {
                 if (LOGGER.isTraceEnabled()) {
                     LOGGER.trace(String.format("[%s] notifying [%s](%s)", name, observer, result));
                 }
 
                 observer.notify(sender, result);
+            } finally {
+                try {
+                    PoolUtil.releaseSafely(LOGGER, pool, this);
+                } catch (Exception e) {
+                    LOGGER.error("Failed to return object to pool", e);
+                }
             }
+        }
 
-            @Override
-            public String toString() {
-                return String.format("[Observer: %s, result: %s]", observer.toString(), result);
-            }
-        });
+        @Override
+        public String toString() {
+            return String.format("[Observer: %s, result: %s]", observer.toString(), result);
+        }
     }
 
     @Override
