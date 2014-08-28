@@ -718,6 +718,6 @@ public class CollectionUtil {
      * @return The size of c or or -1 if c is null
      */
     public static int size(Collection c) {
-        return c == null ? -1 : c.size();
+        return c == null ? 0 : c.size();
     }
 }
