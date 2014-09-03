@@ -106,7 +106,12 @@ public class GenericLocalDirectory<TKey, TValue> extends GenericDirectory<TKey, 
 		return Collections.synchronizedMap(new TreeMap<TKey, Collection<TValue>>(COMPARATOR));
 	}
 
-	@Override
+    @Override
+    public String toString() {
+        return "[Directory: " + data + "]";
+    }
+
+    @Override
 	protected void onDestroy() {
         if(data != null) {
 		    data.clear();

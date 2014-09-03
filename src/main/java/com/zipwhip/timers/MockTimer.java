@@ -27,9 +27,18 @@ public class MockTimer implements Timer {
             throw new NullPointerException("task");
         }
 
-        MockTimeout timeout = new MockTimeout(this, task);
+        final long exitTime = currentTime + unit.toMillis(delay);
 
-        map.add(currentTime + unit.toMillis(delay), timeout);
+        MockTimeout timeout = new MockTimeout(this, task) {
+            @Override
+            public void cancel() {
+                super.cancel();
+
+                map.remove(exitTime, this);
+            }
+        };
+
+        map.add(exitTime, timeout);
 
         LOGGER.debug("(Timeout: {}) scheduled for {}", timeout, currentTime + unit.toMillis(delay));
 
@@ -65,6 +74,10 @@ public class MockTimer implements Timer {
         long end = currentTime + timeUnit.toMillis(delayForward);
         LocalDirectory<Long, Timeout> removes = new ListDirectory<Long, Timeout>();
 
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Moving forward from {} to {}. Timeouts: {}", start, end, map);
+        }
+
         for(long i = start; i <= end; i++) {
             currentTime = i;
 
@@ -95,6 +108,10 @@ public class MockTimer implements Timer {
     @Override
     public Set<Timeout> stop() {
         return null; // Worth implementing this?
+    }
+
+    public boolean isSomethingScheduled() {
+        return !map.isEmpty();
     }
 
     private static class MockTimeout implements Timeout {
