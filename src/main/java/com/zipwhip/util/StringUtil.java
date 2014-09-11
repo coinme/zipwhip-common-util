@@ -1,5 +1,6 @@
 package com.zipwhip.util;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -25,12 +26,43 @@ public class StringUtil {
     public static boolean equals(String string1, String string2) {
         if (string1 == string2) {
             return true; // covers both null, or both same instance
-        }
-        if (string1 == null) {
+        } else if (string1 == null) {
             return false; // covers 1 null, other not.
         }
 
         return (string1.equals(string2)); // covers equals
+    }
+
+    public static String toString(Map object) {
+        if (CollectionUtil.isNullOrEmpty(object)) {
+            return null;
+        }
+
+        return toString((Object) object);
+    }
+
+    public static String toString(Collection object) {
+        if (CollectionUtil.isNullOrEmpty(object)) {
+            return null;
+        }
+
+        return toString((Object) object);
+    }
+
+    public static String toString(final Object[] object) {
+        if (CollectionUtil.isNullOrEmpty(object)) {
+            return null;
+        }
+
+        return toString((Object) object);
+    }
+
+    public static String toString(final Object object) {
+        if (null == object) {
+            return null;
+        }
+
+        return String.valueOf(object);
     }
 
     public static boolean equalsIgnoreCase(String string1, String... strings) {

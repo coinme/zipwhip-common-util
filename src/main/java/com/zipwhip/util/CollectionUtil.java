@@ -46,19 +46,151 @@ public class CollectionUtil {
     }
 
     /**
-     * Try to find something in param1, if its not found, fall back to param2, then otherwise just go with defaultValue.
+     * If the passed in object is an array, returns length.
+     * If the passed in object is a collection, returns size.
+     * If the passed in object is null, returns 0.
+     * If the passed in object is not an array or collection, returns 1.
+     * If the passed in object is a map, returns size.
      *
-     * @param params
+     * @param object
      * @return
      */
-    public static String getString(Map params, String... keys) {
-        return getString(params, Arrays.asList(keys));
+    public static int size(final Object object) {
+        if (null == object) {
+            return 0;
+        } else if (isArray(object)) {
+            return size(object);
+        } else if (isCollection(object)) {
+            return size((Collection) object);
+        } else if (isMap(object)) {
+            return size((Map) object);
+        } else {
+            return 1;
+        }
     }
 
-    public static String getString(Map params, Collection<String> keys) {
+    public static <T> int size(T[] object) {
+        if (null == object) {
+            return 0;
+        }
 
-        for (String key : keys) {
-            String result = getString(params, key);
+        return Array.getLength(object);
+    }
+
+    /**
+     * If the collection is null, returns 0
+     * Returns the size of the collection.
+     *
+     * @param collection The collection to test the size of.
+     * @return The size of the collection or 0 if c is null
+     */
+    public static <T> int size(Collection<T> collection) {
+        return collection == null ? 0 : collection.size();
+    }
+
+    public static <K, V> int size(Map<K, V> map) {
+        return map == null ? 0 : map.size();
+    }
+
+    public static <T> boolean isArray(Object source) {
+        if (source instanceof Object[]) {
+            return true;
+        } else if (source == null) {
+            return false;
+        }
+
+        return source.getClass().isArray();
+    }
+
+    public static boolean isMap(final Object object) {
+        return object instanceof Map;
+    }
+
+    public static boolean isCollection(final Object object) {
+        return object instanceof Collection;
+    }
+
+
+    /**
+     * If the map contains values that are of type List, Collection, Map, or Object[], will attempt to dive one level
+     * deeper.
+     * <p/>
+     * If strict: if those underlying types have more than 1 result, returns null!
+     * If non-strict: if those underlying types have more than 1 result, return the first result.
+     *
+     * @param params
+     * @param key
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    public static <K, V> String getString(final Map<K, V> params, final K key, boolean strict) {
+        final V object = getParam(params, key);
+
+        if (null == object) {
+            return null;
+        } else if (object instanceof String) {
+            return (String) object;
+        } else if (isArray(object)) {
+            final Object[] array = (Object[]) object;
+            final Object result = strict ? get(array) : first(array);
+
+            return StringUtil.toString(result);
+        } else if (isCollection(object)) {
+            final Collection collection = (Collection) object;
+            final Object result = strict ? get(collection) : first(collection);
+
+            return StringUtil.toString(result);
+        } else if (isMap(object)) {
+            final Map map = (Map) object;
+            final Object result = strict ? get(map) : first(map);
+
+            return StringUtil.toString(result);
+        }
+
+        return StringUtil.toString(object);
+    }
+
+    /**
+     * If the map contains values that are of type List, Collection, Map, or Object[], will attempt to dive one level
+     * deeper.
+     * <p/>
+     * This is the non-strict version, if those underlying types have more than 1 result, returns the first one!
+     *
+     * @param params
+     * @param key
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    public static <K, V> String getString(final Map<K, V> params, final K key) {
+        return getString(params, key, false);
+    }
+
+    public static <K, V> String getString(Map<K, V> params, K... keys) {
+        if (isNullOrEmpty(keys) || isNullOrEmpty(params)) {
+            return null;
+        }
+
+        for (final K key : keys) {
+            final String result = getString(params, key);
+
+            if (!StringUtil.isNullOrEmpty(result)) {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    public static <K, V> String getString(final Map<K, V> params, final Collection<K> keys) {
+        if (isNullOrEmpty(keys) || isNullOrEmpty(params)) {
+            return null;
+        }
+
+        for (final K key : keys) {
+            final String result = getString(params, key);
+
             if (!StringUtil.isNullOrEmpty(result)) {
                 return result;
             }
@@ -169,7 +301,7 @@ public class CollectionUtil {
         Object object = getParam(params, key);
 
         if (object instanceof Number) {
-            Long param = ((Number)object).longValue();
+            Long param = ((Number) object).longValue();
 
             if (param == -1L) {
                 return null;
@@ -177,7 +309,7 @@ public class CollectionUtil {
 
             return new Date(param);
         } else if (object instanceof Date) {
-            return (Date)object;
+            return (Date) object;
         }
 
         return null;
@@ -192,30 +324,30 @@ public class CollectionUtil {
 
         return date;
     }
-
-    public static String getString(Map params, String key) {
-        Object param = getParam(params, key);
-
-        if (param == null) {
-            return null;
-        }
-
-        if (param instanceof String) {
-            return (String) param;
-        }
-
-        //        if (param instanceof org.codehaus.groovy.grails.web.json.JSONObject){
-        //        }
-
-//        if (param instanceof Collection) {
-//            Collection collection = ((Collection) param);
 //
-//            return delimitedParser.deliminate(collection);
+//    public static String getString(Map params, String key) {
+//        Object param = getParam(params, key);
+//
+//        if (param == null) {
+//            return null;
 //        }
-
-        return String.valueOf(param);
-        //        return null;
-    }
+//
+//        if (param instanceof String) {
+//            return (String) param;
+//        }
+//
+//        //        if (param instanceof org.codehaus.groovy.grails.web.json.JSONObject){
+//        //        }
+//
+////        if (param instanceof Collection) {
+////            Collection collection = ((Collection) param);
+////
+////            return delimitedParser.deliminate(collection);
+////        }
+//
+//        return String.valueOf(param);
+//        //        return null;
+//    }
 
     public static List<String> getList(Map params, String key, List<String> defaultValue) {
         List<String> result = getList(params, key);
@@ -253,7 +385,6 @@ public class CollectionUtil {
 
         List<String> result = new ArrayList<String>();
         if (param.getClass().isArray()) {
-
             List items = Arrays.asList(toObjectArray(param));
 
             for (Object item : items) {
@@ -266,22 +397,18 @@ public class CollectionUtil {
         return result;
     }
 
-    public static Object getParam(Map params, String key) {
-        Object object = get(params, key);
+    public static <K, V> V getParam(Map<K, V> params, K key, V defaultValue) {
+        V result = getParam(params, key);
 
-//        if (object == org.codehaus.groovy.grails.web.json.JSONObject.NULL) {
-//            return null;
-//        }
-
-        return object;
-    }
-
-    public static Object getParam(Map params, String key, Object defaultValue) {
-        Object result = getParam(params, key);
-        if (result == null) {
+        if (null == result) {
             return defaultValue;
         }
+
         return result;
+    }
+
+    public static <K, V> V getParam(Map<K, V> params, K key) {
+        return get(params, key);
     }
 
     public static Map getMap(Map params, String key) {
@@ -370,16 +497,151 @@ public class CollectionUtil {
         return callbackList;
     }
 
-    public static Object get(Object[] objects, int index) {
-        if (isNullOrEmpty(objects)) {
+    /**
+     * Unwrap an item from the collection only if it has 1 and only 1 item in it.
+     * <p/>
+     * If null or empty, returns null
+     * If it has more than 1 item in it, returns null
+     *
+     * @param collection
+     * @param <T>
+     * @return
+     */
+    public static <T> T get(Collection<T> collection) {
+        if (size(collection) > 1) {
             return null;
         }
-        if (index >= objects.length) {
-            return null;
-        }
-        return objects[index];
+
+        return get(collection, 0);
     }
 
+    /**
+     * If this map is null, returns null.
+     * If this map has 1 and only 1 item in it, returns that item.
+     * If this map has more than 1 item in it, returns null.
+     *
+     * @param map
+     * @param <K>
+     * @param <V>
+     * @return
+     */
+    public static <K, V> V get(Map<K, V> map) {
+        if (isNullOrEmpty(map)) {
+            return null;
+        }
+
+        final int size = size(map);
+
+        // This method refuses to work on maps that have more than 1 item in it.
+        if (size > 1) {
+            return null;
+        }
+
+        return get(map, 0);
+    }
+
+    /**
+     * If this map is null, returns null.
+     * If this map has more than index item in it, returns null.
+     * <p/>
+     * While iterating through the map, will NOT synchronize on the map. The caller should be aware of this.
+     *
+     * @param map
+     * @param <K>
+     * @param <V>
+     * @param index
+     * @return
+     */
+    public static <K, V> V get(final Map<K, V> map, final int index) {
+        if (isNullOrEmpty(map)) {
+            return null;
+        } else if (index < 0) {
+            return null;
+        }
+
+        final int size = map.size();
+
+        if (size <= index) {
+            return null;
+        }
+
+        int i = 0;
+        for (K key : map.keySet()) {
+            if (index == i) {
+                return map.get(key);
+            }
+
+            i++;
+        }
+
+        throw new IllegalStateException(String.format("This can never happen. size:%s, index:%s", size, index));
+    }
+
+    /**
+     * If the collection is null, returns null
+     * If the collection is a list, returns the result within the O(n) notation of that list implementation.
+     * If the index is less than 0, returns null in constant time
+     * If the index is larger than the size, returns null in constant time
+     * <p/>
+     * If the index is within bounds, will return the right item in slow O(index) time by iterating through the collection.
+     *
+     * @param collection
+     * @param index
+     * @param <T>
+     * @return
+     */
+    public static <T> T get(final Collection<T> collection, final int index) {
+        if (collection instanceof List) {
+            return get((List<T>) collection, index);
+        } else if (index < 0) {
+            // Negative positions do not exist.
+            return null;
+        }
+
+        final int size = size(collection);
+
+        if (size <= index) {
+            return null;
+        }
+
+        int i = 0;
+        for (T t : collection) {
+            if (index == i) {
+                return t;
+            }
+
+            i++;
+        }
+
+        throw new IllegalStateException(String.format("This can never happen. size:%s, index:%s", size, index));
+    }
+
+    public static <T> T get(T[] objects) {
+        final int size = size(objects);
+
+        if (size <= 0 || size > 1) {
+            return null;
+        }
+
+        return get(objects, 0);
+    }
+
+    public static <T> T get(T[] objects, int index) {
+        if (index >= size(objects)) {
+            return null;
+        }
+
+        return (T) Array.get(objects, index);
+    }
+
+    /**
+     * This method does not safely synchronize around the internal iterations. The caller must be aware of threading.
+     *
+     * @param original
+     * @param current
+     * @param <T>
+     * @return
+     */
     public static <T> DiffResult<T> diff(Collection<T> original, List<T> current) {
         DiffResult<T> result = new DiffResult<T>();
         result.previous = original;
@@ -495,6 +757,18 @@ public class CollectionUtil {
         return !isNullOrEmpty(map);
     }
 
+    public static <K, V> V first(Map<K, V> map) {
+        return get(map, 0);
+    }
+
+    public static <T> T first(T[] array) {
+        return get(array, 0);
+    }
+
+    public static <T> T first(Collection<T> collection) {
+        return get(collection, 0);
+    }
+
     public static <T> T first(List<T> collection) {
         return get(collection, 0);
     }
@@ -506,21 +780,16 @@ public class CollectionUtil {
         return get(collection, collection.size() - 1);
     }
 
-    public static <K, V> V get(Map<K, V> collection, K param) {
-        if (collection == null) {
-            return null;
-        }
-
-        if (param == null) {
+    public static <K, V> V get(final Map<K, V> map, final K key) {
+        if (map == null) {
             return null;
         }
 
         try {
-            return collection.get(param);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+            return map.get(key);
+        } catch (NullPointerException ex) {
+            return null;
         }
-        return null;
     }
 
     public static <T> T find(List<T> collection, T needle) {
@@ -545,16 +814,12 @@ public class CollectionUtil {
         return null;
     }
 
-    public static <T> T get(List<T> collection, int index) {
+    public static <T> T get(final List<T> collection, final int index) {
         if (isNullOrEmpty(collection)) {
             return null;
-        }
-
-        if (index < 0) {
+        } else if (index < 0) {
             return null;
-        }
-
-        if ((collection.size() - 1) < index) {
+        } else if (collection.size() <= index) {
             return null;
         }
 
@@ -705,19 +970,5 @@ public class CollectionUtil {
             newArray[i] = Array.get(source, i);
         }
         return newArray;
-    }
-
-    /**
-     * Returns the size of the of a Collection  or or -1 if c is null.
-     * <p/>
-     * For example:
-     * <p/>
-     * {@code If (CollectionUtil.size(c) <= 0)...}
-     *
-     * @param c The collection to test the size of.
-     * @return The size of c or or -1 if c is null
-     */
-    public static int size(Collection c) {
-        return c == null ? 0 : c.size();
     }
 }

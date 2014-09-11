@@ -5,6 +5,10 @@ import org.junit.Test;
 
 import java.util.*;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
 /**
  * Created by IntelliJ IDEA.
  * User: jed
@@ -12,6 +16,131 @@ import java.util.*;
  * Time: 12:19 PM
  */
 public class CollectionUtilTest {
+
+    @Test
+    public void testCollectionGetSingleItem() throws Exception {
+        Object object = new Object();
+        Collection<Object> collection = Arrays.asList(object);
+
+        Object object2 = CollectionUtil.get(collection);
+
+        assertSame(object, object2);
+    }
+
+    @Test
+    public void testCollectionGetMultipleItems() throws Exception {
+        Object object = new Object();
+        Collection<Object> collection = Arrays.asList(object, object);
+
+        Object object2 = CollectionUtil.get(collection);
+
+        assertNull(object2);
+    }
+
+    @Test
+    public void testSizeOfNull() throws Exception {
+        assertEquals(0, CollectionUtil.size((Object) null));
+        assertEquals(0, CollectionUtil.size((Object[]) null));
+        assertEquals(0, CollectionUtil.size((Map) null));
+        assertEquals(0, CollectionUtil.size((Collection) null));
+    }
+
+    @Test
+    public void testSizeOfObject() throws Exception {
+        assertEquals(1, CollectionUtil.size((Object) new Object()));
+        assertEquals(1, CollectionUtil.size((Object) Arrays.asList(new Object())));
+        assertEquals(1, CollectionUtil.size((Object) new TreeSet<Object>(Arrays.asList((Object)"test"))));
+        assertEquals(1, CollectionUtil.size((Object) Collections.singletonMap(new Object(), new Object())));
+        assertEquals(0, CollectionUtil.size((Object) null));
+    }
+
+    @Test
+    public void testSizeOfRawTypes() throws Exception {
+        assertEquals(1, CollectionUtil.size(new Object()));
+        assertEquals(1, CollectionUtil.size(Arrays.asList(new Object())));
+        assertEquals(1, CollectionUtil.size(new TreeSet<Object>(Arrays.asList((Object)"test"))));
+        assertEquals(1, CollectionUtil.size(Collections.singletonMap(new Object(), new Object())));
+        assertEquals(0, CollectionUtil.size((Object) null));
+    }
+
+    @Test
+    public void testGetStringServletParameterMap() throws Exception {
+        {
+            final Map<String, String[]> parameterMap = new HashMap<String, String[]>();
+
+            parameterMap.put("test1", new String[]{"test1value"});
+            parameterMap.put("test2", new String[]{null});
+            parameterMap.put("test3", new String[]{"test3value1", "test3value2"});
+            parameterMap.put("test4", null);
+
+            assertEquals("test1value", CollectionUtil.getString(parameterMap, "test1"));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test2"));
+            assertEquals("test3value1", CollectionUtil.getString(parameterMap, "test3"));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test5"));
+
+            assertEquals("test1value", CollectionUtil.getString(parameterMap, "test1", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test2", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test3", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test4", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test5", true));
+        }
+
+        {
+            final Map<String, Collection> parameterMap = new HashMap<String, Collection>();
+
+            parameterMap.put("test1", Arrays.asList("test1value"));
+            parameterMap.put("test2", Arrays.asList((String) null));
+            parameterMap.put("test3", Arrays.asList("test3value1", "test3value2"));
+            parameterMap.put("test4", null);
+
+            assertEquals("test1value", CollectionUtil.getString(parameterMap, "test1"));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test2"));
+            assertEquals("test3value1", CollectionUtil.getString(parameterMap, "test3"));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test5"));
+
+            assertEquals("test1value", CollectionUtil.getString(parameterMap, "test1", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test2", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test3", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test4", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test5", true));
+        }
+
+        {
+            final Map<String, Map> parameterMap = new HashMap<String, Map>();
+
+            parameterMap.put("test1", Collections.singletonMap("b", "test1value"));
+            parameterMap.put("test2", Collections.singletonMap("c", null));
+
+            {
+                Map map = new HashMap();
+
+                map.put("b", "test3value1");
+                map.put("a", "test3value2");
+
+                parameterMap.put("test3", map);
+            }
+
+            parameterMap.put("test4", null);
+
+            assertEquals("test1value", CollectionUtil.getString(parameterMap, "test1"));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test2"));
+            assertEquals("test3value1", CollectionUtil.getString(parameterMap, "test3"));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test5"));
+
+            assertEquals("test1value", CollectionUtil.getString(parameterMap, "test1", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test2", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test3", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test4", true));
+            assertEquals(null, CollectionUtil.getString(parameterMap, "test5", true));
+        }
+    }
+
+    @Test
+    public void testGetStringNullInput() throws Exception {
+        assertEquals(null, CollectionUtil.getString(null, (String) null));
+        assertEquals(null, CollectionUtil.getString(null, "asdfg"));
+    }
+
 
     @Test
     public void testDeepJoinArrays() throws Exception {
