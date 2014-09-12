@@ -1,6 +1,7 @@
 package com.zipwhip.util;
 
-import javax.annotation.processing.SupportedSourceVersion;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -22,6 +23,44 @@ public class StringUtil {
     private static final String PLUS_MOBIFONE = "+84";
     private static final String PLUS = "+";
     private static final String NANP = "+1";
+
+    public static enum CapitalizeMode {
+        /**
+         * Smart Title Case: If the string is all upper case or all lower case, then convert it to title case.
+         */
+        SMART_TITLE_CASE,
+
+        /**
+         * Ignore Case: Do not change the case of the string.
+         */
+        IGNORE,
+
+        TITLE_CASE,
+
+        UPPER_CASE,
+
+        LOWER_CASE
+    }
+
+    public static String capitalize(final String string, final CapitalizeMode capitalizeMode) {
+        if (isNullOrEmpty(string) || null == capitalizeMode || CapitalizeMode.IGNORE == capitalizeMode) {
+            return string;
+        } else if (CapitalizeMode.TITLE_CASE == capitalizeMode) {
+            return StringUtils.capitalize(string);
+        } else if (CapitalizeMode.SMART_TITLE_CASE == capitalizeMode) {
+            // determine if we need to.
+            if (StringUtils.isAllLowerCase(string) || StringUtils.isAllUpperCase(string)) {
+                return StringUtils.capitalize(string);
+            }
+        } else if (CapitalizeMode.LOWER_CASE == capitalizeMode) {
+            return StringUtils.lowerCase(string);
+        } else if (CapitalizeMode.UPPER_CASE == capitalizeMode) {
+            return StringUtils.upperCase(string);
+        }
+
+        // This should not be possible.
+        return string;
+    }
 
     public static boolean equals(String string1, String string2) {
         if (string1 == string2) {
