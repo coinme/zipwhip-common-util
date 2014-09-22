@@ -65,9 +65,35 @@ public class MockTimer implements Timer {
         }
     }
 
-    public void moveForward(long delayForward, TimeUnit timeUnit) throws Exception {
+    public Long getNextScheduledTimeInMilliseconds() {
+        SortedSet<Long> set = new TreeSet<Long>(map.keySet());
+
+        try {
+            return set.first();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    public boolean moveToNextTimeout() throws Exception {
+        final Long timestamp = getNextScheduledTimeInMilliseconds();
+
+        if (null == timestamp) {
+            LOGGER.error("The timestamp was null. Nothing to move next to.");
+
+            return false;
+        }
+
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Moving forward to next timestamp: " + timestamp);
+        }
+
+        return moveForward(timestamp - currentTime, TimeUnit.MILLISECONDS);
+    }
+
+    public boolean moveForward(long delayForward, TimeUnit timeUnit) throws Exception {
         if (delayForward == 0) {
-            return;
+            return false;
         }
 
         long start = currentTime;
@@ -75,8 +101,10 @@ public class MockTimer implements Timer {
         LocalDirectory<Long, Timeout> removes = new ListDirectory<Long, Timeout>();
 
         if (LOGGER.isTraceEnabled()) {
-            LOGGER.trace("Moving forward from {} to {}. Timeouts: {}", start, end, map);
+            LOGGER.trace("Moving forward from {} to {}. (delayForward:{}, units:{}) Timeouts: {}", start, end, delayForward, timeUnit, map);
         }
+
+        boolean changed = false;
 
         for(long i = start; i <= end; i++) {
             currentTime = i;
@@ -91,6 +119,7 @@ public class MockTimer implements Timer {
                 LOGGER.debug("(Timeout: {}) ran at {}", timeout, i);
                 timeout.getTask().run(timeout);
                 removes.add(i, timeout);
+                changed = true;
             }
         }
 
@@ -103,6 +132,8 @@ public class MockTimer implements Timer {
                 }
             }
         }
+
+        return changed;
     }
 
     @Override
