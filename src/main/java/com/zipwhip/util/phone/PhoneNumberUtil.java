@@ -113,6 +113,16 @@ public class PhoneNumberUtil {
     }
 
     /**
+     * @return a national
+     */
+    public static String getNationalPhoneNumber(final String phoneNumber, final String regionCode) throws NumberParseException {
+        final com.google.i18n.phonenumbers.PhoneNumberUtil util = com.google.i18n.phonenumbers.PhoneNumberUtil.getInstance();
+        final Phonenumber.PhoneNumber phoneNumber1 = util.parse(phoneNumber, StringUtil.defaultValue(regionCode, "US"));
+
+        return util.format(phoneNumber1, com.google.i18n.phonenumbers.PhoneNumberUtil.PhoneNumberFormat.NATIONAL);
+    }
+
+    /**
      * Formats the phone number based on the regionCode.
      * if fallbackRegionCode matches the region code derived from the phone number. the number is formatted int the National format.
      * <p/>
