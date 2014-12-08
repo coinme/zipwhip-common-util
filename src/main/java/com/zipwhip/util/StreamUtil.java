@@ -35,6 +35,14 @@ public class StreamUtil {
         return result;
     }
 
+    public static byte[] read(InputStream is) throws IOException {
+        ByteArrayOutputStream os = new ByteArrayOutputStream();
+
+        copy(is, os);
+
+        return os.toByteArray();
+    }
+
     /**
      * Save Bitmap image to disk
      *
