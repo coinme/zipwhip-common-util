@@ -1,5 +1,6 @@
 package com.zipwhip.timers;
 
+import com.zipwhip.lifecycle.CascadingDestroyableBase;
 import com.zipwhip.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * timer facility'</a>.  More comprehensive slides are located
  * <a href="http://www.cse.wustl.edu/~cdgill/courses/cs6874/TimingWheels.ppt">here</a>.
  */
-public class HashedWheelTimer implements Timer {
+public class HashedWheelTimer extends CascadingDestroyableBase implements Timer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HashedWheelTimer.class);
 
@@ -264,6 +265,11 @@ public class HashedWheelTimer implements Timer {
             bucket.clear();
         }
 
+        // If we're not already destroyed, call destroy
+        if (!isDestroyed()) {
+            destroy();
+        }
+
         return Collections.unmodifiableSet(unprocessedTimeouts);
     }
 
@@ -314,6 +320,12 @@ public class HashedWheelTimer implements Timer {
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        // Stop is idempotent. If you call it twice, nothing happens.
+        stop();
     }
 
     private final class Worker implements Runnable {
