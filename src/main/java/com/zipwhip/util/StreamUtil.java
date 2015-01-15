@@ -35,6 +35,23 @@ public class StreamUtil {
         return result;
     }
 
+    public static Object deserialize(byte[] bytes) throws IOException, ClassNotFoundException {
+        ObjectInputStream ois = null;
+        Object object = null;
+
+        try {
+            ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+
+            object = ois.readObject();
+        } finally {
+            if (ois != null) {
+                ois.close();
+            }
+        }
+
+        return object;
+    }
+
     public static byte[] read(InputStream is) throws IOException {
         ByteArrayOutputStream os = new ByteArrayOutputStream();
 
